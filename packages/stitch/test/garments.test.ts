@@ -90,7 +90,7 @@ describe('scene geometry', () => {
   });
 
   it('counts stitches and bounds the work area', () => {
-    expect(stitchCount(scene)).toBe(Math.round(((20 * 20 * 0.5 * 0.5 * 165) / 100)) * 100);
+    expect(stitchCount(scene)).toBe(Math.round((20 * 20 * 0.5 * 0.5 * 165) / 100) * 100);
     expect(stitchCount({ ...scene, D: null })).toBe(0);
     const b = destBox(scene, { sx: 0, sy: 0, S: 1 })!;
     expect(b.x).toBeGreaterThan(0);

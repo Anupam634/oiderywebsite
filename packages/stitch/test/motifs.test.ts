@@ -42,8 +42,13 @@ describe('motif library', () => {
   });
 
   it('motifSvg strips knot highlights and lists the colours used', () => {
-    const { svg, used } = motifSvg('phoolwari', motifColours('phoolwari', ['rani', 'neel', 'mehendi', 'gulaab']));
-    expect(svg).toMatch(/^<svg xmlns="http:\/\/www.w3.org\/2000\/svg" viewBox="-62 -62 124 124" width="620" height="620">/);
+    const { svg, used } = motifSvg(
+      'phoolwari',
+      motifColours('phoolwari', ['rani', 'neel', 'mehendi', 'gulaab']),
+    );
+    expect(svg).toMatch(
+      /^<svg xmlns="http:\/\/www.w3.org\/2000\/svg" viewBox="-62 -62 124 124" width="620" height="620">/,
+    );
     expect(svg).not.toContain('fill="#fff"');
     expect(used).toContain('#e4007c');
     expect(used.every((h) => /^#[0-9a-f]{6}$/.test(h))).toBe(true);

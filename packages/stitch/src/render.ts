@@ -168,5 +168,5 @@ export function stitchPixels(
 export const stitchCount = (S: Scene): number => {
   const D = S.D;
   if (!D) return 0;
-  return Math.round(((((S.size * S.size * D.h) / D.w) * D.cov * 165) / 100)) * 100;
+  return Math.round((((S.size * S.size * D.h) / D.w) * D.cov * 165) / 100) * 100;
 };

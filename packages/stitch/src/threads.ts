@@ -104,16 +104,7 @@ export function nearestThread(l: ArrayLike<number>): number {
 }
 
 export type GarmentColour =
-  | 'white'
-  | 'natural'
-  | 'kajal'
-  | 'neel'
-  | 'maroon'
-  | 'bottle'
-  | 'haldi'
-  | 'gulaab'
-  | 'chandi'
-  | 'sky';
+  'white' | 'natural' | 'kajal' | 'neel' | 'maroon' | 'bottle' | 'haldi' | 'gulaab' | 'chandi' | 'sky';
 
 /** garment colours: [name, dye hex]. null = the photo as shot (no recolouring). */
 export const GC: Readonly<Record<GarmentColour, readonly [name: string, hex: string | null]>> = {

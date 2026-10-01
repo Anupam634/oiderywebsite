@@ -19,9 +19,22 @@ export interface FontDef {
 
 export const FONTS: Readonly<Record<FontKey, FontDef>> = {
   script: { fam: 'Pacifico, cursive', w: 400, k: 1, name: 'Script', lbl: 'Aa' },
-  classic: { fam: "'Playfair Display', Georgia, serif", w: 700, it: true, k: 1.1, name: 'Classic', lbl: 'Aa' },
+  classic: {
+    fam: "'Playfair Display', Georgia, serif",
+    w: 700,
+    it: true,
+    k: 1.1,
+    name: 'Classic',
+    lbl: 'Aa',
+  },
   bold: { fam: "'Archivo Black', Impact, sans-serif", w: 400, k: 0.88, name: 'Bold', lbl: 'AA' },
-  hindi: { fam: "'Yatra One', 'Noto Sans Devanagari', sans-serif", w: 400, k: 1.08, name: 'हिंदी', lbl: 'अआ' },
+  hindi: {
+    fam: "'Yatra One', 'Noto Sans Devanagari', sans-serif",
+    w: 400,
+    k: 1.08,
+    name: 'हिंदी',
+    lbl: 'अआ',
+  },
 };
 
 export const FONT_KEYS: readonly FontKey[] = ['script', 'classic', 'bold', 'hindi'];

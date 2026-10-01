@@ -158,7 +158,10 @@ export function analysePixels(px: PixelData, opts: AnalyseOptions): PreparedDesi
         const X = i % w,
           Y = (i / w) | 0;
         if (
-          ((X > 0 && !A[i - 1]) || (X < w - 1 && !A[i + 1]) || (Y > 0 && !A[i - w]) || (Y < h - 1 && !A[i + w])) &&
+          ((X > 0 && !A[i - 1]) ||
+            (X < w - 1 && !A[i + 1]) ||
+            (Y > 0 && !A[i - w]) ||
+            (Y < h - 1 && !A[i + w])) &&
           dist(i) < tol * 5
         )
           B[i] = 0;
@@ -180,7 +183,9 @@ export function analysePixels(px: PixelData, opts: AnalyseOptions): PreparedDesi
   const edge = (i: number) => {
     const X = i % w,
       Y = (i / w) | 0;
-    return (X > 0 && !A[i - 1]) || (X < w - 1 && !A[i + 1]) || (Y > 0 && !A[i - w]) || (Y < h - 1 && !A[i + w]);
+    return (
+      (X > 0 && !A[i - 1]) || (X < w - 1 && !A[i + 1]) || (Y > 0 && !A[i - w]) || (Y < h - 1 && !A[i + w])
+    );
   };
   const S: Vec3[] = [],
     step = Math.max(1, Math.floor(opaque / 14000));
@@ -189,7 +194,8 @@ export function analysePixels(px: PixelData, opts: AnalyseOptions): PreparedDesi
     if (!A[i] || edge(i)) continue;
     if (cnt++ % step === 0) S.push([LAB[i * 3]!, LAB[i * 3 + 1]!, LAB[i * 3 + 2]!]);
   }
-  if (S.length < 24) for (let i = 0; i < N; i++) if (A[i]) S.push([LAB[i * 3]!, LAB[i * 3 + 1]!, LAB[i * 3 + 2]!]);
+  if (S.length < 24)
+    for (let i = 0; i < N; i++) if (A[i]) S.push([LAB[i * 3]!, LAB[i * 3 + 1]!, LAB[i * 3 + 2]!]);
   const runs: KMeansResult[] = [];
   for (let k = 1; k <= 6; k++) runs.push(kmeans(S, k));
   let k = clamp(opts.k || 4, 1, 6);
@@ -240,7 +246,9 @@ export function analysePixels(px: PixelData, opts: AnalyseOptions): PreparedDesi
       bL = bgLab;
     msum.forEach((m, t) => {
       if (!m[3]) return;
-      const dE = Math.sqrt((m[0] / m[3] - bL[0]) ** 2 + (m[1] / m[3] - bL[1]) ** 2 + (m[2] / m[3] - bL[2]) ** 2);
+      const dE = Math.sqrt(
+        (m[0] / m[3] - bL[0]) ** 2 + (m[1] / m[3] - bL[1]) ** 2 + (m[2] / m[3] - bL[2]) ** 2,
+      );
       if ((dE < 18 || threads[t] === bgT) && count0[t]! / tot < 0.15 && threads.length > 1) drop.add(t);
     });
   }

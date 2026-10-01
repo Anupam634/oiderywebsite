@@ -17,7 +17,10 @@ const isMotifKey = (k: unknown): k is MotifKey =>
  */
 export function motifSvg(name: MotifKey, cols: readonly string[]): { svg: string; used: string[] } {
   const m = MOTIFS[name].draw(cols),
-    body = ((m.b || '') + (m.v || '') + (m.s || '') + (m.t || '')).replace(/<circle[^>]*fill="#fff"[^>]*\/>/g, '');
+    body = ((m.b || '') + (m.v || '') + (m.s || '') + (m.t || '')).replace(
+      /<circle[^>]*fill="#fff"[^>]*\/>/g,
+      '',
+    );
   const used = [...new Set((body.match(/#[0-9a-fA-F]{6}\b/g) || []).map((h) => h.toLowerCase()))];
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-62 -62 124 124" width="${MOTIF_PX}" height="${MOTIF_PX}">${body}</svg>`;
   return { svg, used };
@@ -28,7 +31,8 @@ export function motifColours(name: MotifKey, mcols: readonly string[] | undefine
   const keys = mcols && mcols.length ? mcols : MOTIFS[name].def;
   return keys.map((k, i) => {
     const h = col(k);
-    if (h === undefined) throw new Error(`@store/stitch: unknown thread colour "${k}" for motif slot ${i + 1}`);
+    if (h === undefined)
+      throw new Error(`@store/stitch: unknown thread colour "${k}" for motif slot ${i + 1}`);
     return h;
   });
 }
@@ -79,7 +83,8 @@ export async function drawDesign(
     F = spec.font || 'script';
   if (!isFontKey(F)) throw new Error(`@store/stitch: unknown font "${String(F)}"`);
   const tcol = text ? col(spec.tcol) : undefined;
-  if (text && tcol === undefined) throw new Error(`@store/stitch: a name needs a thread colour (tcol), got "${String(spec.tcol)}"`);
+  if (text && tcol === undefined)
+    throw new Error(`@store/stitch: a name needs a thread colour (tcol), got "${String(spec.tcol)}"`);
   const fam = families[F] ?? FONTS[F].fam,
     c = createCanvas(),
     x = ctx2d(c);

@@ -10,7 +10,8 @@ let probe: SVGPathElement | null = null;
 
 function getProbe(): SVGPathElement | null {
   if (probe) return probe;
-  if (typeof document === 'undefined' || !document.body || typeof document.createElementNS !== 'function') return null;
+  if (typeof document === 'undefined' || !document.body || typeof document.createElementNS !== 'function')
+    return null;
   const p = document.createElementNS(SVG_NS, 'path'),
     s = document.createElementNS(SVG_NS, 'svg');
   s.setAttribute('width', '0');

@@ -34,7 +34,9 @@ describe('colour maths', () => {
   it('f rounds to 2 decimals and esc escapes markup', () => {
     expect(f(1.23456)).toBe(1.23);
     expect(f(-7.005)).toBe(-7);
-    expect(esc(`<a href="x" title='y'>&</a>`)).toBe('&lt;a href=&quot;x&quot; title=&#39;y&#39;&gt;&amp;&lt;/a&gt;');
+    expect(esc(`<a href="x" title='y'>&</a>`)).toBe(
+      '&lt;a href=&quot;x&quot; title=&#39;y&#39;&gt;&amp;&lt;/a&gt;',
+    );
   });
 });
 

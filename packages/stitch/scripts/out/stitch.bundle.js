@@ -405,7 +405,9 @@ function analysePixels(px, opts) {
     const bgT = nearestThread(bgLab), bL = bgLab;
     msum.forEach((m, t) => {
       if (!m[3]) return;
-      const dE = Math.sqrt((m[0] / m[3] - bL[0]) ** 2 + (m[1] / m[3] - bL[1]) ** 2 + (m[2] / m[3] - bL[2]) ** 2);
+      const dE = Math.sqrt(
+        (m[0] / m[3] - bL[0]) ** 2 + (m[1] / m[3] - bL[1]) ** 2 + (m[2] / m[3] - bL[2]) ** 2
+      );
       if ((dE < 18 || threads[t] === bgT) && count0[t] / tot < 0.15 && threads.length > 1) drop.add(t);
     });
   }
@@ -526,7 +528,8 @@ function setTcol(D) {
 // src/dom.ts
 var hasDom = () => typeof document !== "undefined" && typeof document.createElement === "function";
 function needDom(what) {
-  if (!hasDom()) throw new Error(`@store/stitch: ${what} needs a browser (canvas). Call it from a client component.`);
+  if (!hasDom())
+    throw new Error(`@store/stitch: ${what} needs a browser (canvas). Call it from a client component.`);
 }
 function createCanvas(w, h) {
   needDom("drawing");
@@ -560,9 +563,22 @@ function loadImage(src, crossOrigin = "anonymous") {
 // src/fonts.ts
 var FONTS = {
   script: { fam: "Pacifico, cursive", w: 400, k: 1, name: "Script", lbl: "Aa" },
-  classic: { fam: "'Playfair Display', Georgia, serif", w: 700, it: true, k: 1.1, name: "Classic", lbl: "Aa" },
+  classic: {
+    fam: "'Playfair Display', Georgia, serif",
+    w: 700,
+    it: true,
+    k: 1.1,
+    name: "Classic",
+    lbl: "Aa"
+  },
   bold: { fam: "'Archivo Black', Impact, sans-serif", w: 400, k: 0.88, name: "Bold", lbl: "AA" },
-  hindi: { fam: "'Yatra One', 'Noto Sans Devanagari', sans-serif", w: 400, k: 1.08, name: "\u0939\u093F\u0902\u0926\u0940", lbl: "\u0905\u0906" }
+  hindi: {
+    fam: "'Yatra One', 'Noto Sans Devanagari', sans-serif",
+    w: 400,
+    k: 1.08,
+    name: "\u0939\u093F\u0902\u0926\u0940",
+    lbl: "\u0905\u0906"
+  }
 };
 var FONT_KEYS = ["script", "classic", "bold", "hindi"];
 var isFontKey = (k) => typeof k === "string" && Object.prototype.hasOwnProperty.call(FONTS, k);
@@ -595,7 +611,8 @@ var SVG_NS = "http://www.w3.org/2000/svg";
 var probe = null;
 function getProbe() {
   if (probe) return probe;
-  if (typeof document === "undefined" || !document.body || typeof document.createElementNS !== "function") return null;
+  if (typeof document === "undefined" || !document.body || typeof document.createElementNS !== "function")
+    return null;
   const p = document.createElementNS(SVG_NS, "path"), s = document.createElementNS(SVG_NS, "svg");
   s.setAttribute("width", "0");
   s.setAttribute("height", "0");
@@ -895,7 +912,9 @@ var kamal = {
       [32, 48, 19, p],
       [0, 54, 22, shade(p, 0.14)]
     ];
-    s += `<g transform="translate(0 10)">` + P.map(([a, len, wd, cc]) => `<path transform="rotate(${a})" d="${petal(len, wd)}" fill="${cc}"/>`).join("") + `<path d="M-24 0C-18 12 18 12 24 0L18 9C9 16-9 16-18 9Z" fill="${c}"/></g>`;
+    s += `<g transform="translate(0 10)">` + P.map(([a, len, wd, cc]) => `<path transform="rotate(${a})" d="${petal(len, wd)}" fill="${cc}"/>`).join(
+      ""
+    ) + `<path d="M-24 0C-18 12 18 12 24 0L18 9C9 16-9 16-18 9Z" fill="${c}"/></g>`;
     const veins = [
       [-32, 48],
       [32, 48],
@@ -984,7 +1003,10 @@ var phoolwari = {
   def: ["rani", "neel", "mehendi"],
   draw(cols) {
     const [a, b, l, a2] = cols3(cols);
-    const m = (n, cs, x, y, sc, r = 0) => grp(MOTIFS[n].draw(cs), `translate(${x} ${y}) rotate(${r}) scale(${sc})`).replace(/ filter="url\(#[^)]*\)"/g, "");
+    const m = (n, cs, x, y, sc, r = 0) => grp(MOTIFS[n].draw(cs), `translate(${x} ${y}) rotate(${r}) scale(${sc})`).replace(
+      / filter="url\(#[^)]*\)"/g,
+      ""
+    );
     return {
       s: m("gulaab", [a, TH.haldi, l], -14, -6, 0.62) + m("gulaab", [a2 || shade(a, 0.38), TH.sindoor, l], 26, -22, 0.44, 16) + m("phool", [b, TH.haldi, l], 16, 26, 0.34) + m("phool", [TH.sindoor, TH.haldi, l], -34, 30, 0.25, -12) + m("dil", [TH.haldi, a, a], 36, 22, 0.2, 12)
     };
@@ -1010,7 +1032,10 @@ var MOTIF_KEYS = [
 var MOTIF_PX = 620;
 var isMotifKey = (k) => typeof k === "string" && Object.prototype.hasOwnProperty.call(MOTIFS, k);
 function motifSvg(name, cols) {
-  const m = MOTIFS[name].draw(cols), body = ((m.b || "") + (m.v || "") + (m.s || "") + (m.t || "")).replace(/<circle[^>]*fill="#fff"[^>]*\/>/g, "");
+  const m = MOTIFS[name].draw(cols), body = ((m.b || "") + (m.v || "") + (m.s || "") + (m.t || "")).replace(
+    /<circle[^>]*fill="#fff"[^>]*\/>/g,
+    ""
+  );
   const used = [...new Set((body.match(/#[0-9a-fA-F]{6}\b/g) || []).map((h) => h.toLowerCase()))];
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-62 -62 124 124" width="${MOTIF_PX}" height="${MOTIF_PX}">${body}</svg>`;
   return { svg, used };
@@ -1019,7 +1044,8 @@ function motifColours(name, mcols) {
   const keys = mcols && mcols.length ? mcols : MOTIFS[name].def;
   return keys.map((k, i) => {
     const h = col(k);
-    if (h === void 0) throw new Error(`@store/stitch: unknown thread colour "${k}" for motif slot ${i + 1}`);
+    if (h === void 0)
+      throw new Error(`@store/stitch: unknown thread colour "${k}" for motif slot ${i + 1}`);
     return h;
   });
 }
@@ -1053,7 +1079,8 @@ async function drawDesign(spec, families = {}) {
   const text = (spec.text || "").trim(), F = spec.font || "script";
   if (!isFontKey(F)) throw new Error(`@store/stitch: unknown font "${String(F)}"`);
   const tcol = text ? col(spec.tcol) : void 0;
-  if (text && tcol === void 0) throw new Error(`@store/stitch: a name needs a thread colour (tcol), got "${String(spec.tcol)}"`);
+  if (text && tcol === void 0)
+    throw new Error(`@store/stitch: a name needs a thread colour (tcol), got "${String(spec.tcol)}"`);
   const fam = families[F] ?? FONTS[F].fam, c = createCanvas(), x = ctx2d(c);
   let fs = 200;
   x.font = fontStr(F, fs, fam);
@@ -1165,7 +1192,15 @@ function recolourGarment(g, ref, hex, d) {
 }
 
 // src/garments.ts
-var GARMENT_VIEWS = ["tee", "model", "polo", "shirt", "hoodie", "cap", "tote"];
+var GARMENT_VIEWS = [
+  "tee",
+  "model",
+  "polo",
+  "shirt",
+  "hoodie",
+  "cap",
+  "tote"
+];
 var GARMENTS = {
   tee: {
     w: 900,
@@ -1332,7 +1367,9 @@ function createStitchEngine(options = {}) {
   const base0 = options.assetBase ?? "/mockups/", assetBase = base0.endsWith("/") ? base0 : base0 + "/", crossOrigin = options.crossOrigin === void 0 ? "anonymous" : options.crossOrigin, families = { ...options.fontFamilies }, fontTimeoutMs = options.fontTimeoutMs ?? 2500, cache = /* @__PURE__ */ new Map();
   const probes = [
     ...FONT_PROBES,
-    ...FONT_KEYS.filter((k) => families[k] && families[k] !== FONTS[k].fam).map((k) => fontStr(k, 120, families[k]))
+    ...FONT_KEYS.filter((k) => families[k] && families[k] !== FONTS[k].fam).map(
+      (k) => fontStr(k, 120, families[k])
+    )
   ];
   const garmentUrls = (view) => ({
     photo: `${assetBase}${view}.jpg`,
@@ -1367,7 +1404,9 @@ function createStitchEngine(options = {}) {
   function need(view) {
     const e = cache.get(view);
     if (!e || !e.data)
-      throw new Error(`@store/stitch: garment "${String(view)}" is not loaded yet; await engine.garmentReady(view) first`);
+      throw new Error(
+        `@store/stitch: garment "${String(view)}" is not loaded yet; await engine.garmentReady(view) first`
+      );
     return e;
   }
   function baseFor(view, colour) {

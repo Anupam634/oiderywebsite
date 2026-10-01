@@ -98,7 +98,9 @@ for (const view of views) {
       `    place: {\n${place}\n    },\n` +
       `    credit: ${str(v.src)},\n  },`,
   );
-  console.log(`${view.padEnd(7)} ${String(jpg.length).padStart(7)} B jpg  ${String(png.length).padStart(6)} B mask`);
+  console.log(
+    `${view.padEnd(7)} ${String(jpg.length).padStart(7)} B jpg  ${String(png.length).padStart(6)} B mask`,
+  );
 }
 
 const rel = relative(PLATFORM, SRC).split('\\').join('/');

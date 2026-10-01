@@ -91,7 +91,8 @@ export const PAISLEY_POINTS: ReadonlyArray<readonly [number, number]> = [
   [17.916095733642578, 41.70996856689453],
 ];
 
-export type MotifKey = 'phoolwari' | 'gulaab' | 'phool' | 'kairi' | 'mor' | 'kamal' | 'chand' | 'dil' | 'genda';
+export type MotifKey =
+  'phoolwari' | 'gulaab' | 'phool' | 'kairi' | 'mor' | 'kamal' | 'chand' | 'dil' | 'genda';
 
 export interface Motif {
   name: string;
@@ -233,7 +234,9 @@ const kamal: Motif = {
     ];
     s +=
       `<g transform="translate(0 10)">` +
-      P.map(([a, len, wd, cc]) => `<path transform="rotate(${a})" d="${petal(len, wd)}" fill="${cc}"/>`).join('') +
+      P.map(([a, len, wd, cc]) => `<path transform="rotate(${a})" d="${petal(len, wd)}" fill="${cc}"/>`).join(
+        '',
+      ) +
       `<path d="M-24 0C-18 12 18 12 24 0L18 9C9 16-9 16-18 9Z" fill="${c}"/></g>`;
     const veins: Array<[number, number]> = [
       [-32, 48],
@@ -249,7 +252,9 @@ const kamal: Motif = {
         )
         .join('') +
       `</g>`;
-    t += run('M-52 34q13-7 26 0t26 0t26 0t26 0', w, 2.6, '5 4') + run('M-38 45q10-6 19 0t19 0t19 0t19 0', w, 2.3, '5 4');
+    t +=
+      run('M-52 34q13-7 26 0t26 0t26 0t26 0', w, 2.6, '5 4') +
+      run('M-38 45q10-6 19 0t19 0t19 0t19 0', w, 2.3, '5 4');
     return { s, t };
   },
 };
@@ -342,7 +347,10 @@ const phoolwari: Motif = {
   draw(cols) {
     const [a, b, l, a2] = cols3(cols);
     const m = (n: MotifKey, cs: readonly string[], x: number, y: number, sc: number, r = 0) =>
-      grp(MOTIFS[n].draw(cs), `translate(${x} ${y}) rotate(${r}) scale(${sc})`).replace(/ filter="url\(#[^)]*\)"/g, '');
+      grp(MOTIFS[n].draw(cs), `translate(${x} ${y}) rotate(${r}) scale(${sc})`).replace(
+        / filter="url\(#[^)]*\)"/g,
+        '',
+      );
     return {
       s:
         m('gulaab', [a, TH.haldi, l], -14, -6, 0.62) +

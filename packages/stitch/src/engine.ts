@@ -102,7 +102,9 @@ export function createStitchEngine(options: StitchEngineOptions = {}): StitchEng
   /* fontsLoaded() waits for the overridden families too */
   const probes = [
     ...FONT_PROBES,
-    ...FONT_KEYS.filter((k) => families[k] && families[k] !== FONTS[k].fam).map((k) => fontStr(k, 120, families[k])),
+    ...FONT_KEYS.filter((k) => families[k] && families[k] !== FONTS[k].fam).map((k) =>
+      fontStr(k, 120, families[k]),
+    ),
   ];
 
   const garmentUrls = (view: GarmentView) => ({
@@ -144,7 +146,9 @@ export function createStitchEngine(options: StitchEngineOptions = {}): StitchEng
   function need(view: GarmentView): GarmentEntry & { data: GarmentPixels } {
     const e = cache.get(view);
     if (!e || !e.data)
-      throw new Error(`@store/stitch: garment "${String(view)}" is not loaded yet; await engine.garmentReady(view) first`);
+      throw new Error(
+        `@store/stitch: garment "${String(view)}" is not loaded yet; await engine.garmentReady(view) first`,
+      );
     return e as GarmentEntry & { data: GarmentPixels };
   }
 
@@ -208,8 +212,10 @@ export function createStitchEngine(options: StitchEngineOptions = {}): StitchEng
     return t;
   }
 
-  const analyse = (src: DesignSource, opts: AnalyseOptions = DEFAULT_ANALYSE) => analysePixels(pixels(src), opts);
-  const analyseKnown = (src: DesignSource, palette: readonly string[]) => analyseKnownPixels(pixels(src), palette);
+  const analyse = (src: DesignSource, opts: AnalyseOptions = DEFAULT_ANALYSE) =>
+    analysePixels(pixels(src), opts);
+  const analyseKnown = (src: DesignSource, palette: readonly string[]) =>
+    analyseKnownPixels(pixels(src), palette);
   const designFrom = (spec: DesignSpec) => drawDesign(spec, families);
   const hasDesign = (spec: DesignSpec | null | undefined): spec is DesignSpec =>
     !!spec && ((!!spec.motif && spec.motif !== 'none') || !!(spec.text || '').trim());

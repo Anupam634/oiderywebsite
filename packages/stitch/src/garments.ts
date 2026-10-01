@@ -20,7 +20,15 @@ export interface GarmentPlacements {
 
 export type PlacementKey = GarmentPlacements[GarmentView];
 
-export const GARMENT_VIEWS: readonly GarmentView[] = ['tee', 'model', 'polo', 'shirt', 'hoodie', 'cap', 'tote'];
+export const GARMENT_VIEWS: readonly GarmentView[] = [
+  'tee',
+  'model',
+  'polo',
+  'shirt',
+  'hoodie',
+  'cap',
+  'tote',
+];
 
 export const GARMENTS: Record<GarmentView, GarmentManifest> = {
   tee: {

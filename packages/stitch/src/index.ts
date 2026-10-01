@@ -8,7 +8,18 @@ export type { SceneSpec, StitchEngine, StitchEngineOptions } from './engine';
 
 /* garments + colours */
 export { GARMENTS, GARMENT_VIEWS } from './garments';
-export { TH, THREADS, TNAME, TPAL, TLAB, GC, GARMENT_COLOURS, col, isThreadKey, nearestThread } from './threads';
+export {
+  TH,
+  THREADS,
+  TNAME,
+  TPAL,
+  TLAB,
+  GC,
+  GARMENT_COLOURS,
+  col,
+  isThreadKey,
+  nearestThread,
+} from './threads';
 
 /* motifs, fonts, sample logos */
 export {
@@ -52,6 +63,14 @@ export {
   setTcol,
 } from './analyse';
 export type { KMeansResult } from './analyse';
-export { sceneGeometry, placementsOf, fitSize, destBox, closeView, stitchPixels, stitchCount } from './render';
+export {
+  sceneGeometry,
+  placementsOf,
+  fitSize,
+  destBox,
+  closeView,
+  stitchPixels,
+  stitchCount,
+} from './render';
 export type { RenderView, SceneGeometry } from './render';
 export { pixels } from './dom';

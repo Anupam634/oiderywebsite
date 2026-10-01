@@ -47,7 +47,10 @@ export function blz(a: ArrayLike<number>, w: number, h: number, x: number, y: nu
     fx = x - x0,
     fy = y - y0,
     g = (X: number, Y: number) => (X < 0 || Y < 0 || X >= w || Y >= h ? 0 : a[Y * w + X]!);
-  return (g(x0, y0) * (1 - fx) + g(x0 + 1, y0) * fx) * (1 - fy) + (g(x0, y0 + 1) * (1 - fx) + g(x0 + 1, y0 + 1) * fx) * fy;
+  return (
+    (g(x0, y0) * (1 - fx) + g(x0 + 1, y0) * fx) * (1 - fy) +
+    (g(x0, y0 + 1) * (1 - fx) + g(x0 + 1, y0 + 1) * fx) * fy
+  );
 }
 
 /**

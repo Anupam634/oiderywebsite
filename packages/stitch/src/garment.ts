@@ -104,7 +104,12 @@ export function garmentFringe(m: Float32Array, lum: Float32Array, W: number, H: 
  * Dye the garment: writes the photo into `d` (RGBA, same size), recoloured inside the mask with `hex`
  * keeping the fabric's light and shade (null = the photo as shot). `ref` is the garment's average brightness.
  */
-export function recolourGarment(g: GarmentPixels, ref: number, hex: string | null, d: Uint8ClampedArray): void {
+export function recolourGarment(
+  g: GarmentPixels,
+  ref: number,
+  hex: string | null,
+  d: Uint8ClampedArray,
+): void {
   const px = g.px,
     N = g.lum.length;
   d.set(px);
