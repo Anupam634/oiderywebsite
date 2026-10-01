@@ -72,7 +72,7 @@ export function ProductEditor({ id }: { id: string }) {
       <div className="grid2">
         <div>
           <Section title="Basics">
-            <div className="fg">
+            <div className="formgrid">
               <label className="f full"><span>Name</span><input value={d.name} onChange={(e) => set('name', e.target.value)} /></label>
               <label className="f"><span>Link <i>(/p/…)</i></span><input value={d.slug} onChange={(e) => set('slug', e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-'))} /></label>
               <label className="f"><span>Code <i>(SKU prefix)</i></span><input value={d.code} onChange={(e) => set('code', e.target.value.toLowerCase().replace(/[^a-z0-9]/g, ''))} /></label>
@@ -109,7 +109,7 @@ export function ProductEditor({ id }: { id: string }) {
 
         <div>
           <Section title="Making & shipping">
-            <div className="fg">
+            <div className="formgrid">
               <label className="f"><span>Ships as</span><select value={d.shipMode} onChange={(e) => set('shipMode', e.target.value as Draft['shipMode'])}><option value="READY">Ready (1–2 days)</option><option value="MADE">Made to order</option><option value="CUSTOM">Made for you (prepaid)</option></select></label>
               <label className="f"><span>Making days <i>(blank = default)</i></span><input inputMode="numeric" value={d.madeDays ?? ''} onChange={(e) => set('madeDays', e.target.value ? Number(e.target.value.replace(/\D/g, '')) : null)} /></label>
               <label className="f full"><span>Shipping note <i>(optional)</i></span><input value={d.shipNote ?? ''} maxLength={120} onChange={(e) => set('shipNote', e.target.value || null)} /></label>
@@ -125,7 +125,7 @@ export function ProductEditor({ id }: { id: string }) {
           <Section title="Personalisation">
             <label className="chk"><input type="checkbox" checked={!!d.personalisation} onChange={(e) => set('personalisation', e.target.checked ? (p.personalisation ?? DEFAULT_PERSO) : null)} />Customers can add a name</label>
             {d.personalisation && (
-              <div className="fg" style={{ marginTop: 10 }}>
+              <div className="formgrid" style={{ marginTop: 10 }}>
                 <label className="f"><span>Extra charge (₹)</span><input inputMode="numeric" value={d.personalisation.fee / 100} onChange={(e) => set('personalisation', { ...d.personalisation!, fee: Number(e.target.value.replace(/\D/g, '')) * 100 })} /></label>
                 <label className="f"><span>Longest name</span><input inputMode="numeric" value={d.personalisation.maxLength} onChange={(e) => set('personalisation', { ...d.personalisation!, maxLength: Number(e.target.value.replace(/\D/g, '')) || 1 })} /></label>
                 <label className="f"><span>Example name</span><input value={d.personalisation.defaultText} onChange={(e) => set('personalisation', { ...d.personalisation!, defaultText: e.target.value })} /></label>
@@ -139,7 +139,7 @@ export function ProductEditor({ id }: { id: string }) {
             <details style={{ marginTop: 12 }}>
               <summary className="muted" style={{ cursor: 'pointer' }}>Live preview settings (advanced)</summary>
               <JsonField value={d.livePreview} onChange={(v) => set('livePreview', v as Draft['livePreview'])} />
-              <div className="fg" style={{ marginTop: 8 }}>
+              <div className="formgrid" style={{ marginTop: 8 }}>
                 <label className="f"><span>Studio garment <i>(logo items)</i></span><input value={d.studioGarment ?? ''} onChange={(e) => set('studioGarment', e.target.value || null)} placeholder="tee, polo, cap, tote…" /></label>
                 <label className="f"><span>Studio sample</span><input value={d.studioSample ?? ''} onChange={(e) => set('studioSample', e.target.value || null)} placeholder="chai, mono, team" /></label>
               </div>
@@ -147,7 +147,7 @@ export function ProductEditor({ id }: { id: string }) {
           </Section>
 
           <Section title="GST">
-            <div className="fg">
+            <div className="formgrid">
               <label className="f"><span>HSN code</span><input inputMode="numeric" value={d.hsnCode} onChange={(e) => set('hsnCode', e.target.value.replace(/\D/g, '').slice(0, 8))} /></label>
               <label className="f"><span>Rate</span><select value={d.gstRule === 'threshold' ? 'threshold' : String(d.gstRateBp)} onChange={(e) => (e.target.value === 'threshold' ? setD({ ...d, gstRule: 'threshold' }) : setD({ ...d, gstRule: 'flat', gstRateBp: Number(e.target.value) }))}>
                 <option value="threshold">Clothing & textiles: 5% up to ₹2,500, 18% above</option>
@@ -158,7 +158,7 @@ export function ProductEditor({ id }: { id: string }) {
           </Section>
 
           <Section title="Search engines">
-            <div className="fg">
+            <div className="formgrid">
               <label className="f full"><span>Title <i>(up to 70)</i></span><input value={d.seoTitle ?? ''} maxLength={70} onChange={(e) => set('seoTitle', e.target.value || null)} placeholder={d.name} /></label>
               <label className="f full"><span>Description <i>(up to 170)</i></span><textarea value={d.seoDescription ?? ''} maxLength={170} onChange={(e) => set('seoDescription', e.target.value || null)} placeholder={d.story.slice(0, 160)} /></label>
             </div>
@@ -188,7 +188,7 @@ export function ProductEditor({ id }: { id: string }) {
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <div className="card">
+    <div className="panel">
       <h2>{title}</h2>
       {children}
     </div>
@@ -239,7 +239,7 @@ function Variants({ p, onSaved }: { p: AdminProduct; onSaved: (p: AdminProduct) 
   const dirty = JSON.stringify(rows) !== JSON.stringify(p.variants);
   const set = (i: number, patch: Partial<AdminVariant>) => setRows(rows.map((r, j) => (j === i ? { ...r, ...patch } : r)));
   return (
-    <div className="card">
+    <div className="panel">
       <h2>Colours, sizes &amp; stock</h2>
       <div className="tblwrap">
         <table className="tbl vt">
@@ -302,7 +302,7 @@ function Photos({ p, onSaved }: { p: AdminProduct; onSaved: (p: AdminProduct) =>
     setImgs(next);
   };
   return (
-    <div className="card">
+    <div className="panel">
       <h2>Photos</h2>
       <div className="imgs">
         {imgs.map((im, i) => (

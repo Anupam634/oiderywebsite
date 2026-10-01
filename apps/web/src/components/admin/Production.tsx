@@ -22,7 +22,7 @@ export function Production() {
   return (
     <>
       <PageHead title="Production" sub="Made-for-you pieces, oldest first. Open a piece to send its proof or add the machine file." />
-      <div className="tabs">
+      <div className="chips">
         {STEPS.map(([k, l]) => (
           <button key={k} type="button" aria-pressed={status === k} onClick={() => router.replace(`/admin/production${k ? `?status=${k}` : ''}`)}>{l}</button>
         ))}
@@ -31,16 +31,16 @@ export function Production() {
       {!data ? (
         <Loading />
       ) : !data.length ? (
-        <div className="card empty">Nothing waiting here.</div>
+        <div className="panel blank">Nothing waiting here.</div>
       ) : (
-        <div className="card">
+        <div className="panel">
           <div className="tblwrap">
             <table className="tbl">
               <thead><tr><th /><th>Piece</th><th>Order</th><th>Step</th><th>Files</th><th>Due</th></tr></thead>
               <tbody>
                 {data.map((r) => (
                   <tr key={r.itemId} onClick={() => router.push(`/admin/orders/${r.orderNumber}`)}>
-                    <td><div className="thumbs">{r.image && <img src={media(r.image)} alt="" />}</div></td>
+                    <td><div className="stack">{r.image && <img src={media(r.image)} alt="" />}</div></td>
                     <td><b>{r.name}</b> × {r.qty}<div className="muted">{r.description}</div></td>
                     <td><b>{r.orderNumber}</b> {r.express && <Pill v="express" text="Express" />}<div className="muted">{r.customerName} · {day(r.orderDate)}</div></td>
                     <td><Pill v={r.status} text={PRODUCTION_LABEL[r.status]} />{r.proofVersion ? <div className="muted">proof v{r.proofVersion}</div> : null}</td>

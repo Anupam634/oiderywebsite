@@ -32,7 +32,7 @@ export function Dashboard() {
       </div>
       <div className="grid2" style={{ marginTop: 16 }}>
         <div>
-          <div className="card">
+          <div className="panel">
             <h2>To do</h2>
             <div className="todo">
               {todo.map((t) => (
@@ -40,7 +40,7 @@ export function Dashboard() {
               ))}
             </div>
           </div>
-          <div className="card">
+          <div className="panel">
             <h2>Sales, last 14 days</h2>
             <div className="bars" aria-label="Revenue per day">
               {d.days.map((x) => (
@@ -53,26 +53,26 @@ export function Dashboard() {
           </div>
         </div>
         <div>
-          <div className="card">
+          <div className="panel">
             <h2>Latest orders</h2>
             {d.recent.length ? (
               <table className="tbl">
                 <tbody>
                   {d.recent.map((o) => (
                     <tr key={o.number} onClick={() => router.push(`/admin/orders/${o.number}`)}>
-                      <td><div className="thumbs">{o.images.slice(0, 2).map((s, i) => <img key={i} src={media(s)} alt="" />)}</div></td>
+                      <td><div className="stack">{o.images.slice(0, 2).map((s, i) => <img key={i} src={media(s)} alt="" />)}</div></td>
                       <td><b>{o.number}</b><div className="muted">{o.customerName} · {o.city}</div></td>
                       <td><Pill v={o.status} /></td>
-                      <td className="num"><b>{rupees(o.totalPaise)}</b></td>
+                      <td className="amt"><b>{rupees(o.totalPaise)}</b></td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             ) : (
-              <div className="empty">No orders yet</div>
+              <div className="blank">No orders yet</div>
             )}
           </div>
-          <div className="card">
+          <div className="panel">
             <h2>Running low</h2>
             {d.lowStock.length ? (
               <table className="tbl">
@@ -80,13 +80,13 @@ export function Dashboard() {
                   {d.lowStock.map((v) => (
                     <tr key={v.sku} onClick={() => router.push(`/admin/products/${v.productId}`)}>
                       <td><b>{v.name}</b><div className="muted">{v.sku}</div></td>
-                      <td className="num"><Pill v={v.stock ? 'PENDING' : 'CANCELLED'} text={v.stock ? `${v.stock} left` : 'Sold out'} /></td>
+                      <td className="amt"><Pill v={v.stock ? 'PENDING' : 'CANCELLED'} text={v.stock ? `${v.stock} left` : 'Sold out'} /></td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             ) : (
-              <div className="empty">Stock looks healthy</div>
+              <div className="blank">Stock looks healthy</div>
             )}
           </div>
         </div>

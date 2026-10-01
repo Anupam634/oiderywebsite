@@ -20,10 +20,10 @@
 .adm .ph h1{font-size:clamp(28px,3vw,38px);margin:0;line-height:1.05}
 .adm .ph p{margin:6px 0 0;color:var(--ink-2)}
 .adm .ph .acts{display:flex;gap:10px;flex-wrap:wrap}
-.adm .card{background:var(--card);border-radius:20px;border:1px solid var(--line);padding:20px;box-shadow:0 18px 40px -36px rgba(27,16,48,.7)}
-.adm .card+.card{margin-top:14px}
-.adm .card h2{font-size:20px;margin:0 0 12px;display:flex;align-items:center;gap:10px}
-.adm .card h3{font-size:16px;margin:0 0 8px;font-family:var(--sans);font-weight:800}
+.adm .panel{background:var(--card);border-radius:20px;border:1px solid var(--line);padding:20px;box-shadow:0 18px 40px -36px rgba(27,16,48,.7)}
+.adm .panel+.panel{margin-top:14px}
+.adm .panel h2{font-size:20px;margin:0 0 12px;display:flex;align-items:center;gap:10px}
+.adm .panel h3{font-size:16px;margin:0 0 8px;font-family:var(--sans);font-weight:800}
 .adm .grid2{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:16px;align-items:start}
 .adm .grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
 .adm .grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
@@ -57,11 +57,11 @@
 .adm .tbl tr:last-child td{border-bottom:0}
 .adm .tbl tbody tr{cursor:pointer;transition:background .15s}
 .adm .tbl tbody tr:hover{background:#FFF9F1}
-.adm .tbl .num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.adm .tbl .amt{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 .adm .tbl b{font-weight:800}
-.adm .thumbs{display:flex}
-.adm .thumbs img{width:40px;height:50px;border-radius:9px;object-fit:cover;border:2px solid #fff;background:#F4EDE4;box-shadow:0 4px 10px -6px rgba(27,16,48,.5)}
-.adm .thumbs img+img{margin-left:-16px}
+.adm .stack{display:flex}
+.adm .stack img{width:40px;height:50px;border-radius:9px;object-fit:cover;border:2px solid #fff;background:#F4EDE4;box-shadow:0 4px 10px -6px rgba(27,16,48,.5)}
+.adm .stack img+img{margin-left:-16px}
 .adm .tblwrap{overflow-x:auto;margin:0 -20px;padding:0 20px}
 
 /* pills */
@@ -86,8 +86,8 @@
 .adm .f small{color:var(--mute);font-weight:600;font-size:12px}
 .adm .f.bad input,.adm .f.bad select{border-color:#DC2626}
 .adm .f.bad small{color:#B91C1C}
-.adm .fg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.adm .fg3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.adm .formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.adm .formgrid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
 .adm .full{grid-column:1/-1}
 .adm .chk{display:flex;gap:10px;align-items:center;font-weight:700;font-size:14px;cursor:pointer}
 .adm .chk input{width:18px;height:18px;accent-color:var(--rani)}
@@ -97,19 +97,19 @@
 .adm .btn.line:hover{border-color:var(--ink)}
 .adm .btn.danger{background:#fff;border:1.5px solid #FCA5A5;color:#B91C1C}
 .adm .btn:disabled{opacity:.55;cursor:not-allowed;transform:none!important}
-.adm .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
-.adm .tabs button{height:38px;padding:0 14px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font-weight:750;font-size:13.5px}
-.adm .tabs button[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.adm .chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.adm .chips button{height:38px;padding:0 14px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font-weight:750;font-size:13.5px}
+.adm .chips button[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
 .adm .search{display:flex;align-items:center;gap:8px;height:42px;padding:0 14px;border-radius:999px;border:1.5px solid var(--line);background:#fff;min-width:260px}
 .adm .search svg{width:17px;height:17px;color:var(--mute)}
 .adm .search input{border:0;outline:0;background:transparent;font:inherit;font-size:14px;flex:1;min-width:0}
 .adm .note{padding:12px 14px;border-radius:14px;background:#FFF1E0;border:1px solid #FED7AA;color:#9A3412;font-weight:650;font-size:13.5px}
-.adm .note.info{background:#EDE9FF;border-color:#C9C0FF;color:#2B1FA0}
+.adm .note.blue{background:#EDE9FF;border-color:#C9C0FF;color:#2B1FA0}
 .adm .note.ok{background:#E9F7EC;border-color:#BFE5C8;color:#1F6F33}
-.adm .empty{text-align:center;padding:40px 10px;color:var(--mute);font-weight:650}
+.adm .blank{text-align:center;padding:40px 10px;color:var(--mute);font-weight:650}
 
 /* order detail */
-.adm .items{display:grid;gap:14px}
+.adm .pieces{display:grid;gap:14px}
 .adm .item{display:grid;grid-template-columns:96px minmax(0,1fr);gap:16px;padding-bottom:14px;border-bottom:1px dashed var(--line)}
 .adm .item:last-child{border-bottom:0;padding-bottom:0}
 .adm .item>img{width:96px;height:120px;border-radius:14px;object-fit:cover;background:#F4EDE4}
@@ -133,8 +133,8 @@
 .adm .tl2 li::before{content:'';width:9px;height:9px;margin-top:6px;border-radius:50%;background:linear-gradient(135deg,#FF2E93,#FF8A00)}
 .adm .tl2 li.hid::before{background:#CFC6DD}
 .adm .tl2 time{display:block;color:var(--mute);font-size:12px;font-weight:650}
-.adm .modal{position:fixed;inset:0;z-index:200;display:grid;place-items:center;background:rgba(27,16,48,.45);padding:16px}
-.adm .modal .card{width:min(520px,100%);max-height:90vh;overflow:auto}
+.adm .dialog{position:fixed;inset:0;z-index:200;display:grid;place-items:center;background:rgba(27,16,48,.45);padding:16px}
+.adm .dialog .panel{width:min(520px,100%);max-height:90vh;overflow:auto}
 
 /* product editor */
 .adm .imgs{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
@@ -145,7 +145,7 @@
 .adm .vt input,.adm .vt select{width:100%;min-width:60px;font:inherit;font-size:13.5px;padding:7px 8px;border-radius:9px;border:1.5px solid var(--line);background:#FFFDF9}
 .adm .vt td{padding:6px 4px}
 .adm .vt tbody tr{cursor:default}
-.adm .sw{display:inline-block;width:16px;height:16px;border-radius:50%;border:1px solid var(--line);vertical-align:middle}
+.adm .swatch{display:inline-block;width:16px;height:16px;border-radius:50%;border:1px solid var(--line);vertical-align:middle}
 .adm .list-edit{display:grid;gap:8px}
 .adm .list-edit .row>*{flex:1}
 .adm .list-edit .row>button{flex:none}
@@ -172,6 +172,6 @@
   .adm .topbar svg{width:20px;height:20px}
   .adm .main{padding:16px 14px 60px}
   .adm .grid3,.adm .todo{grid-template-columns:minmax(0,1fr)}
-  .adm .fg,.adm .fg3{grid-template-columns:minmax(0,1fr)}
+  .adm .formgrid,.adm .formgrid3{grid-template-columns:minmax(0,1fr)}
   .adm .search{min-width:0;width:100%}
 }

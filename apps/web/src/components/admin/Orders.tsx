@@ -35,7 +35,7 @@ export function Orders() {
       <PageHead title="Orders" sub={data ? `${data.total} order${data.total === 1 ? '' : 's'}` : ' '}>
         <SearchBox value={q} onChange={(v) => go({ q: v })} placeholder="Order no., phone, name or tracking" />
       </PageHead>
-      <div className="tabs">
+      <div className="chips">
         {TABS.map(([k, l]) => (
           <button key={k} type="button" aria-pressed={status === k} onClick={() => go({ status: k })}>{l}</button>
         ))}
@@ -44,18 +44,18 @@ export function Orders() {
       {!data ? (
         <Loading />
       ) : !data.items.length ? (
-        <div className="card empty">Nothing here right now.</div>
+        <div className="panel blank">Nothing here right now.</div>
       ) : (
-        <div className="card">
+        <div className="panel">
           <div className="tblwrap">
             <table className="tbl">
               <thead>
-                <tr><th /><th>Order</th><th>Customer</th><th>Status</th><th>Proofs</th><th>Payment</th><th className="num">Total</th></tr>
+                <tr><th /><th>Order</th><th>Customer</th><th>Status</th><th>Proofs</th><th>Payment</th><th className="amt">Total</th></tr>
               </thead>
               <tbody>
                 {data.items.map((o) => (
                   <tr key={o.number} onClick={() => router.push(`/admin/orders/${o.number}`)}>
-                    <td><div className="thumbs">{o.images.slice(0, 3).map((s, i) => <img key={i} src={media(s)} alt="" />)}</div></td>
+                    <td><div className="stack">{o.images.slice(0, 3).map((s, i) => <img key={i} src={media(s)} alt="" />)}</div></td>
                     <td><b>{o.number}</b> {o.express && <Pill v="express" text="Express" />}<div className="muted">{dayTime(o.createdAt)} · {o.itemCount} item{o.itemCount === 1 ? '' : 's'}</div></td>
                     <td>{o.customerName}<div className="muted">{o.city} · {o.phone}</div></td>
                     <td><Pill v={o.status} /></td>
@@ -65,7 +65,7 @@ export function Orders() {
                       {!o.proofs.toMake && !o.proofs.changes && !o.proofs.sent && <span className="muted">—</span>}
                     </td>
                     <td><Pill v={o.paymentState} text={o.paymentMethod === 'COD' && o.paymentState === 'COD_PENDING' ? 'COD' : undefined} /><div className="muted">{PAY_METHOD_LABEL[o.paymentMethod]}</div></td>
-                    <td className="num"><b>{rupees(o.totalPaise)}</b></td>
+                    <td className="amt"><b>{rupees(o.totalPaise)}</b></td>
                   </tr>
                 ))}
               </tbody>

@@ -38,11 +38,11 @@ function Store({ owner }: { owner: boolean }) {
   const set = <K extends keyof StoreSettings>(k: K, v: StoreSettings[K]) => setS({ ...s, [k]: v });
   const gstBad = !!s.gstin && !isValidGstin(s.gstin);
   return (
-    <div className="card">
+    <div className="panel">
       <h2>Seller details <span className="muted">(printed on every invoice)</span></h2>
-      {!s.gstin && <div className="note info" style={{ marginBottom: 12 }}>No GSTIN yet: invoices say “Invoice” without a tax split. Add it once the studio is GST-registered.</div>}
+      {!s.gstin && <div className="note blue" style={{ marginBottom: 12 }}>No GSTIN yet: invoices say “Invoice” without a tax split. Add it once the studio is GST-registered.</div>}
       <fieldset disabled={!owner} style={{ border: 0, padding: 0, margin: 0 }}>
-        <div className="fg">
+        <div className="formgrid">
           <label className="f"><span>Legal name</span><input value={s.legalName} onChange={(e) => set('legalName', e.target.value)} /></label>
           <label className="f"><span>Shop name</span><input value={s.tradeName} onChange={(e) => set('tradeName', e.target.value)} /></label>
           <label className={`f full${gstBad ? ' bad' : ''}`}><span>GSTIN</span><input value={s.gstin} maxLength={15} onChange={(e) => set('gstin', e.target.value.toUpperCase())} placeholder="27ABCDE1234F1Z5" /><small>{gstBad ? 'This GSTIN doesn’t look right (check digit)' : ' '}</small></label>
@@ -72,7 +72,7 @@ function Team() {
   const [name, setName] = useState('');
   const [secret, setSecret] = useState<{ who: string; password: string } | null>(null);
   return (
-    <div className="card">
+    <div className="panel">
       <h2>Team</h2>
       {secret && (
         <div className="note ok" style={{ marginBottom: 12 }}>
@@ -88,7 +88,7 @@ function Team() {
               <tr key={u.id} style={{ cursor: 'default' }}>
                 <td><b>{u.name}</b><div className="muted">{u.email}{u.lastLoginAt ? ` · last in ${dayTime(u.lastLoginAt)}` : ' · never logged in'}</div></td>
                 <td><Pill v={u.active ? 'ACTIVE' : 'ARCHIVED'} text={u.active ? u.role.toLowerCase() : 'switched off'} /></td>
-                <td className="num">
+                <td className="amt">
                   <button className="btn line sm" type="button" onClick={async () => { try { const r = await adminApi.updateUser(u.id, { resetPassword: true }); if (r.password) setSecret({ who: u.email, password: r.password }); } catch (e) { err(e); } }}>New password</button>{' '}
                   <button className="btn line sm" type="button" onClick={async () => { try { await adminApi.updateUser(u.id, { active: !u.active }); await reload(); } catch (e) { err(e); } }}>{u.active ? 'Switch off' : 'Switch on'}</button>
                 </td>
@@ -97,7 +97,7 @@ function Team() {
           </tbody>
         </table>
       )}
-      <div className="fg" style={{ marginTop: 14 }}>
+      <div className="formgrid" style={{ marginTop: 14 }}>
         <label className="f"><span>Name</span><input value={name} onChange={(e) => setName(e.target.value)} /></label>
         <label className="f"><span>Email</span><input type="email" value={email} onChange={(e) => setEmail(e.target.value)} /></label>
       </div>
@@ -120,9 +120,9 @@ function Password() {
   const [current, setCurrent] = useState('');
   const [next, setNext] = useState('');
   return (
-    <div className="card">
+    <div className="panel">
       <h2>My password</h2>
-      <div className="fg">
+      <div className="formgrid">
         <label className="f"><span>Current</span><input type="password" autoComplete="current-password" value={current} onChange={(e) => setCurrent(e.target.value)} /></label>
         <label className="f"><span>New <i>(10+ characters)</i></span><input type="password" autoComplete="new-password" value={next} onChange={(e) => setNext(e.target.value)} /></label>
       </div>
@@ -134,7 +134,7 @@ function Password() {
 function Audit() {
   const { data } = useLoad(() => adminApi.audit(), []);
   return (
-    <div className="card">
+    <div className="panel">
       <h2>Recent changes</h2>
       {!data ? (
         <Loading />

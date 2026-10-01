@@ -35,7 +35,7 @@ export function Categories() {
       <div className="grid2">
         <div>
           {tops.map((t) => (
-            <div key={t.id} className="card">
+            <div key={t.id} className="panel">
               <h2 style={{ justifyContent: 'space-between' }}>
                 <span>{t.name} <span className="muted">/{t.slug}</span></span>
                 <button className="btn line sm" type="button" onClick={() => setEdit(t)}>Edit</button>
@@ -45,7 +45,7 @@ export function Categories() {
                   {data.filter((c) => c.parentId === t.id).map((c) => (
                     <tr key={c.id} onClick={() => setEdit(c)}>
                       <td><b>{c.name}</b><div className="muted">/{c.slug}</div></td>
-                      <td className="num">{c.productCount} product{c.productCount === 1 ? '' : 's'}</td>
+                      <td className="amt">{c.productCount} product{c.productCount === 1 ? '' : 's'}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -54,9 +54,9 @@ export function Categories() {
           ))}
         </div>
         {edit && (
-          <div className="card" style={{ position: 'sticky', top: 20 }}>
+          <div className="panel" style={{ position: 'sticky', top: 20 }}>
             <h2>{edit.id ? `Edit ${edit.name}` : 'New category'}</h2>
-            <div className="fg">
+            <div className="formgrid">
               <label className="f"><span>Name</span><input value={edit.name ?? ''} onChange={(e) => setEdit({ ...edit, name: e.target.value, ...(edit.id ? {} : { slug: e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') }) })} /></label>
               <label className="f"><span>Link</span><input value={edit.slug ?? ''} onChange={(e) => setEdit({ ...edit, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '') })} /></label>
               <label className="f"><span>Inside</span><select value={edit.parentId ?? ''} onChange={(e) => setEdit({ ...edit, parentId: e.target.value || null })}><option value="">(top level)</option>{tops.filter((t) => t.id !== edit.id).map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}</select></label>
@@ -102,7 +102,7 @@ export function Coupons() {
         <button className="btn btn-grad" type="button" onClick={() => setEdit({ ...EMPTY_COUPON, isNew: true })}><Plus />New coupon</button>
       </PageHead>
       <div className="grid2">
-        <div className="card">
+        <div className="panel">
           <table className="tbl">
             <thead><tr><th>Code</th><th>Offer</th><th>Used</th><th>Status</th></tr></thead>
             <tbody>
@@ -118,9 +118,9 @@ export function Coupons() {
           </table>
         </div>
         {edit && (
-          <div className="card">
+          <div className="panel">
             <h2>{edit.isNew ? 'New coupon' : edit.code}</h2>
-            <div className="fg">
+            <div className="formgrid">
               {edit.isNew && <label className="f"><span>Code</span><input value={edit.code} onChange={(e) => setEdit({ ...edit, code: e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '') })} placeholder="DIWALI20" /></label>}
               <label className="f"><span>Shown as</span><input value={edit.label} onChange={(e) => setEdit({ ...edit, label: e.target.value })} placeholder="20% off for Diwali" /></label>
               <label className="f"><span>% off</span><input inputMode="numeric" value={edit.percent} onChange={(e) => setEdit({ ...edit, percent: Number(e.target.value.replace(/\D/g, '')) })} /></label>
@@ -168,16 +168,16 @@ export function Reviews() {
           <button className="btn danger sm" type="button" onClick={async () => { if (!confirm('Delete all demo reviews and recount ratings?')) return; try { const r = await adminApi.removeSampleReviews(); ui.toast(`Removed ${r.removed} demo reviews`); await reload(); } catch (e) { err(e); } }}>Remove demo reviews</button>
         </div>
       )}
-      <div className="tabs">
+      <div className="chips">
         {(['PENDING', 'PUBLISHED', 'HIDDEN'] as const).map((s) => <button key={s} type="button" aria-pressed={status === s} onClick={() => setStatus(s)}>{s === 'PENDING' ? 'To check' : s === 'PUBLISHED' ? 'Published' : 'Hidden'}</button>)}
       </div>
       {!data ? (
         <Loading />
       ) : !data.items.length ? (
-        <div className="card empty">Nothing here.</div>
+        <div className="panel blank">Nothing here.</div>
       ) : (
         data.items.map((r) => (
-          <div key={r.id} className="card">
+          <div key={r.id} className="panel">
             <div className="row" style={{ justifyContent: 'space-between' }}>
               <div><b>{'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}</b> <span className="muted">{r.productName}</span> {r.isSample && <Pill v="DRAFT" text="Demo" />}</div>
               <span className="muted">{r.authorName}{r.city ? `, ${r.city}` : ''} · {day(r.createdAt)}</span>
@@ -208,16 +208,16 @@ export function Customers() {
       {!data ? (
         <Loading />
       ) : (
-        <div className="card">
+        <div className="panel">
           <div className="tblwrap">
             <table className="tbl">
-              <thead><tr><th>Customer</th><th>Orders</th><th className="num">Spent</th><th>Last order</th><th>Joined</th></tr></thead>
+              <thead><tr><th>Customer</th><th>Orders</th><th className="amt">Spent</th><th>Last order</th><th>Joined</th></tr></thead>
               <tbody>
                 {data.items.map((c) => (
                   <tr key={c.id} onClick={() => router.push(`/admin/customers/${c.id}`)}>
                     <td><b>{c.name ?? 'No name yet'}</b> {c.codBlocked && <Pill v="CANCELLED" text="COD blocked" />}<div className="muted">{formatPhone(c.phone)}{c.email ? ` · ${c.email}` : ''}</div></td>
                     <td>{c.orders}</td>
-                    <td className="num"><b>{rupees(c.spentPaise)}</b></td>
+                    <td className="amt"><b>{rupees(c.spentPaise)}</b></td>
                     <td>{day(c.lastOrderAt)}</td>
                     <td className="muted">{day(c.createdAt)}</td>
                   </tr>
@@ -243,7 +243,7 @@ export function CustomerDetail({ id }: { id: string }) {
         <a className="btn btn-wa" href={`https://wa.me/91${c.phone}`} target="_blank" rel="noopener">WhatsApp</a>
       </PageHead>
       <div className="grid2">
-        <div className="card">
+        <div className="panel">
           <h2>Orders</h2>
           {data.orders.length ? (
             <table className="tbl">
@@ -252,17 +252,17 @@ export function CustomerDetail({ id }: { id: string }) {
                   <tr key={o.number} onClick={() => router.push(`/admin/orders/${o.number}`)}>
                     <td><b>{o.number}</b><div className="muted">{day(o.createdAt)} · {o.itemCount} items</div></td>
                     <td><Pill v={o.status} /></td>
-                    <td className="num"><b>{rupees(o.totalPaise)}</b></td>
+                    <td className="amt"><b>{rupees(o.totalPaise)}</b></td>
                   </tr>
                 ))}
               </tbody>
             </table>
           ) : (
-            <div className="empty">No orders yet</div>
+            <div className="blank">No orders yet</div>
           )}
         </div>
         <div>
-          <div className="card">
+          <div className="panel">
             <h2>Studio notes</h2>
             <label className="chk" style={{ marginBottom: 10 }}>
               <input type="checkbox" checked={c.codBlocked} onChange={async (e) => { try { await adminApi.updateCustomer(c.id, { codBlocked: e.target.checked }); await reload(); ui.toast(e.target.checked ? 'Cash on delivery blocked' : 'Cash on delivery allowed'); } catch (x) { err(x); } }} />
@@ -271,7 +271,7 @@ export function CustomerDetail({ id }: { id: string }) {
             <label className="f"><textarea value={notes ?? c.notes ?? ''} onChange={(e) => setNotes(e.target.value)} placeholder="Preferences, sizes, past issues…" /></label>
             <button className="btn line sm" style={{ marginTop: 8 }} type="button" disabled={notes === null} onClick={async () => { try { await adminApi.updateCustomer(c.id, { notes: notes ?? '' }); setNotes(null); await reload(); ui.toast('Saved'); } catch (x) { err(x); } }}>Save notes</button>
           </div>
-          <div className="card">
+          <div className="panel">
             <h2>Addresses</h2>
             {data.addresses.map((a) => (
               <p key={a.id} style={{ margin: '0 0 10px', lineHeight: 1.5 }}><b>{a.name}</b>{a.isDefault ? ' (default)' : ''}<br />{a.line1}, {a.line2}<br />{a.city}, {a.state} {a.pincode}</p>

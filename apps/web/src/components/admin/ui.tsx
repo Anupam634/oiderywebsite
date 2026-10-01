@@ -53,5 +53,5 @@ export function useLoad<T>(fn: () => Promise<T>, deps: unknown[]) {
 }
 
 export function Loading() {
-  return <div className="card empty" aria-busy="true">Loading…</div>;
+  return <div className="panel blank" aria-busy="true">Loading…</div>;
 }

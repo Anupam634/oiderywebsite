@@ -1,6 +1,7 @@
 'use client';
 import { useEffect } from 'react';
-import { BRAND, FONT_LABEL, THREAD_LABEL, formatPhone, type FontKey, type ThreadKey } from '@store/shared';
+import { BRAND, FONT_LABEL, STUDIO_PLACEMENTS, THREAD_LABEL, formatPhone, studioGarment, type FontKey, type ThreadKey } from '@store/shared';
+import { GC, type GarmentColour } from '@store/stitch';
 import { adminApi } from '@/lib/admin-api';
 import { media } from '@/lib/media';
 import { rupees, useLoad } from './ui';
@@ -68,7 +69,7 @@ export function Slip({ number }: { number: string }) {
           {o.items
             .filter((i) => i.personalisation || i.studio || i.petName)
             .map((i) => {
-              const s = i.studio as { garment?: string; colour?: string; placement?: string; widthCm?: number; sizes?: Record<string, number>; threads?: { hex: string; name: string }[] } | null;
+              const s = i.studio as { garment?: string; colour?: string; view?: string; placement?: string; widthCm?: number; sizes?: Record<string, number>; threads?: { hex: string; name: string }[] } | null;
               return (
                 <div key={i.id} style={{ marginTop: 10 }}>
                   <b>{i.name}</b> × {i.qty}
@@ -78,7 +79,7 @@ export function Slip({ number }: { number: string }) {
                     </div>
                   )}
                   {i.petName && <div>Pet name: <b>“{i.petName}”</b></div>}
-                  {s && <div>{s.garment} · {s.colour} · {s.placement}, {s.widthCm} cm{s.sizes ? ` · ${Object.entries(s.sizes).map(([k, n]) => `${k}×${n}`).join(', ')}` : ''}</div>}
+                  {s && <div>{studioGarment(s.garment ?? '')?.name ?? s.garment} · {GC[s.colour as GarmentColour]?.[0] ?? s.colour} · {STUDIO_PLACEMENTS[s.view ?? s.garment ?? '']?.[s.placement ?? '']?.name ?? s.placement}, {s.widthCm} cm{s.sizes ? ` · ${Object.entries(s.sizes).map(([k, n]) => `${k}×${n}`).join(', ')}` : ''}</div>}
                   {s?.threads?.length ? <div>Threads in order: {s.threads.map((t) => t.name).join(' → ')}</div> : null}
                   {i.proofs[0] && <div>Approved proof: v{i.proofs[0].version} ({i.proofs[0].status.toLowerCase()})</div>}
                   {i.stitchFiles.map((f) => (

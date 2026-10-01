@@ -7,14 +7,17 @@ import {
   FONT_LABEL,
   PAY_METHOD_LABEL,
   PRODUCTION_LABEL,
+  STUDIO_PLACEMENTS,
   THREAD_LABEL,
   formatPhone,
   formatRate,
+  studioGarment,
   type AdminOrderDetail,
   type AdminOrderItem,
   type FontKey,
   type ThreadKey,
 } from '@store/shared';
+import { GC, type GarmentColour } from '@store/stitch';
 import { ApiError } from '@/lib/api';
 import { adminApi, useAdmin } from '@/lib/admin-api';
 import { media } from '@/lib/media';
@@ -75,9 +78,9 @@ export function OrderDetail({ number }: { number: string }) {
 
       <div className="grid2">
         <div>
-          <div className="card">
+          <div className="panel">
             <h2>Pieces <span className="muted">({o.itemCount})</span></h2>
-            <div className="items">
+            <div className="pieces">
               {o.items.map((i) => (
                 <Item key={i.id} i={i} busy={busy} act={act} />
               ))}
@@ -86,7 +89,7 @@ export function OrderDetail({ number }: { number: string }) {
           <Timeline o={o} act={act} busy={busy} />
         </div>
         <div>
-          <div className="card">
+          <div className="panel">
             <h2>Customer</h2>
             <dl className="kv">
               <dt>Name</dt><dd>{o.customer.name ?? o.ship.name}</dd>
@@ -94,20 +97,20 @@ export function OrderDetail({ number }: { number: string }) {
               {o.email && <><dt>Email</dt><dd><a href={`mailto:${o.email}`}>{o.email}</a></dd></>}
               <dt>Orders</dt><dd>{o.customer.orders}{o.customer.codBlocked && <> · <Pill v="CANCELLED" text="COD blocked" /></>}</dd>
             </dl>
-            {o.customer.notes && <div className="note info" style={{ marginBottom: 10 }}>{o.customer.notes}</div>}
+            {o.customer.notes && <div className="note blue" style={{ marginBottom: 10 }}>{o.customer.notes}</div>}
             <div className="row">
               <a className="btn btn-wa sm" href={`https://wa.me/91${o.phone}?text=${encodeURIComponent(`Hi ${o.ship.name.split(' ')[0]}! About your order ${o.number}: `)}`} target="_blank" rel="noopener"><Chat />WhatsApp</a>
               <Link className="btn line sm" href={`/admin/customers/${o.customer.id}`}>Customer page</Link>
             </div>
           </div>
-          <div className="card">
+          <div className="panel">
             <h2>Deliver to</h2>
             <p style={{ margin: 0, lineHeight: 1.6 }}>
               <b>{o.ship.name}</b><br />{o.ship.line1}, {o.ship.line2}{o.ship.landmark ? `, ${o.ship.landmark}` : ''}<br />{o.ship.city}, {o.ship.state} {o.ship.pincode}<br />{formatPhone(o.ship.phone)}
             </p>
             <button className="btn line sm" type="button" style={{ marginTop: 10 }} onClick={() => { void navigator.clipboard?.writeText(`${o.ship.name}\n${o.ship.line1}, ${o.ship.line2}${o.ship.landmark ? `, ${o.ship.landmark}` : ''}\n${o.ship.city}, ${o.ship.state} ${o.ship.pincode}\n+91 ${o.ship.phone}`); ui.toast('Address copied'); }}>Copy address</button>
-            {o.giftNote && <div className="note info" style={{ marginTop: 10 }}>Gift note: “{o.giftNote}” (hide prices on the slip)</div>}
-            {o.gst && <div className="note info" style={{ marginTop: 10 }}>GST invoice for {o.gst.business} · {o.gst.gstin}</div>}
+            {o.giftNote && <div className="note blue" style={{ marginTop: 10 }}>Gift note: “{o.giftNote}” (hide prices on the slip)</div>}
+            {o.gst && <div className="note blue" style={{ marginTop: 10 }}>GST invoice for {o.gst.business} · {o.gst.gstin}</div>}
             {o.tracking && (
               <dl className="kv" style={{ marginTop: 12 }}>
                 <dt>Courier</dt><dd>{o.tracking.courier}</dd>
@@ -115,7 +118,7 @@ export function OrderDetail({ number }: { number: string }) {
               </dl>
             )}
           </div>
-          <div className="card">
+          <div className="panel">
             <h2>Payment</h2>
             <dl className="kv">
               <dt>Subtotal</dt><dd>{rupees(o.subtotalPaise)}</dd>
@@ -156,7 +159,7 @@ function Item({ i, busy, act }: { i: AdminOrderItem; busy: boolean; act: Act }) 
   const [stitch, setStitch] = useState<File | null>(null);
   const needsProof = i.productionStatus !== 'NOT_NEEDED';
   const p = i.personalisation;
-  const s = i.studio as { garment?: string; colour?: string; placement?: string; widthCm?: number; stitches?: number; source?: string; sizes?: Record<string, number>; threads?: { hex: string; name: string }[] } | null;
+  const s = i.studio as { garment?: string; colour?: string; view?: string; placement?: string; widthCm?: number; stitches?: number; source?: string; sizes?: Record<string, number>; threads?: { hex: string; name: string }[] } | null;
   const latest = i.proofs[0];
   return (
     <div className="item">
@@ -177,10 +180,10 @@ function Item({ i, busy, act }: { i: AdminOrderItem; busy: boolean; act: Act }) 
           {i.giftWrap && <><dt>Gift</dt><dd>Gift wrap</dd></>}
           {s && (
             <>
-              <dt>Garment</dt><dd>{s.garment} · {s.colour} · {s.placement}, {s.widthCm} cm</dd>
+              <dt>Garment</dt><dd>{studioGarment(s.garment ?? '')?.name ?? s.garment} · {GC[s.colour as GarmentColour]?.[0] ?? s.colour} · {STUDIO_PLACEMENTS[s.view ?? s.garment ?? '']?.[s.placement ?? '']?.name ?? s.placement}, {s.widthCm} cm</dd>
               <dt>Design</dt><dd>{s.source === 'upload' ? 'Customer’s logo (needs digitizing)' : 'Our motif / name'} · about {s.stitches?.toLocaleString('en-IN')} stitches</dd>
               {s.sizes && <><dt>Sizes</dt><dd>{Object.entries(s.sizes).map(([k, n]) => `${k} × ${n}`).join(', ')}</dd></>}
-              {s.threads?.length ? <><dt>Threads</dt><dd className="row" style={{ gap: 8 }}>{s.threads.map((t, n) => <span key={n}><span className="sw" style={{ background: t.hex }} /> {t.name}</span>)}</dd></> : null}
+              {s.threads?.length ? <><dt>Threads</dt><dd className="row" style={{ gap: 8 }}>{s.threads.map((t, n) => <span key={n}><span className="swatch" style={{ background: t.hex }} /> {t.name}</span>)}</dd></> : null}
             </>
           )}
         </dl>
@@ -215,7 +218,7 @@ function Item({ i, busy, act }: { i: AdminOrderItem; busy: boolean; act: Act }) 
               </div>
             )}
             {['AWAITING_PROOF', 'CHANGES_REQUESTED', 'PROOF_SENT'].includes(i.productionStatus) && (
-              <div className="fg" style={{ marginTop: 10 }}>
+              <div className="formgrid" style={{ marginTop: 10 }}>
                 <label className="drop full">
                   <input type="file" accept="image/png,image/jpeg,image/webp" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
                   {file ? `Proof: ${file.name}` : latest ? 'Choose a new proof image' : 'Choose the proof image (a mockup or photo of the stitch-out)'}
@@ -239,7 +242,7 @@ function Item({ i, busy, act }: { i: AdminOrderItem; busy: boolean; act: Act }) 
                 {f.previewUrl && <img src={media(f.previewUrl)} alt="" style={{ width: 64, height: 64, objectFit: 'contain', borderRadius: 10, background: '#fff', border: '1px solid var(--line)' }} />}
                 <div className="sp">
                   <b>{f.label}</b> <span className="muted">{f.format.toUpperCase()} · {f.stitches.toLocaleString('en-IN')} stitches · {f.widthMm.toFixed(0)}×{f.heightMm.toFixed(0)} mm · {f.colourChanges + 1} colour{f.colourChanges ? 's' : ''}</span>
-                  <div className="row" style={{ gap: 4, marginTop: 4 }}>{f.threads.map((t, n) => <span key={n} className="sw" title={`${t.name}${t.code ? ` (${t.code})` : ''}`} style={{ background: t.hex }} />)}</div>
+                  <div className="row" style={{ gap: 4, marginTop: 4 }}>{f.threads.map((t, n) => <span key={n} className="swatch" title={`${t.name}${t.code ? ` (${t.code})` : ''}`} style={{ background: t.hex }} />)}</div>
                 </div>
                 {f.pesUrl && <a className="btn btn-ink sm" href={media(f.pesUrl)} download>PES for the machine</a>}
                 <a className="btn line sm" href={media(f.sourceUrl)} download>Original</a>
@@ -262,7 +265,7 @@ function Item({ i, busy, act }: { i: AdminOrderItem; busy: boolean; act: Act }) 
 function Timeline({ o, act, busy }: { o: AdminOrderDetail; act: Act; busy: boolean }) {
   const [msg, setMsg] = useState('');
   return (
-    <div className="card">
+    <div className="panel">
       <h2>Timeline</h2>
       <ul className="tl2">
         {[...o.allEvents].reverse().map((e, n) => (
@@ -282,7 +285,7 @@ function Timeline({ o, act, busy }: { o: AdminOrderDetail; act: Act; busy: boole
 function Notes({ o, act }: { o: AdminOrderDetail; act: Act }) {
   const [notes, setNotes] = useState(o.adminNotes ?? '');
   return (
-    <div className="card">
+    <div className="panel">
       <h2>Studio notes</h2>
       <label className="f"><span>Only the team sees these</span><textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Thread brand codes, packing notes, call summary…" /></label>
       <button className="btn line sm" style={{ marginTop: 8 }} type="button" disabled={notes === (o.adminNotes ?? '')} onClick={() => void act(() => adminApi.notes(o.number, notes), 'Notes saved')}>Save notes</button>
@@ -292,8 +295,8 @@ function Notes({ o, act }: { o: AdminOrderDetail; act: Act }) {
 
 function ModalCard({ title, children, onClose }: { title: string; children: ReactNode; onClose: () => void }) {
   return (
-    <div className="modal" role="dialog" aria-modal="true" aria-label={title} onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="card">
+    <div className="dialog" role="dialog" aria-modal="true" aria-label={title} onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="panel">
         <h2>{title}</h2>
         {children}
       </div>
@@ -311,7 +314,7 @@ function ShipModal({ o, onClose, act }: { o: AdminOrderDetail; onClose: () => vo
   return (
     <ModalCard title="Mark as shipped" onClose={onClose}>
       {pending.length > 0 && <div className="note" style={{ marginBottom: 12 }}>{pending.length} piece(s) don’t have an approved proof yet.</div>}
-      <div className="fg">
+      <div className="formgrid">
         <label className="f"><span>Courier</span><select value={courier} onChange={(e) => setCourier(e.target.value)}>{COURIERS.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}</select></label>
         <label className="f"><span>Tracking number (AWB)</span><input value={awb} onChange={(e) => setAwb(e.target.value)} /></label>
         <label className="f full"><span>Tracking link <i>{template ? '(filled in from the courier if empty)' : '(paste it from the courier)'}</i></span><input value={url} onChange={(e) => setUrl(e.target.value)} placeholder={template ? template.replace('{awb}', awb || 'AWB') : 'https://…'} /></label>
@@ -332,7 +335,7 @@ function CancelModal({ o, onClose, act }: { o: AdminOrderDetail; onClose: () => 
   return (
     <ModalCard title={`Cancel ${o.number}`} onClose={onClose}>
       {o.paymentState === 'PAID' && <div className="note" style={{ marginBottom: 12 }}>The full payment of {rupees(o.totalPaise - o.refundedPaise)} will be refunded.</div>}
-      <div className="fg">
+      <div className="formgrid">
         <label className="f full"><span>Reason (the customer sees this)</span><input value={reason} maxLength={300} onChange={(e) => setReason(e.target.value)} placeholder="e.g. Out of stock in this colour" /></label>
         <label className="chk full"><input type="checkbox" checked={notify} onChange={(e) => setNotify(e.target.checked)} />Tell the customer on WhatsApp and email</label>
       </div>
@@ -351,7 +354,7 @@ function RefundModal({ o, onClose, act }: { o: AdminOrderDetail; onClose: () => 
   const paise = Math.round(Number(amount) * 100);
   return (
     <ModalCard title="Refund" onClose={onClose}>
-      <div className="fg">
+      <div className="formgrid">
         <label className="f"><span>Amount in ₹ <i>(up to {rupees(left)})</i></span><input inputMode="numeric" value={amount} onChange={(e) => setAmount(e.target.value.replace(/[^\d.]/g, ''))} /></label>
         <label className="f"><span>Reason</span><input value={reason} onChange={(e) => setReason(e.target.value)} placeholder="e.g. Thread colour differed" /></label>
       </div>
