@@ -1,6 +1,7 @@
 'use client';
 import { Archivo_Black, Pacifico, Playfair_Display, Yatra_One } from 'next/font/google';
 import { createStitchEngine } from '@store/stitch';
+import { jakarta } from './fonts';
 
 /* The name fonts the embroidery machine files are digitized from, self-hosted by Next.js.
    The engine draws names on a canvas, so it needs the real family names next/font generates. */
@@ -16,4 +17,4 @@ export const NAME_FONT_CSS: Record<string, string> = {
   hindi: yatra.style.fontFamily,
 };
 
-export const engine = createStitchEngine({ assetBase: '/mockups/', fontFamilies: NAME_FONT_CSS });
+export const engine = createStitchEngine({ assetBase: '/mockups/', fontFamilies: NAME_FONT_CSS, sansFamily: jakarta.style.fontFamily });

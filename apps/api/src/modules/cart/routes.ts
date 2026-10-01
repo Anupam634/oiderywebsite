@@ -2,8 +2,12 @@ import { z } from 'zod';
 import {
   FLOWER_PRESETS,
   FONT_KEYS,
+  STUDIO_MAX_QTY,
+  STUDIO_SIZES,
   THREAD_KEYS,
   checkName,
+  studioGarment,
+  studioPrice,
   computeTotals,
   formatINR,
   unitPrice,
@@ -14,7 +18,7 @@ import {
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import type { Db } from '../../lib/prisma.ts';
 
-const lineSchema = z.object({
+const catalogLineSchema = z.object({
   variantId: z.string().min(1).max(40),
   qty: z.number().int().min(1).max(50),
   personalisation: z
@@ -27,6 +31,21 @@ const lineSchema = z.object({
     .nullish(),
   giftWrap: z.boolean().optional(),
 });
+const studioLineSchema = z.object({
+  qty: z.number().int().min(1).max(STUDIO_MAX_QTY),
+  studio: z.object({
+    garment: z.string().max(20),
+    colour: z.string().max(20),
+    view: z.string().max(20),
+    placement: z.string().regex(/^[a-z]{1,8}$/),
+    widthCm: z.number().min(2).max(40),
+    stitches: z.number().int().min(0).max(200_000),
+    source: z.enum(['upload', 'make']),
+    sizes: z.partialRecord(z.enum(STUDIO_SIZES), z.number().int().min(0).max(STUDIO_MAX_QTY)).optional(),
+    label: z.string().trim().max(120),
+  }),
+});
+const lineSchema = z.union([catalogLineSchema, studioLineSchema]);
 const bodySchema = z.object({
   items: z.array(lineSchema).max(50),
   coupon: z.string().trim().toUpperCase().max(30).optional(),
@@ -44,14 +63,15 @@ export const cartRoutes =
       async (req) => {
         const { items, coupon: code, shipping, payment } = req.body;
         const variants = await db.productVariant.findMany({
-          where: { id: { in: items.map((i) => i.variantId) } },
+          where: { id: { in: items.flatMap((i) => ('variantId' in i ? [i.variantId] : [])) } },
           include: { product: true },
         });
         const byId = new Map(variants.map((v) => [v.id, v]));
         const lines = items.map((it) => {
+          if ('studio' in it) return priceStudioLine(it);
           const v = byId.get(it.variantId);
           if (!v || v.product.status !== 'ACTIVE') {
-            return { variantId: it.variantId, available: false, problems: ['This piece is no longer available'], qty: it.qty, unitPricePaise: 0, unitMrpPaise: 0, custom: false, product: null };
+            return { variantId: it.variantId, available: false, problems: ['This piece is no longer available'], qty: it.qty, unitPricePaise: 0, unitMrpPaise: 0, extraPaise: 0, custom: false, product: null };
           }
           const p = v.product;
           const perso = p.personalisation as (Omit<PersonalisationConfig, 'feePaise'> & { fee: number }) | null;
@@ -82,6 +102,7 @@ export const cartRoutes =
             qty: it.qty,
             unitPricePaise: price.pricePaise,
             unitMrpPaise: price.mrpPaise,
+            extraPaise: 0,
             custom,
             product: { id: p.id, slug: p.slug, name: p.name, sku: v.sku, colour: v.colourName, size: v.size },
           };
@@ -97,7 +118,7 @@ export const cartRoutes =
         }
         const ok = lines.filter((l) => l.available);
         const totals = computeTotals(
-          ok.map((l) => ({ qty: l.qty, pricePaise: l.unitPricePaise, mrpPaise: l.unitMrpPaise, custom: l.custom })),
+          ok.map((l) => ({ qty: l.qty, pricePaise: l.unitPricePaise, mrpPaise: l.unitMrpPaise, custom: l.custom, extraPaise: l.extraPaise })),
           { coupon, ...(shipping ? { shipping } : {}), ...(payment ? { payment } : {}) },
         );
         return { lines, totals, coupon: code ? couponStatus(code, coupon, totals) : null };
@@ -118,6 +139,34 @@ export const cartRoutes =
       },
     );
   };
+
+/** A studio piece: a blank garment with the customer's design. The stitch count comes from the preview;
+    the digitizer confirms it on the proof before anything is made. */
+function priceStudioLine(it: z.infer<typeof studioLineSchema>) {
+  const s = it.studio;
+  const g = studioGarment(s.garment);
+  const problems: string[] = [];
+  if (!g) problems.push('This garment is no longer available');
+  else {
+    if (!g.colours.includes(s.colour)) problems.push('This colour is no longer available');
+    if (!g.views.some(([v]) => v === s.view)) problems.push('Choose the garment again');
+    const sized = s.sizes ? Object.values(s.sizes).reduce((a, n) => a + (n ?? 0), 0) : null;
+    if (g.sizes && sized !== it.qty) problems.push('Choose your sizes again');
+    if (!g.sizes && s.sizes) problems.push('This piece comes in one size');
+  }
+  const price = g ? studioPrice(g, it.qty, s.stitches, s.source === 'upload') : null;
+  return {
+    variantId: `studio:${s.garment}`,
+    available: problems.length === 0,
+    problems,
+    qty: it.qty,
+    unitPricePaise: price?.unitPaise ?? 0,
+    unitMrpPaise: price?.unitMrpPaise ?? 0,
+    extraPaise: price?.digitizePaise ?? 0,
+    custom: true,
+    product: null,
+  };
+}
 
 /** What to tell the shopper about the code they typed. */
 function couponStatus(code: string, coupon: Coupon | null, totals: Totals) {

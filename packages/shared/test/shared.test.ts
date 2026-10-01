@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
+  studioGarment,
+  studioPrice,
   checkoutErrors,
   applyListing,
   checkName,
@@ -127,4 +129,19 @@ describe('checkout details', () => {
     });
   });
   it('takes a lower-case GSTIN', () => expect(checkoutErrors({ ...good, gst: { gstin: '27abcde1234f1z5', business: 'Chai Co' } })).toEqual({}));
+});
+
+describe('studio pricing', () => {
+  const tee = studioGarment('tee')!;
+  it('matches the design prototype', () => {
+    // 1 tee, 5,200 stitches: ₹449 + ₹(79 + 21.6 → 101) embroidery, digitizing for an upload
+    expect(studioPrice(tee, 1, 5200, true)).toMatchObject({ unitPaise: 55_000, embroideryPaise: 10_100, digitizePaise: 39_900 });
+    // 30 tees: 15% off the tee, 7.5% off embroidery, free digitizing
+    expect(studioPrice(tee, 30, 5200, true)).toMatchObject({ garmentPaise: 38_200, embroideryPaise: 9_300, digitizePaise: 0 });
+    expect(studioPrice(tee, 1, 3000, false).digitizePaise).toBe(0);
+  });
+  it('adds one-time charges once', () => {
+    const t = computeTotals([{ qty: 3, pricePaise: 10_000, mrpPaise: 10_000, custom: true, extraPaise: 39_900 }]);
+    expect(t.subtotalPaise).toBe(69_900);
+  });
 });

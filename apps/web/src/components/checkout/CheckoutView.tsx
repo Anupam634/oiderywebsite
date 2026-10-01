@@ -57,12 +57,16 @@ const write = (k: string, v: string | null) => {
 };
 
 const toRequest = (lines: CartLine[], coupon: string, shipping: Ship, payment: Pay): CartPriceRequest => ({
-  items: lines.map((l) => ({
-    variantId: l.variantId,
-    qty: l.qty,
-    ...(l.personalisation ? { personalisation: l.personalisation } : {}),
-    ...(l.giftWrap ? { giftWrap: true } : {}),
-  })),
+  items: lines.map((l) =>
+    l.studio
+      ? { qty: l.qty, studio: l.studio }
+      : {
+          variantId: l.variantId,
+          qty: l.qty,
+          ...(l.personalisation ? { personalisation: l.personalisation } : {}),
+          ...(l.giftWrap ? { giftWrap: true } : {}),
+        },
+  ),
   ...(coupon ? { coupon } : {}),
   shipping,
   payment,
@@ -104,7 +108,7 @@ export function CheckoutView({ offers }: { offers: Offer[] }) {
   const estimate = useMemo(() => {
     const offer = offers.find((o) => o.code === coupon);
     return computeTotals(
-      lines.map((l) => ({ qty: l.qty, pricePaise: l.unitPricePaise, mrpPaise: l.unitMrpPaise, custom: l.custom })),
+      lines.map((l) => ({ qty: l.qty, pricePaise: l.unitPricePaise, mrpPaise: l.unitMrpPaise, custom: l.custom, extraPaise: l.extraPaise ?? 0 })),
       { coupon: offer ? { code: offer.code, percent: offer.percent, maxDiscountPaise: offer.maxDiscountPaise, minSubtotalPaise: offer.minSubtotalPaise, label: offer.label } : null, shipping: ship, payment: pay },
     );
   }, [lines, coupon, ship, pay, offers]);
@@ -392,15 +396,17 @@ function Summary(props: {
           const p = priced?.lines[i]?.variantId === l.variantId ? priced.lines[i] : undefined;
           const price = p?.available ? p.unitPricePaise : l.unitPricePaise;
           const mrp = p?.available ? p.unitMrpPaise : l.unitMrpPaise;
+          const extra = p?.available ? p.extraPaise : (l.extraPaise ?? 0);
           return (
             <div className={`si${p && !p.available ? ' bad' : ''}`} key={l.key}>
               <div className="th"><img src={l.image.startsWith('data:') ? l.image : media(l.image)} alt="" /><em>{l.qty}</em></div>
               <div>
                 <b>{l.name}</b><small>{l.desc}</small>
+                {extra > 0 && <small>+ {formatINR(extra)} logo digitizing (one-time)</small>}
                 {l.custom && <span className="ptag">Made for you · prepaid</span>}
                 {p && !p.available && <span className="prob">{p.problems[0]}</span>}
               </div>
-              <div className="pp">{formatINR(price * l.qty)}{mrp > price && <s>{formatINR(mrp * l.qty)}</s>}</div>
+              <div className="pp">{formatINR(price * l.qty + extra)}{mrp > price && <s>{formatINR(mrp * l.qty + extra)}</s>}</div>
             </div>
           );
         })}

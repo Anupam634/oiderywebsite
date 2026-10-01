@@ -8,3 +8,4 @@ export * from './cart/pricing';
 export * from './personalisation';
 export * from './size-guides';
 export * from './checkout';
+export * from './studio';

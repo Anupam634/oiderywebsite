@@ -6,7 +6,7 @@ import { FREE_SHIPPING_MIN_PAISE, formatINR, type CategoryNode, type ProductCard
 import { api } from '@/lib/api';
 import { categoryHref, productHref, SHOP_LINKS } from '@/lib/links';
 import { media } from '@/lib/media';
-import { cart, ui, useCart, useWishlist, wishlist } from '@/lib/store';
+import { cart, lineTotal, ui, useCart, useWishlist, wishlist } from '@/lib/store';
 import { addCardToBag } from './ProductCard';
 import { SearchRow, useSuggestions } from './HeaderClient';
 import { Bag, Chat, Check, Close, Search } from './icons';
@@ -56,7 +56,7 @@ export function Overlays({ categories }: { categories: CategoryNode[] }) {
 function CartDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
   const lines = useCart();
   const count = lines.reduce((a, l) => a + l.qty, 0);
-  const sub = lines.reduce((a, l) => a + l.qty * l.unitPricePaise, 0);
+  const sub = lines.reduce((a, l) => a + lineTotal(l), 0);
   const left = Math.max(0, FREE_SHIPPING_MIN_PAISE - sub);
   const hasCustom = lines.some((l) => l.custom);
   return (
@@ -74,13 +74,18 @@ function CartDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
               <div>
                 <b>{l.name}</b>
                 <small>{l.desc}</small>
-                <div className="qty">
-                  <button type="button" aria-label="Decrease" onClick={() => cart.setQty(l.key, l.qty - 1)}>−</button>
-                  {l.qty}
-                  <button type="button" aria-label="Increase" onClick={() => cart.setQty(l.key, l.qty + 1)}>+</button>
-                </div>
+                {l.studio ? (
+                  // the price depends on the size mix, so studio quantities are changed in the studio
+                  <small><b>{l.qty} piece{l.qty === 1 ? '' : 's'}</b>{l.extraPaise ? ` · incl. ${formatINR(l.extraPaise)} digitizing` : ''}</small>
+                ) : (
+                  <div className="qty">
+                    <button type="button" aria-label="Decrease" onClick={() => cart.setQty(l.key, l.qty - 1)}>−</button>
+                    {l.qty}
+                    <button type="button" aria-label="Increase" onClick={() => cart.setQty(l.key, l.qty + 1)}>+</button>
+                  </div>
+                )}
               </div>
-              <div><div className="pp">{formatINR(l.unitPricePaise * l.qty)}</div><button className="rm" type="button" onClick={() => cart.remove(l.key)}>Remove</button></div>
+              <div><div className="pp">{formatINR(lineTotal(l))}</div><button className="rm" type="button" onClick={() => cart.remove(l.key)}>Remove</button></div>
             </div>
           ))
         ) : (

@@ -49,13 +49,16 @@ export const api = {
 };
 
 export interface CartPriceResponse {
-  lines: { variantId: string; available: boolean; problems: string[]; qty: number; unitPricePaise: number; unitMrpPaise: number; custom: boolean }[];
+  lines: { variantId: string; available: boolean; problems: string[]; qty: number; unitPricePaise: number; unitMrpPaise: number; extraPaise: number; custom: boolean }[];
   totals: import('@store/shared').Totals;
   coupon: { code: string; valid: boolean; applied: boolean; message: string } | null;
 }
 
 export interface CartPriceRequest {
-  items: { variantId: string; qty: number; personalisation?: { text: string; font: string; thread: string; flowers?: number } | null; giftWrap?: boolean }[];
+  items: (
+    | { variantId: string; qty: number; personalisation?: { text: string; font: string; thread: string; flowers?: number } | null; giftWrap?: boolean }
+    | { qty: number; studio: import('@store/shared').StudioLineSpec }
+  )[];
   coupon?: string;
   shipping?: 'standard' | 'express';
   payment?: 'upi' | 'card' | 'netbanking' | 'wallet' | 'cod';

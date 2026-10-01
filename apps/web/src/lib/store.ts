@@ -1,5 +1,6 @@
 'use client';
 import { useSyncExternalStore } from 'react';
+import type { StudioLineSpec } from '@store/shared';
 
 /* Bag and wishlist, kept in localStorage and shared across tabs and pages.
    Prices here are for display; the API re-prices the bag before payment. */
@@ -17,7 +18,13 @@ export interface CartLine {
   custom: boolean;
   personalisation?: { text: string; font: string; thread: string; flowers?: number } | null;
   giftWrap?: boolean;
+  /** one-time charge on the line (logo digitizing) */
+  extraPaise?: number;
+  /** a design-studio piece: priced by the API from this spec instead of a catalogue variant */
+  studio?: StudioLineSpec;
 }
+
+export const lineTotal = (l: CartLine) => l.qty * l.unitPricePaise + (l.extraPaise ?? 0);
 
 function persisted<T>(key: string, fallback: T) {
   let value = fallback;

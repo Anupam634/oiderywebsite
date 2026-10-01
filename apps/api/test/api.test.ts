@@ -144,6 +144,18 @@ describe('cart pricing', () => {
     expect(body.totals.discountPaise).toBe(0);
   });
 
+  it('prices design-studio pieces with tiers and the digitizing fee', async () => {
+    const studio = { garment: 'tee', colour: 'kajal', view: 'tee', placement: 'lc', widthCm: 8, stitches: 5200, source: 'upload', label: 'logo.png' };
+    let { body } = await price({ items: [{ qty: 2, studio: { ...studio, sizes: { M: 1, L: 1 } } }] });
+    expect(body.lines[0]).toMatchObject({ available: true, unitPricePaise: 55_000, extraPaise: 39_900, custom: true });
+    expect(body.totals.subtotalPaise).toBe(2 * 55_000 + 39_900);
+    expect(body.totals.codAllowed).toBe(false);
+    ({ body } = await price({ items: [{ qty: 30, studio: { ...studio, sizes: { M: 30 } } }] }));
+    expect(body.lines[0]).toMatchObject({ unitPricePaise: 47_500, extraPaise: 0 });
+    ({ body } = await price({ items: [{ qty: 3, studio: { ...studio, colour: 'natural', sizes: { M: 2 } } }] }));
+    expect(body.lines[0].problems).toEqual(['This colour is no longer available', 'Choose your sizes again']);
+  });
+
   it('lists the offers shoppers can use', async () => {
     const r = await app.inject({ method: 'GET', url: '/v1/coupons' });
     expect(r.statusCode).toBe(200);

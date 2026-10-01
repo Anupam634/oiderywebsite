@@ -11,8 +11,17 @@ export const SAMPLE_NAMES: Readonly<Record<SampleKind, string>> = {
 
 export const SAMPLE_KINDS = Object.keys(SAMPLE_NAMES) as SampleKind[];
 
+/** the typefaces the sample logos are lettered in; apps that self-host fonts under other names pass those */
+export interface SampleFonts {
+  display: string;
+  serif: string;
+  sans: string;
+}
+const DEFAULT_SAMPLE_FONTS: SampleFonts = { display: '"Archivo Black"', serif: '"Playfair Display"', sans: '"Plus Jakarta Sans"' };
+
 /** a 640 × 640 sample logo; uses Archivo Black, Playfair Display and Plus Jakarta Sans (await fontsLoaded() first) */
-export function sampleLogo(kind: SampleKind): HTMLCanvasElement {
+export function sampleLogo(kind: SampleKind, fonts: Partial<SampleFonts> = {}): HTMLCanvasElement {
+  const F = { ...DEFAULT_SAMPLE_FONTS, ...fonts };
   const c = createCanvas();
   c.width = c.height = 640;
   const x = ctx2d(c);
@@ -56,10 +65,10 @@ export function sampleLogo(kind: SampleKind): HTMLCanvasElement {
       x.stroke();
     });
     x.fillStyle = '#FFF3DC';
-    x.font = '84px "Archivo Black", Impact, sans-serif';
+    x.font = `84px ${F.display}, Impact, sans-serif`;
     x.fillText('CHAI CO.', 320, 452);
     x.fillStyle = '#FF8A00';
-    x.font = '800 32px "Plus Jakarta Sans", sans-serif';
+    x.font = `800 32px ${F.sans}, sans-serif`;
     x.fillText('EST. 2019 · PUNE', 320, 504);
   } else if (kind === 'mono') {
     x.strokeStyle = '#C99A2E';
@@ -86,7 +95,7 @@ export function sampleLogo(kind: SampleKind): HTMLCanvasElement {
       });
     }
     x.fillStyle = '#7A1F33';
-    x.font = 'italic 700 260px "Playfair Display", Georgia, serif';
+    x.font = `italic 700 260px ${F.serif}, Georgia, serif`;
     x.fillText('R', 196, 410);
     x.fillText('P', 448, 410);
     x.fillStyle = '#E4007C';
@@ -98,7 +107,7 @@ export function sampleLogo(kind: SampleKind): HTMLCanvasElement {
     x.bezierCurveTo(382, 248, 382, 312, 322, 352);
     x.fill();
     x.fillStyle = '#7A1F33';
-    x.font = '800 30px "Plus Jakarta Sans", sans-serif';
+    x.font = `800 30px ${F.sans}, sans-serif`;
     x.fillText('14 · 02 · 2027', 320, 520);
   } else {
     x.fillStyle = '#1B2A55';
@@ -136,10 +145,10 @@ export function sampleLogo(kind: SampleKind): HTMLCanvasElement {
     x.fillStyle = '#FBFBF8';
     x.fillRect(118, 356, 404, 86);
     x.fillStyle = '#1B2A55';
-    x.font = '74px "Archivo Black", Impact, sans-serif';
+    x.font = `74px ${F.display}, Impact, sans-serif`;
     x.fillText('TITANS', 320, 425);
     x.fillStyle = '#FBFBF8';
-    x.font = '800 34px "Plus Jakarta Sans", sans-serif';
+    x.font = `800 34px ${F.sans}, sans-serif`;
     x.fillText('TEAM', 320, 122);
   }
   return c;

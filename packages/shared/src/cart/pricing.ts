@@ -43,6 +43,8 @@ export interface TotalsLine {
   mrpPaise: number;
   /** made-for-you pieces: prepaid only */
   custom: boolean;
+  /** one-time charge on the line, not per piece (e.g. logo digitizing) */
+  extraPaise?: number;
 }
 
 export interface Totals {
@@ -68,8 +70,8 @@ export function computeTotals(
   opts: { coupon?: Coupon | null; shipping?: ShippingMethod; payment?: PaymentMethod } = {},
 ): Totals {
   const itemCount = lines.reduce((a, l) => a + l.qty, 0);
-  const subtotal = lines.reduce((a, l) => a + l.qty * l.pricePaise, 0);
-  const mrpTotal = lines.reduce((a, l) => a + l.qty * l.mrpPaise, 0);
+  const subtotal = lines.reduce((a, l) => a + l.qty * l.pricePaise + (l.extraPaise ?? 0), 0);
+  const mrpTotal = lines.reduce((a, l) => a + l.qty * l.mrpPaise + (l.extraPaise ?? 0), 0);
   const hasCustom = lines.some((l) => l.custom);
   const payment = opts.payment === 'cod' && hasCustom ? 'upi' : opts.payment;
 

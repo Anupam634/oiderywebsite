@@ -44,7 +44,7 @@ export type { Motif, MotifParts } from './motifs';
 export { FONTS, FONT_KEYS, FONT_PROBES, GOOGLE_FONTS_CSS, fontStr, fontsLoaded, isFontKey } from './fonts';
 export type { FontDef } from './fonts';
 export { SAMPLE_NAMES, SAMPLE_KINDS, sampleLogo } from './samples';
-export type { SampleKind } from './samples';
+export type { SampleFonts, SampleKind } from './samples';
 export { MOTIF_PX, motifSvg, motifColours, trimCanvas } from './design';
 
 /* the pure pipeline (no DOM): useful for tests, workers and the design studio */

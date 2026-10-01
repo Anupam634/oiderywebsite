@@ -11,6 +11,7 @@ import { FONT_PROBES, FONTS, FONT_KEYS, fontStr, fontsLoaded, type FontKey } fro
 import { prepareGarment, recolourGarment, type GarmentPixels } from './garment';
 import { GARMENTS, type GarmentView, type PlacementKey } from './garments';
 import { destBox, fitSize, sceneGeometry, stitchCount, stitchPixels, type RenderView } from './render';
+import { sampleLogo, type SampleKind } from './samples';
 import { GC, type GarmentColour } from './threads';
 import type {
   AnalyseError,
@@ -33,6 +34,8 @@ export interface StitchEngineOptions {
    * `pacifico.style.fontFamily`). Must be the same typefaces, or previews won't match production.
    */
   fontFamilies?: Partial<Record<FontKey, string>>;
+  /** family of the sans-serif lettering on the sample logos (default "Plus Jakarta Sans") */
+  sansFamily?: string;
   /** fontsLoaded() gives up waiting after this long (default 2500 ms) */
   fontTimeoutMs?: number;
 }
@@ -80,6 +83,8 @@ export interface StitchEngine {
   fontsLoaded(): Promise<void>;
   /** canvas font string for a name font, with the engine's family overrides */
   fontStr(font: FontKey, px: number): string;
+  /** a sample logo lettered in the engine's fonts (await fontsLoaded() first) */
+  sampleLogo(kind: SampleKind): HTMLCanvasElement;
 }
 
 interface GarmentEntry {
@@ -105,6 +110,7 @@ export function createStitchEngine(options: StitchEngineOptions = {}): StitchEng
     ...FONT_KEYS.filter((k) => families[k] && families[k] !== FONTS[k].fam).map((k) =>
       fontStr(k, 120, families[k]),
     ),
+    ...(options.sansFamily ? [`800 32px ${options.sansFamily}`] : []),
   ];
 
   const garmentUrls = (view: GarmentView) => ({
@@ -250,6 +256,12 @@ export function createStitchEngine(options: StitchEngineOptions = {}): StitchEng
     stitchCount,
     fontsLoaded: () => fontsLoaded(probes, fontTimeoutMs),
     fontStr: (font, px) => fontStr(font, px, families[font] ?? FONTS[font].fam),
+    sampleLogo: (kind) =>
+      sampleLogo(kind, {
+        ...(families.bold ? { display: families.bold } : {}),
+        ...(families.classic ? { serif: families.classic } : {}),
+        ...(options.sansFamily ? { sans: options.sansFamily } : {}),
+      }),
   };
   return engine;
 }
