@@ -233,3 +233,7 @@
 .co-page .ready .co-h .n{background:#23863A}
 .co-page .ready p{margin:0 0 14px;color:var(--ink-2);font-weight:600;line-height:1.5}
 .co-page .ready .kv{margin-bottom:14px}
+.co-page .verified{display:flex;align-items:center;gap:10px;height:52px;padding:0 16px;border-radius:14px;background:#F1FBF3;border:1.5px solid #BFE5C8}
+.co-page .verified svg{width:18px;height:18px;color:#23863A}
+.co-page .verified small{margin-left:auto;color:#23863A;font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+.co-page .co-h .n svg{width:16px;height:16px}

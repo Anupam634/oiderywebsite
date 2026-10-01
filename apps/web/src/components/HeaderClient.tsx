@@ -6,6 +6,7 @@ import { formatINR, type ProductCard } from '@store/shared';
 import { api } from '@/lib/api';
 import { productHref } from '@/lib/links';
 import { media } from '@/lib/media';
+import { useMe } from '@/lib/session';
 import { ui, useCart, useWishlist } from '@/lib/store';
 import { Bag, Heart, Menu, Search, User } from './icons';
 
@@ -114,6 +115,18 @@ export function useCounts() {
   return { bag: lines.reduce((a, l) => a + l.qty, 0), wish: wish.length };
 }
 
+/** "Account" in the header: the login page when logged out, the account page (with the shopper's initial) when in */
+function AccountLink() {
+  const me = useMe();
+  const initial = me?.name?.trim()[0]?.toUpperCase();
+  return (
+    <Link className="ib lab acc" href={me ? '/account' : '/login'} aria-label={me ? 'My account' : 'Log in'}>
+      {initial ? <b className="avatar" aria-hidden="true">{initial}</b> : <User />}
+      <span>{me ? 'Account' : 'Log in'}</span>
+    </Link>
+  );
+}
+
 export function HeaderIcons() {
   const { bag, wish } = useCounts();
   useEffect(() => {
@@ -125,7 +138,7 @@ export function HeaderIcons() {
   return (
     <div className="icons">
       <button className="ib lab sbtn" type="button" aria-label="Search" onClick={() => ui.open('search')}><Search /></button>
-      <button className="ib lab acc" type="button" aria-label="Account" onClick={() => ui.toast('Login with WhatsApp OTP is coming in the next phase')}><User /><span>Account</span></button>
+      <AccountLink />
       <button className="ib lab" type="button" aria-label="Wishlist" onClick={() => ui.open('wish')}>
         <Heart /><span>Wishlist</span>{wish > 0 && <b className="count">{wish}</b>}
       </button>

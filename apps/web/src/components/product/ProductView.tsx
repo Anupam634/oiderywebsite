@@ -15,6 +15,7 @@ import {
   type Variant,
 } from '@store/shared';
 import { relLum, lab, hexRgb, TH, TNAME, type ThreadKey } from '@store/stitch';
+import { api, ApiError } from '@/lib/api';
 import { media } from '@/lib/media';
 import { NAME_FONT_CSS } from '@/lib/stitch';
 import { cart, ui, useWishlist, wishlist } from '@/lib/store';
@@ -43,7 +44,8 @@ export function ProductView({ p }: { p: ProductDetail }) {
   const [pal, setPal] = useState(0);
   const [agree, setAgree] = useState(false);
   const [shake, setShake] = useState<string | null>(null);
-  const [pet, setPet] = useState<{ thumb: string; file: string; name: string; later: boolean }>({ thumb: '', file: '', name: '', later: false });
+  const [pet, setPet] = useState<{ thumb: string; file: string; name: string; later: boolean; blob?: File }>({ thumb: '', file: '', name: '', later: false });
+  const [adding, setAdding] = useState(false);
   const [gift, setGift] = useState({ on: false, note: '', hide: false });
   const [sg, setSg] = useState(false);
   const saved = useWishlist().includes(p.slug);
@@ -115,8 +117,20 @@ export function ProductView({ p }: { p: ProductDetail }) {
     }
     return true;
   }
-  function add(goCheckout = false) {
-    if (!validate()) return;
+  async function add(goCheckout = false) {
+    if (!validate() || adding) return;
+    // the pet photo goes to the studio at full size (the bag keeps a small thumbnail)
+    let uploads: string[] | undefined;
+    if (p.petPhoto && pet.blob && !pet.later) {
+      setAdding(true);
+      try {
+        uploads = [(await api.upload('pet', pet.blob, pet.file)).id];
+      } catch (e) {
+        setAdding(false);
+        return ui.toast(e instanceof ApiError ? e.message : 'We couldn’t upload the photo. Please try again.');
+      }
+      setAdding(false);
+    }
     const thumb = live && render.front ? thumbOf(render.front) : p.petPhoto && pet.thumb ? pet.thumb : p.image.path;
     const bits = [
       variant.colourName,
@@ -140,6 +154,8 @@ export function ProductView({ p }: { p: ProductDetail }) {
       custom,
       personalisation: perso && persoOn ? { text: cleanText, font, thread, ...(flowers ? { flowers: pal } : {}) } : null,
       giftWrap: gift.on,
+      ...(p.petPhoto && cleanName(pet.name).trim() ? { petName: cleanName(pet.name).trim().slice(0, 20) } : {}),
+      ...(uploads ? { uploads } : {}),
     });
     if (goCheckout) location.href = '/checkout';
     else {
@@ -160,7 +176,7 @@ export function ProductView({ p }: { p: ProductDetail }) {
       c.height = Math.round(im.naturalHeight * s);
       c.getContext('2d')!.drawImage(im, 0, 0, c.width, c.height);
       URL.revokeObjectURL(url);
-      setPet((x) => ({ ...x, thumb: c.toDataURL('image/jpeg', 0.82), file: f.name, later: false }));
+      setPet((x) => ({ ...x, thumb: c.toDataURL('image/jpeg', 0.82), file: f.name, later: false, blob: f }));
       ui.toast('Photo added. Our artist will sketch from this one.');
     };
     im.onerror = () => ui.toast('We couldn’t read that photo. Try another one.');
@@ -308,10 +324,10 @@ export function ProductView({ p }: { p: ProductDetail }) {
               <span aria-live="polite">{qty}</span>
               <button type="button" aria-label="Increase quantity" onClick={() => (qty < maxQty ? setQty(qty + 1) : ui.toast(p.isUnique ? 'This is a one-of-a-kind piece, so only 1 is available' : maxQty < 10 ? `Only ${maxQty} available` : 'For more than 10, see our corporate orders'))}>+</button>
             </div>
-            <button className="btn btn-grad" type="button" ref={addBtn} onClick={() => add()}><Bag /><span>Add to bag · {formatINR(price.pricePaise * qty)}</span></button>
+            <button className="btn btn-grad" type="button" ref={addBtn} disabled={adding} onClick={() => void add()}>{adding ? <span className="spin" /> : <Bag />}<span>{adding ? 'Uploading your photo…' : `Add to bag · ${formatINR(price.pricePaise * qty)}`}</span></button>
             <button className={`favbig${saved ? ' on' : ''}`} type="button" aria-label="Save to wishlist" aria-pressed={saved} onClick={() => ui.toast(wishlist.toggle(p.slug) ? 'Saved to your wishlist' : 'Removed from your wishlist')}><Heart /></button>
           </div>
-          <button className="btn btn-ink wide" type="button" onClick={() => add(true)}>Buy now</button>
+          <button className="btn btn-ink wide" type="button" disabled={adding} onClick={() => void add(true)}>Buy now</button>
 
           <DeliveryCheck custom={custom} madeDays={p.madeDays} petPhoto={p.petPhoto} totalPaise={price.pricePaise * qty} />
           <Offers />
@@ -325,7 +341,7 @@ export function ProductView({ p }: { p: ProductDetail }) {
       <div className={`mbar${mbar ? ' on' : ''}`} aria-hidden={!mbar}>
         <div className="mth">{live ? <LiveCanvas src={render.front} fallback={media(p.image.path)} width={88} height={110} /> : <img src={media(p.image.path)} alt="" />}</div>
         <div className="mtx"><b>{p.name}</b><span>{formatINR(price.pricePaise * qty)}</span></div>
-        <button className="btn btn-grad" type="button" onClick={() => add()}>Add to bag</button>
+        <button className="btn btn-grad" type="button" disabled={adding} onClick={() => void add()}>Add to bag</button>
       </div>
     </main>
   );

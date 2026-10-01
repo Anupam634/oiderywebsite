@@ -44,9 +44,10 @@ export function isValidGstin(gstin: string): boolean {
   return GSTIN_CHARS[(36 - (sum % 36)) % 36] === g[14];
 }
 
-/** Indian financial year of a date: 1 Oct 2026 → "2026-27" */
+/** Indian financial year of a moment, in India time (the year turns at midnight IST on 1 April): 1 Oct 2026 → "2026-27" */
 export function financialYear(d: Date): string {
-  const y = d.getMonth() >= 3 ? d.getFullYear() : d.getFullYear() - 1;
+  const ist = new Date(d.getTime() + 330 * 60_000);
+  const y = ist.getUTCMonth() >= 3 ? ist.getUTCFullYear() : ist.getUTCFullYear() - 1;
   return `${y}-${String((y + 1) % 100).padStart(2, '0')}`;
 }
 

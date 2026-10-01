@@ -21,6 +21,7 @@ import { catalogRoutes } from './modules/catalog/routes.ts';
 import { fileRoutes } from './modules/files/routes.ts';
 import { Files } from './modules/files/service.ts';
 import { createStorage } from './modules/files/storage.ts';
+import { InvoiceService } from './modules/invoice/service.ts';
 import { Notifications } from './modules/notify/messages.ts';
 import { Transport } from './modules/notify/transport.ts';
 import { orderRoutes, webhookRoutes } from './modules/orders/routes.ts';
@@ -59,11 +60,13 @@ export async function buildApp({ config, db, gateway }: { config: Config; db: Db
   const files = new Files(db, createStorage(config), config);
   const notify = new Notifications(new Transport(config, app.log), config);
   const orders = new OrderService(db, config, gateway ?? createGateway(config), files, notify, app.log);
+  const invoices = new InvoiceService(db, files);
   const otp = createOtpProvider(config, (msg) => app.log.info(msg));
   app.decorate('catalog', catalog);
   app.decorate('files', files);
   app.decorate('orders', orders);
   app.decorate('notify', notify);
+  app.decorate('invoices', invoices);
 
   await app.register(catalogRoutes(catalog), { prefix: '/v1' });
   await app.register(cartRoutes(db), { prefix: '/v1' });
@@ -81,5 +84,6 @@ declare module 'fastify' {
     files: Files;
     orders: OrderService;
     notify: Notifications;
+    invoices: InvoiceService;
   }
 }

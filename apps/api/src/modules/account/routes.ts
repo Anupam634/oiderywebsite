@@ -130,7 +130,7 @@ export const accountRoutes =
         const o = await orders.byNumber(req.params.number);
         if (!o || o.customerId !== me(req)) throw notFound('Order');
         if (!canCustomerCancel(o)) throw new AppError(409, 'cannot_cancel', 'This order is already being made or shipped. Please WhatsApp us and we’ll help.');
-        const done = await orders.cancel(o.id, req.body.reason ? `Cancelled by you: ${req.body.reason}` : 'Cancelled by you', { actor: 'CUSTOMER' });
+        const done = await orders.cancel(o.id, req.body.reason ?? '', { actor: 'CUSTOMER' });
         return { order: orders.dto(done) };
       },
     );

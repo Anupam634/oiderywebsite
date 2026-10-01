@@ -200,6 +200,8 @@ describe('GST', () => {
     expect(financialYear(new Date('2026-10-01'))).toBe('2026-27');
     expect(financialYear(new Date('2027-03-31'))).toBe('2026-27');
     expect(financialYear(new Date('2027-04-01'))).toBe('2027-28');
+    // 31 Mar 2027, 19:00 UTC is already 1 April in India
+    expect(financialYear(new Date('2027-03-31T19:00:00Z'))).toBe('2027-28');
     expect(invoiceNumber('TK', '2026-27', 7)).toBe('TK/2026-27/0007');
   });
   it('writes amounts in words with lakh and crore', () => {

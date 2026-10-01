@@ -22,6 +22,10 @@ export interface CartLine {
   extraPaise?: number;
   /** a design-studio piece: priced by the API from this spec instead of a catalogue variant */
   studio?: StudioLineSpec;
+  /** files uploaded when it was added (preview render, logo, pet photo); attached to the order */
+  uploads?: string[];
+  /** pet portraits: the name stitched below */
+  petName?: string;
 }
 
 export const lineTotal = (l: CartLine) => l.qty * l.unitPricePaise + (l.extraPaise ?? 0);
@@ -91,6 +95,10 @@ export const cart = {
   },
   clear() {
     cartStore.set([]);
+  },
+  /** remember uploads made after the line was added (e.g. a preview uploaded at checkout) */
+  setUploads(key: string, uploads: string[]) {
+    cartStore.set(cartStore.get().map((l) => (l.key === key ? { ...l, uploads } : l)));
   },
 };
 

@@ -29,6 +29,17 @@ export const STUDIO_GARMENTS: readonly StudioGarment[] = [
 ];
 export const studioGarment = (id: string) => STUDIO_GARMENTS.find((g) => g.id === id);
 
+/** print areas per garment photo: name and design width limits in cm (mirrors @store/stitch GARMENTS; a test keeps them equal) */
+export const STUDIO_PLACEMENTS: Record<string, Record<string, { name: string; min: number; max: number }>> = {
+  tee: { lc: { name: 'Left chest', min: 5, max: 10 }, cc: { name: 'Centre chest', min: 10, max: 28 } },
+  model: { lc: { name: 'Left chest', min: 5, max: 10 }, cc: { name: 'Centre chest', min: 10, max: 28 } },
+  polo: { lc: { name: 'Left chest', min: 5, max: 10 }, rc: { name: 'Right chest', min: 5, max: 10 } },
+  shirt: { pk: { name: 'On the pocket', min: 4, max: 7 }, ap: { name: 'Above the pocket', min: 5, max: 9 } },
+  hoodie: { cc: { name: 'Centre chest', min: 10, max: 20 }, lc: { name: 'Left chest', min: 5, max: 9 } },
+  cap: { fr: { name: 'Front', min: 4, max: 11 } },
+  tote: { cc: { name: 'Centre', min: 8, max: 28 }, bc: { name: 'Bottom corner', min: 5, max: 10 } },
+};
+
 export const STUDIO_SIZES = ['S', 'M', 'L', 'XL', 'XXL'] as const;
 export type StudioSize = (typeof STUDIO_SIZES)[number];
 export const STUDIO_MAX_QTY = 999;

@@ -1,0 +1,139 @@
+/* Login, account and order pages. They sit inside .co-page (checkout.css) to share its cards and form fields. */
+
+/* ---------- one-time code login ---------- */
+.co-page .otp{display:grid;gap:14px}
+.co-page .otp .btn{width:100%}
+.co-page .otp.compact .btn{width:auto;justify-self:start;height:50px}
+.co-page .otp-fine{margin:0;font-size:13px;color:var(--mute);font-weight:650}
+.co-page .otp-sent{margin:0;font-size:14.5px;color:var(--ink-2)}
+.co-page .otp-code input{font-size:26px;font-weight:800;letter-spacing:.55em;text-align:center;padding-left:.55em;font-variant-numeric:tabular-nums}
+.co-page .otp-code input::placeholder{letter-spacing:.55em;color:#D9CFE3}
+.co-page .otp-dev{margin:0;padding:10px 14px;border-radius:12px;background:#FFF6D6;border:1px dashed #E8B400;font-size:13.5px;font-weight:650;color:#6B4E00}
+.co-page .otp-dev b{letter-spacing:.12em}
+.co-page .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* ---------- login page ---------- */
+.acc-login{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,460px);gap:34px;align-items:center;padding:40px 0 70px}
+.acc-hero{position:relative;border-radius:34px;padding:46px 40px;color:#fff;overflow:hidden;min-height:440px;background:radial-gradient(70% 60% at 100% 0%,rgba(255,179,0,.55),transparent 60%),radial-gradient(60% 70% at 0% 100%,rgba(61,43,214,.55),transparent 60%),linear-gradient(135deg,#FF2E93,#E4007C 45%,#FF8A00)}
+.acc-hero::after{content:'';position:absolute;inset:14px;border-radius:24px;border:2px dashed rgba(255,255,255,.45);pointer-events:none}
+.acc-hero .kicker{color:#fff}
+.acc-hero h1{font-size:clamp(36px,4.4vw,58px);line-height:1.02;margin:14px 0 14px;color:#fff;font-variation-settings:'SOFT' 100}
+.acc-hero h1 em{font-style:italic}
+.acc-hero p{margin:0;max-width:420px;font-size:16.5px;opacity:.95}
+.acc-perks{list-style:none;margin:26px 0 0;padding:0;display:grid;gap:12px;max-width:420px}
+.acc-perks li{display:flex;gap:12px;align-items:center;font-weight:700;background:rgba(255,255,255,.16);border-radius:16px;padding:12px 14px;backdrop-filter:blur(6px)}
+.acc-perks svg{width:22px;height:22px;flex:none}
+.acc-card{background:#fff;border-radius:30px;padding:30px;border:1px solid var(--line);box-shadow:0 30px 60px -44px rgba(27,16,48,.7)}
+.acc-card h2{font-size:30px;margin:0 0 6px}
+.acc-card > p{margin:0 0 20px;color:var(--ink-2)}
+
+/* ---------- account dashboard ---------- */
+.acc-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:30px 0 18px}
+.acc-head h1{font-size:clamp(34px,4vw,52px);line-height:1;margin:10px 0 0;font-variation-settings:'SOFT' 100}
+.acc-head h1 em{font-style:italic;background:linear-gradient(95deg,#E4007C,#FF8A00);-webkit-background-clip:text;background-clip:text;color:transparent;padding-right:.05em}
+.acc-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}
+.acc-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,.65fr);gap:22px;align-items:start;padding-bottom:60px}
+.acc-empty{text-align:center;padding:34px 12px;color:var(--ink-2)}
+.acc-empty b{display:block;font-family:var(--serif);font-size:24px;color:var(--ink);margin-bottom:6px}
+.acc-empty .btn{margin-top:16px}
+
+.olist{display:grid;gap:12px}
+.ocard{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:16px;align-items:center;padding:16px;border-radius:22px;border:1.5px solid var(--line);background:#fff;transition:border-color var(--d2),transform var(--d2) var(--ease),box-shadow var(--d2)}
+.ocard:hover{border-color:var(--rani);transform:translateY(-2px);box-shadow:0 18px 30px -24px rgba(228,0,124,.6)}
+.othumbs{display:flex}
+.othumbs img{width:54px;height:66px;border-radius:12px;object-fit:cover;border:3px solid #fff;box-shadow:0 6px 12px -8px rgba(27,16,48,.5);background:#F6EFE6}
+.othumbs img+img{margin-left:-22px}
+.ocard b{display:block;font-size:16px}
+.ocard small{color:var(--mute);font-weight:650;font-size:13px}
+.ocard .ototal{text-align:right;font-family:var(--serif);font-size:20px;font-weight:700}
+
+.st{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:999px;font-size:12px;font-weight:800;background:#F1ECF6;color:var(--ink-2);white-space:nowrap}
+.st::before{content:'';width:7px;height:7px;border-radius:50%;background:currentColor}
+.st.PENDING_PAYMENT{background:#FFF1E0;color:#B45309}
+.st.PLACED{background:#FDE7F3;color:#BE0068}
+.st.IN_PRODUCTION{background:#EDE9FF;color:#3D2BD6}
+.st.SHIPPED{background:#E0F5F3;color:#00756F}
+.st.DELIVERED{background:#E9F7EC;color:#23863A}
+.st.CANCELLED{background:#F1F1F3;color:#6B6478}
+
+.addrs{display:grid;gap:10px}
+.addr{position:relative;padding:16px 16px 14px;border-radius:20px;border:1.5px solid var(--line);background:#fff;font-size:14px;line-height:1.5;color:var(--ink-2)}
+.addr b{color:var(--ink);font-size:15px}
+.addr .tag{display:inline-block;margin-left:8px;padding:2px 9px;border-radius:999px;background:#F1ECF6;font-size:11px;font-weight:800;color:var(--ink-2);vertical-align:middle}
+.addr .tag.def{background:#E9F7EC;color:#23863A}
+.addr .acts{display:flex;gap:14px;margin-top:10px;font-size:13px}
+.addr.pick{cursor:pointer;padding-left:48px;transition:border-color var(--d2),box-shadow var(--d2)}
+.addr.pick::before{content:'';position:absolute;left:16px;top:18px;width:20px;height:20px;border-radius:50%;border:2px solid #CFC4DB;background:#fff}
+.addr.pick.on{border-color:var(--rani);box-shadow:0 0 0 4px rgba(228,0,124,.1)}
+.addr.pick.on::before{border:6px solid var(--rani)}
+.addr-new{display:flex;align-items:center;justify-content:center;gap:8px;min-height:54px;border-radius:20px;border:1.5px dashed #CFC4DB;font-weight:750;color:var(--ink-2);background:transparent;width:100%}
+.addr-new:hover{border-color:var(--rani);color:var(--rani)}
+.addr-new svg{width:18px;height:18px}
+
+/* ---------- order page (avoid .done/.now: checkout.css uses them) ---------- */
+.ohero{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;padding:26px 0 18px}
+.ohero h1{font-size:clamp(30px,3.6vw,46px);line-height:1;margin:10px 0 8px}
+.ohero p{margin:0;color:var(--ink-2)}
+.ohero .acts{display:flex;gap:10px;flex-wrap:wrap}
+.ohero .acts .btn{height:48px;padding:0 20px;font-size:15px}
+.steps4{list-style:none;margin:0 0 18px;padding:18px 20px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;background:#fff;border-radius:24px;border:1px solid var(--line)}
+.steps4 li{position:relative;display:grid;justify-items:center;text-align:center;gap:8px;font-size:13px;font-weight:750;color:var(--mute)}
+.steps4 li:not(:last-child)::after{content:'';position:absolute;top:17px;left:calc(50% + 22px);right:calc(-50% + 22px);height:3px;border-radius:3px;background:#EEE6F2}
+.steps4 li.ok:not(:last-child)::after{background:linear-gradient(90deg,#FF2E93,#FF8A00)}
+.steps4 i{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:#F3EEF6;color:var(--ink-2);font-style:normal;font-weight:800}
+.steps4 i svg{width:17px;height:17px}
+.steps4 li.ok i{background:linear-gradient(135deg,#FF2E93,#FF8A00);color:#fff;box-shadow:0 8px 16px -8px rgba(228,0,124,.7)}
+.steps4 li.ok{color:var(--ink)}
+.steps4 li.cur i{box-shadow:0 0 0 5px rgba(228,0,124,.16)}
+.oitems{display:grid;gap:12px}
+.oitem{display:grid;grid-template-columns:76px minmax(0,1fr) auto;gap:14px;align-items:start;padding-bottom:12px;border-bottom:1px dashed var(--line)}
+.oitem:last-child{border-bottom:0;padding-bottom:0}
+.oitem img{width:76px;height:95px;border-radius:14px;object-fit:cover;background:#F6EFE6}
+.oitem b{display:block}
+.oitem small{display:block;color:var(--mute);font-weight:650;font-size:13px;margin-top:2px}
+.oitem .pp{font-weight:800;white-space:nowrap}
+.prod{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:5px 11px;border-radius:999px;background:#EDE9FF;color:#3D2BD6;font-size:12px;font-weight:800}
+.prod.attn{background:#FFF1E0;color:#B45309}
+.prod.ok{background:#E9F7EC;color:#23863A}
+.prod a{text-decoration:underline}
+.opay svg{width:20px;height:20px;flex:none}
+.opay{display:flex;gap:12px;align-items:center;padding:14px 16px;border-radius:18px;background:#FFF1E0;border:1px solid #FED7AA;margin-bottom:16px;font-weight:650;color:#9A3412}
+.opay .btn{margin-left:auto;height:44px;padding:0 18px;font-size:14.5px}
+.oaddr{font-size:14.5px;line-height:1.55;color:var(--ink-2)}
+.oaddr b{color:var(--ink)}
+.otl{list-style:none;margin:0;padding:0;display:grid;gap:10px;font-size:13.5px}
+.otl li{display:grid;grid-template-columns:auto 1fr;gap:10px;color:var(--ink-2)}
+.otl li::before{content:'';width:9px;height:9px;margin-top:6px;border-radius:50%;background:linear-gradient(135deg,#FF2E93,#FF8A00)}
+.otl time{display:block;font-size:12px;color:var(--mute);font-weight:650}
+
+/* ---------- test payment sheet ---------- */
+.paysheet{position:fixed;inset:0;z-index:120;display:grid;place-items:end center;background:rgba(27,16,48,.45);animation:fade .2s}
+.paysheet .ps{width:min(440px,100%);margin:0 auto;background:#fff;border-radius:28px 28px 0 0;padding:26px 24px calc(24px + env(safe-area-inset-bottom));box-shadow:0 -20px 60px -20px rgba(27,16,48,.5);animation:pop2 .3s var(--ease)}
+@media(min-width:700px){.paysheet{place-items:center}.paysheet .ps{border-radius:28px}}
+.paysheet h3{font-size:24px;margin:6px 0}
+.paysheet .amt{font-family:var(--serif);font-size:42px;font-weight:700;margin:6px 0 4px}
+.paysheet p{margin:0 0 18px;color:var(--ink-2);font-size:14px}
+.paysheet .tag{display:inline-block;padding:4px 10px;border-radius:999px;background:#FFF6D6;color:#6B4E00;font-size:11.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+.paysheet .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.paysheet .btn{width:100%;height:52px}
+.paysheet .bad{background:#fff;border:1.5px solid #FCA5A5;color:#B91C1C}
+
+@media(max-width:1000px){
+  .acc-login{grid-template-columns:minmax(0,1fr);padding-top:18px}
+  .acc-hero{min-height:0;padding:34px 26px}
+  .acc-grid{grid-template-columns:minmax(0,1fr)}
+}
+@media(max-width:560px){
+  .acc-card{padding:22px 18px;border-radius:24px}
+  .acc-perks{display:none}
+  .ocard{grid-template-columns:auto minmax(0,1fr);gap:12px}
+  .ocard .ototal{grid-column:2;text-align:left;font-size:18px}
+  .steps4{padding:14px 10px;gap:2px}
+  .steps4 li{font-size:11px}
+  .steps4 li:not(:last-child)::after{left:calc(50% + 19px);right:calc(-50% + 19px)}
+  .oitem{grid-template-columns:64px minmax(0,1fr)}
+  .oitem img{width:64px;height:80px}
+  .oitem .pp{grid-column:2}
+  .opay{flex-wrap:wrap}
+  .opay .btn{margin-left:0;width:100%}
+}

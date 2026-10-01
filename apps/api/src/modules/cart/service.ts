@@ -4,6 +4,7 @@ import {
   FONT_KEYS,
   MAKE_DAYS,
   STUDIO_MAX_QTY,
+  STUDIO_PLACEMENTS,
   STUDIO_SIZES,
   THREAD_KEYS,
   checkName,
@@ -121,7 +122,6 @@ const GARMENT_COLOUR: Record<string, string> = {
   white: 'White', natural: 'Natural canvas', kajal: 'Kajal black', neel: 'Neel navy', maroon: 'Maroon', bottle: 'Bottle green',
   haldi: 'Haldi yellow', gulaab: 'Gulaab pink', chandi: 'Chandi grey', sky: 'Sky blue',
 };
-const PLACEMENT: Record<string, string> = { lc: 'Left chest', cc: 'Centre chest', back: 'Back', front: 'Front', side: 'Side', centre: 'Centre', center: 'Centre' };
 
 export async function priceCart(db: Db, body: CartBody, ctx: { customerId?: string | null } = {}): Promise<PricedCart> {
   const { items, coupon: code, shipping, payment } = body;
@@ -237,6 +237,9 @@ function priceStudioLine(it: z.infer<typeof studioLineSchema>): PricedLine {
   else {
     if (!g.colours.includes(s.colour)) problems.push('This colour is no longer available');
     if (!g.views.some(([v]) => v === s.view)) problems.push('Choose the garment again');
+    const area = STUDIO_PLACEMENTS[s.view]?.[s.placement];
+    if (!area) problems.push('Choose where to stitch it again');
+    else if (s.widthCm < area.min - 0.25 || s.widthCm > area.max + 0.25) problems.push(`${area.name} designs can be ${area.min}–${area.max} cm wide`);
     const sized = s.sizes ? Object.values(s.sizes).reduce((a, n) => a + (n ?? 0), 0) : null;
     if (g.sizes && sized !== it.qty) problems.push('Choose your sizes again');
     if (!g.sizes && s.sizes) problems.push('This piece comes in one size');
@@ -261,7 +264,7 @@ function priceStudioLine(it: z.infer<typeof studioLineSchema>): PricedLine {
           slug: null,
           sku: `STUDIO-${g.id.toUpperCase()}-${s.colour.toUpperCase()}`,
           name: `${g.name} with ${s.source === 'upload' ? 'your logo' : 'your design'}`,
-          description: [GARMENT_COLOUR[s.colour] ?? s.colour, `${PLACEMENT[s.placement] ?? s.placement}, ${s.widthCm} cm`, s.label, mix].filter(Boolean).join(' · '),
+          description: [GARMENT_COLOUR[s.colour] ?? s.colour, `${STUDIO_PLACEMENTS[s.view]?.[s.placement]?.name ?? s.placement}, ${s.widthCm} cm`, s.label, mix].filter(Boolean).join(' · '),
           imagePath: null,
           hsnCode: g.hsn,
           gstRule: g.gstRule,

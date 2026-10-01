@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore, type FormEvent, type ReactNode } from 'react';
 import {
   FREE_SHIPPING_MIN_PAISE,
@@ -8,15 +9,24 @@ import {
   RULES,
   checkoutErrors,
   computeTotals,
+  deliveryDays,
   formatINR,
+  formatPhone,
+  type AddressDto,
+  type CheckoutDetails,
   type CheckoutField,
+  type OrderDto,
+  type PaymentStart,
   type Totals,
 } from '@store/shared';
-import { api, type CartPriceRequest, type CartPriceResponse, type Offer } from '@/lib/api';
-import { PINS, dateIn, transitDays } from '@/lib/delivery';
+import { api, ApiError, type CartItemRequest, type CartPriceRequest, type CartPriceResponse, type Offer } from '@/lib/api';
+import { MAKE_DAYS, PINS, dateIn } from '@/lib/delivery';
 import { media } from '@/lib/media';
-import { ui, useCart, type CartLine } from '@/lib/store';
-import { Bag, Bank, Card, Cash, Eye, Info, Lock, Shield, Spark, Swap, Upi, Wallet } from '../icons';
+import { logout, setMe, useMe } from '@/lib/session';
+import { cart, ui, useCart, type CartLine } from '@/lib/store';
+import { OtpLogin } from '../auth/OtpLogin';
+import { Bag, Bank, Card, Cash, Check, Eye, Info, Lock, Plus, Shield, Spark, Swap, Upi, Wallet } from '../icons';
+import { usePayment } from './Payment';
 
 type Ship = NonNullable<CartPriceRequest['shipping']>;
 type Pay = NonNullable<CartPriceRequest['payment']>;
@@ -28,7 +38,6 @@ const PAYS: { id: Pay; name: string; sub: string; icon: ReactNode; colour: strin
   { id: 'wallet', name: 'Wallets', sub: 'Paytm, PhonePe, Amazon Pay', icon: <Wallet />, colour: '#FF8A00' },
   { id: 'cod', name: 'Cash on delivery', sub: 'Pay in cash or UPI when it arrives · ₹49 fee', icon: <Cash />, colour: '#E4007C' },
 ];
-const PAY_NAME: Record<Pay, string> = { upi: 'UPI', card: 'Card', netbanking: 'Net banking', wallet: 'Wallet', cod: 'Cash on delivery' };
 
 interface Form {
   phone: string; email: string; whatsappUpdates: boolean; pincode: string; name: string; line1: string; line2: string;
@@ -56,34 +65,66 @@ const write = (k: string, v: string | null) => {
   }
 };
 
+const itemOf = (l: CartLine): CartItemRequest =>
+  l.studio
+    ? { qty: l.qty, studio: l.studio, ...(l.uploads?.length ? { uploads: l.uploads } : {}) }
+    : {
+        variantId: l.variantId,
+        qty: l.qty,
+        ...(l.personalisation ? { personalisation: l.personalisation } : {}),
+        ...(l.giftWrap ? { giftWrap: true } : {}),
+        ...(l.petName ? { petName: l.petName } : {}),
+        ...(l.uploads?.length ? { uploads: l.uploads } : {}),
+      };
+
 const toRequest = (lines: CartLine[], coupon: string, shipping: Ship, payment: Pay): CartPriceRequest => ({
-  items: lines.map((l) =>
-    l.studio
-      ? { qty: l.qty, studio: l.studio }
-      : {
-          variantId: l.variantId,
-          qty: l.qty,
-          ...(l.personalisation ? { personalisation: l.personalisation } : {}),
-          ...(l.giftWrap ? { giftWrap: true } : {}),
-        },
-  ),
+  items: lines.map(itemOf),
   ...(coupon ? { coupon } : {}),
   shipping,
   payment,
 });
 
+const fromAddress = (a: AddressDto): Partial<Form> => ({
+  name: a.name, phone: a.phone, line1: a.line1, line2: a.line2, landmark: a.landmark, city: a.city, state: a.state, pincode: a.pincode,
+  addressType: a.type.toLowerCase() as Form['addressType'],
+});
+
+/** a made-for-you line's preview (a data URL in the bag) is uploaded once, so the studio sees what was ordered */
+async function uploadPreviews(lines: CartLine[]) {
+  for (const l of lines) {
+    if (!l.image.startsWith('data:') || l.uploads?.length) continue;
+    try {
+      const blob = await (await fetch(l.image)).blob();
+      const up = await api.upload('preview', blob, 'preview.jpg');
+      cart.setUploads(l.key, [up.id]);
+      l.uploads = [up.id];
+    } catch {
+      /* the order still works without the preview */
+    }
+  }
+}
+
 const useHydrated = () => useSyncExternalStore(() => () => {}, () => true, () => false);
+const newKey = () => (typeof crypto !== 'undefined' && 'randomUUID' in crypto ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`);
 
 export function CheckoutView({ offers }: { offers: Offer[] }) {
+  const router = useRouter();
   const hydrated = useHydrated();
   const lines = useCart();
+  const me = useMe();
   const [ship, setShip] = useState<Ship>('standard');
   const [pay, setPay] = useState<Pay>('upi');
   const [coupon, setCoupon] = useState('');
   const [form, setForm] = useState<Form>(EMPTY_FORM);
   const [errors, setErrors] = useState<Partial<Record<CheckoutField, string>>>({});
-  const [ready, setReady] = useState<{ total: number; eta: string } | null>(null);
   const [placing, setPlacing] = useState(false);
+  const [saved, setSaved] = useState<AddressDto[] | null>(null);
+  const [picked, setPicked] = useState<string | 'new' | null>(null);
+  const [saveAddress, setSaveAddress] = useState(true);
+  const [pending, setPending] = useState<{ number: string; reason: string } | null>(null);
+  const [repriceKey, setRepriceKey] = useState(0);
+  const attempt = useRef<{ key: string; sig: string } | null>(null);
+  const payment = usePayment();
 
   // restore the saved pincode, coupon and address draft once in the browser
   useEffect(() => {
@@ -103,7 +144,27 @@ export function CheckoutView({ offers }: { offers: Offer[] }) {
     return () => clearTimeout(t);
   }, [form, hydrated]);
 
-  const server = useServerPrice(lines, coupon, ship, pay);
+  // logged in: prefill contact details and offer saved addresses
+  useEffect(() => {
+    if (!me) {
+      setSaved(null);
+      return;
+    }
+    setForm((f) => ({ ...f, phone: f.phone || me.phone, email: f.email || me.email || '', name: f.name || me.name || '', whatsappUpdates: me.whatsappOptIn }));
+    api.addresses().then(
+      (items) => {
+        setSaved(items);
+        const def = items.find((a) => a.isDefault) ?? items[0];
+        if (def) {
+          setPicked(def.id);
+          setForm((f) => ({ ...f, ...fromAddress(def) }));
+        } else setPicked('new');
+      },
+      () => setSaved([]),
+    );
+  }, [me]);
+
+  const server = useServerPrice(lines, coupon, ship, pay, `${me?.id ?? ''}:${repriceKey}`);
   // instant estimate while the server answers; the server's number is the one we charge
   const estimate = useMemo(() => {
     const offer = offers.find((o) => o.code === coupon);
@@ -120,7 +181,6 @@ export function CheckoutView({ offers }: { offers: Offer[] }) {
 
   const set = <K extends keyof Form>(k: K, v: Form[K]) => {
     setForm((f) => ({ ...f, [k]: v }));
-    setReady(null);
     if (k in errors) setErrors((e) => ({ ...e, [k]: undefined }));
   };
   const onPin = (raw: string) => {
@@ -135,26 +195,73 @@ export function CheckoutView({ offers }: { offers: Offer[] }) {
     setCoupon(c);
     write('store-coupon', c || null);
   };
+  const pickAddress = (a: AddressDto | 'new') => {
+    if (a === 'new') {
+      setPicked('new');
+      setForm((f) => ({ ...f, name: me?.name ?? '', phone: me?.phone ?? '', line1: '', line2: '', landmark: '', city: '', state: '', pincode: '', addressType: 'home' }));
+    } else {
+      setPicked(a.id);
+      setForm((f) => ({ ...f, ...fromAddress(a) }));
+    }
+    setErrors({});
+  };
 
   const okPin = PINCODE_RE.test(form.pincode);
-  const base = okPin ? transitDays(form.pincode) : 5;
-  const make = T.hasCustom ? 6 : 1;
-  const eta = { standard: dateIn(make + base), express: dateIn(make + Math.max(1, base - 2)) };
+  const make = T.hasCustom ? MAKE_DAYS.custom : MAKE_DAYS.ready;
+  const eta = { standard: dateIn(deliveryDays(form.pincode, { express: false, makeDays: make })), express: dateIn(deliveryDays(form.pincode, { express: true, makeDays: make })) };
   const problems = server.data?.lines.some((l) => !l.available) ?? false;
+  const usingSaved = !!saved?.length && picked !== 'new' && picked !== null;
 
-  const details = () => ({
-    phone: form.phone, email: form.email.trim(), whatsappUpdates: form.whatsappUpdates, pincode: form.pincode, name: form.name,
-    line1: form.line1, line2: form.line2, landmark: form.landmark, city: form.city, state: form.state, addressType: form.addressType,
-    gst: form.gstOn ? { gstin: form.gstin, business: form.business } : null, giftNote: form.giftOn ? form.giftNote : null,
-  });
+  const details = (): CheckoutDetails =>
+    ({
+      phone: form.phone, email: form.email.trim(), whatsappUpdates: form.whatsappUpdates, pincode: form.pincode, name: form.name,
+      line1: form.line1, line2: form.line2, landmark: form.landmark, city: form.city, state: form.state as CheckoutDetails['state'], addressType: form.addressType,
+      gst: form.gstOn ? { gstin: form.gstin, business: form.business } : null, giftNote: form.giftOn ? form.giftNote : null,
+    });
+
+  const done = (order: OrderDto) => {
+    cart.clear();
+    write('store-coupon', null);
+    write(DRAFT_KEY, null);
+    attempt.current = null;
+    router.push(`/account/orders/${order.number}?placed=1`);
+  };
+
+  async function runPayment(start: PaymentStart) {
+    setPending(null);
+    const outcome = await payment.open(start);
+    if (outcome.kind === 'paid') return done(outcome.order);
+    setPending({ number: start.orderNumber, reason: outcome.kind === 'failed' ? outcome.reason : 'You closed the payment window before paying.' });
+    setTimeout(() => document.getElementById('pending')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50);
+  }
+
+  async function retryPayment() {
+    if (!pending) return;
+    setPlacing(true);
+    try {
+      await runPayment(await api.payAgain(pending.number));
+    } catch (x) {
+      ui.toast(x instanceof ApiError ? x.message : 'Please try again');
+      if (x instanceof ApiError && (x.code === 'payment_window_closed' || x.code === 'not_payable')) setPending(null);
+    } finally {
+      setPlacing(false);
+    }
+  }
 
   const submit = async (e?: FormEvent) => {
     e?.preventDefault();
     if (!lines.length) return ui.toast('Your bag is empty');
-    const errs = checkoutErrors(details());
+    if (!me) {
+      document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(() => document.getElementById('otp-phone')?.focus({ preventScroll: true }), 380);
+      return ui.toast('Please verify your mobile number first');
+    }
+    const d = details();
+    const errs = checkoutErrors(d);
     setErrors(errs);
     const first = Object.keys(errs)[0];
     if (first) {
+      if (usingSaved) setPicked('new');
       const el = document.getElementById(`f-${first}`);
       el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       setTimeout(() => el?.focus({ preventScroll: true }), 380);
@@ -162,18 +269,31 @@ export function CheckoutView({ offers }: { offers: Offer[] }) {
     }
     setPlacing(true);
     try {
-      // re-price right before payment so the shopper sees exactly what will be charged
-      const fresh = await api.priceCart(toRequest(lines, coupon, ship, pay));
-      server.set(fresh);
-      if (fresh.lines.some((l) => !l.available)) {
+      await uploadPreviews(lines);
+      const req = toRequest(lines, coupon, ship, pay);
+      const sig = JSON.stringify([req, d, usingSaved ? false : saveAddress]);
+      // same bag and details as the last try = same checkout attempt (the server returns that order)
+      if (!attempt.current || attempt.current.sig !== sig) attempt.current = { key: newKey(), sig };
+      const r = await api.placeOrder({
+        ...req,
+        shipping: ship,
+        payment: pay,
+        details: d,
+        saveAddress: usingSaved ? false : saveAddress,
+        clientKey: attempt.current.key,
+        ...(server.data ? { expectedTotalPaise: server.data.totals.totalPaise } : {}),
+      });
+      if (!r.payment) return done(r.order);
+      await runPayment(r.payment);
+    } catch (x) {
+      if (!(x instanceof ApiError)) return ui.toast('Something went wrong. Please try again.');
+      if (x.status === 401) setMe(null);
+      if (x.code === 'coupon_invalid') applyCoupon('');
+      if (x.code.startsWith('cod_')) setPay('upi');
+      if (['cart_changed', 'price_changed', 'sold_out', 'coupon_invalid'].includes(x.code)) setRepriceKey((n) => n + 1);
+      if (x.code === 'cart_changed' || x.code === 'sold_out')
         [...document.querySelectorAll<HTMLElement>('.co-right, .co-sumbar')].find((el) => el.offsetParent)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        return ui.toast('Something in your bag needs a look');
-      }
-      if (fresh.totals.totalPaise !== T.totalPaise) ui.toast(`Your total is now ${formatINR(fresh.totals.totalPaise)}`);
-      setReady({ total: fresh.totals.totalPaise, eta: eta[ship] });
-      setTimeout(() => document.getElementById('ready')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50);
-    } catch {
-      ui.toast('We could not reach the store. Please try again.');
+      ui.toast(x.message);
     } finally {
       setPlacing(false);
     }
@@ -206,52 +326,86 @@ export function CheckoutView({ offers }: { offers: Offer[] }) {
           <MobileSummary total={T.totalPaise}>{summary}</MobileSummary>
 
           <form id="coForm" noValidate onSubmit={submit}>
-            <section className="co-card">
-              <div className="co-h"><span className="n">1</span><h2>Contact</h2><span className="link" style={{ opacity: 0.6 }} title="Coming with accounts">Log in with OTP · soon</span></div>
-              <div className="fgrid2">
-                <label className={`${fld('phone')} full`}><span>Mobile number</span>
-                  <div className="inp pre"><em>+91</em><input id="f-phone" inputMode="numeric" maxLength={10} autoComplete="tel-national" placeholder="98765 43210" value={form.phone} onChange={(e) => set('phone', e.target.value.replace(/\D/g, '').slice(0, 10))} /></div>
-                  <small className="err">{err('phone')}</small></label>
-                <label className={`${fld('email')} full`}><span>Email <i>(optional, for your GST invoice)</i></span>
-                  <div className="inp"><input id="f-email" type="email" autoComplete="email" placeholder="you@example.com" value={form.email} onChange={(e) => set('email', e.target.value)} /></div>
-                  <small className="err">{err('email')}</small></label>
-                <label className="chk full"><input type="checkbox" checked={form.whatsappUpdates} onChange={(e) => set('whatsappUpdates', e.target.checked)} /><span>Send order updates and my stitch proof on WhatsApp</span></label>
+            <section className="co-card" id="contact">
+              <div className="co-h">
+                <span className="n">{me ? <Check strokeWidth={3} /> : '1'}</span>
+                <h2>Contact</h2>
+                {me && <button type="button" className="link" onClick={() => void logout()}>Not you? Log out</button>}
               </div>
+              {me === undefined ? (
+                <div style={{ height: 90 }} aria-busy="true" />
+              ) : me === null ? (
+                <>
+                  <p style={{ margin: '0 0 14px', color: 'var(--ink-2)', fontSize: 14.5 }}>Verify your mobile number to place the order. We send your order updates and stitch proof here.</p>
+                  <OtpLogin compact defaultPhone={form.phone} />
+                </>
+              ) : (
+                <div className="fgrid2">
+                  <div className="fld full">
+                    <span>Mobile number</span>
+                    <div className="verified"><Check strokeWidth={3} /><b>{formatPhone(me.phone)}</b><small>Verified</small></div>
+                  </div>
+                  <label className={`${fld('email')} full`}><span>Email <i>(optional, for your GST invoice)</i></span>
+                    <div className="inp"><input id="f-email" type="email" autoComplete="email" placeholder="you@example.com" value={form.email} onChange={(e) => set('email', e.target.value)} /></div>
+                    <small className="err">{err('email')}</small></label>
+                  <label className="chk full"><input type="checkbox" checked={form.whatsappUpdates} onChange={(e) => set('whatsappUpdates', e.target.checked)} /><span>Send order updates and my stitch proof on WhatsApp</span></label>
+                </div>
+              )}
             </section>
 
             <section className="co-card">
               <div className="co-h"><span className="n">2</span><h2>Delivery address</h2></div>
-              <div className="fgrid2">
-                <label className={fld('pincode')}><span>Pincode</span>
-                  <div className="inp"><input id="f-pincode" inputMode="numeric" maxLength={6} autoComplete="postal-code" placeholder="400001" value={form.pincode} onChange={(e) => onPin(e.target.value)} /></div>
-                  <small className="err">{err('pincode')}</small>
-                  <small className="okm">{okPin ? (PINS[form.pincode] ? `✓ ${PINS[form.pincode]![0]}, ${PINS[form.pincode]![1]} · we deliver here` : '✓ We deliver to this pincode') : ''}</small></label>
-                <label className={fld('name')}><span>Full name</span>
-                  <div className="inp"><input id="f-name" autoComplete="name" placeholder="Priya Sharma" value={form.name} onChange={(e) => set('name', e.target.value)} /></div>
-                  <small className="err">{err('name')}</small></label>
-                <label className={`${fld('line1')} full`}><span>Flat, house number, building</span>
-                  <div className="inp"><input id="f-line1" autoComplete="address-line1" placeholder="Flat 402, Gulmohar Apartments" value={form.line1} onChange={(e) => set('line1', e.target.value)} /></div>
-                  <small className="err">{err('line1')}</small></label>
-                <label className={`${fld('line2')} full`}><span>Area, street, sector</span>
-                  <div className="inp"><input id="f-line2" autoComplete="address-line2" placeholder="Linking Road, Bandra West" value={form.line2} onChange={(e) => set('line2', e.target.value)} /></div>
-                  <small className="err">{err('line2')}</small></label>
-                <label className="fld"><span>Landmark <i>(optional)</i></span>
-                  <div className="inp"><input placeholder="Near the post office" value={form.landmark} onChange={(e) => set('landmark', e.target.value)} /></div></label>
-                <label className={fld('city')}><span>City</span>
-                  <div className="inp"><input id="f-city" autoComplete="address-level2" placeholder="City" value={form.city} onChange={(e) => set('city', e.target.value)} /></div>
-                  <small className="err">{err('city')}</small></label>
-                <label className={fld('state')}><span>State</span>
-                  <div className="inp sel"><select id="f-state" autoComplete="address-level1" value={form.state} onChange={(e) => set('state', e.target.value)}>
-                    <option value="">Select state</option>
-                    {INDIAN_STATES.map((s) => <option key={s}>{s}</option>)}
-                  </select></div>
-                  <small className="err">{err('state')}</small></label>
-                <div className="fld"><span>Save this address as</span>
-                  <div className="seg2">
-                    {(['home', 'work', 'other'] as const).map((t) => (
-                      <button key={t} type="button" aria-pressed={form.addressType === t} onClick={() => set('addressType', t)}>{t[0]!.toUpperCase() + t.slice(1)}</button>
-                    ))}
-                  </div></div>
+              {!!saved?.length && (
+                <div className="addrs" style={{ marginBottom: picked === 'new' ? 16 : 0 }}>
+                  {saved.map((a) => (
+                    <div key={a.id} role="radio" aria-checked={picked === a.id} tabIndex={0} className={`addr pick${picked === a.id ? ' on' : ''}`} onClick={() => pickAddress(a)} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && pickAddress(a)}>
+                      <b>{a.name}</b><span className="tag">{a.type[0] + a.type.slice(1).toLowerCase()}</span>
+                      <div>{a.line1}, {a.line2}{a.landmark ? `, ${a.landmark}` : ''}</div>
+                      <div>{a.city}, {a.state} {a.pincode} · {formatPhone(a.phone)}</div>
+                    </div>
+                  ))}
+                  {picked !== 'new' && <button className="addr-new" type="button" onClick={() => pickAddress('new')}><Plus />Deliver to a new address</button>}
+                </div>
+              )}
+              {!usingSaved && (
+                <div className="fgrid2">
+                  <label className={fld('pincode')}><span>Pincode</span>
+                    <div className="inp"><input id="f-pincode" inputMode="numeric" maxLength={6} autoComplete="postal-code" placeholder="400001" value={form.pincode} onChange={(e) => onPin(e.target.value)} /></div>
+                    <small className="err">{err('pincode')}</small>
+                    <small className="okm">{okPin ? (PINS[form.pincode] ? `✓ ${PINS[form.pincode]![0]}, ${PINS[form.pincode]![1]} · we deliver here` : '✓ We deliver to this pincode') : ''}</small></label>
+                  <label className={fld('name')}><span>Full name</span>
+                    <div className="inp"><input id="f-name" autoComplete="name" placeholder="Priya Sharma" value={form.name} onChange={(e) => set('name', e.target.value)} /></div>
+                    <small className="err">{err('name')}</small></label>
+                  <label className={`${fld('line1')} full`}><span>Flat, house number, building</span>
+                    <div className="inp"><input id="f-line1" autoComplete="address-line1" placeholder="Flat 402, Gulmohar Apartments" value={form.line1} onChange={(e) => set('line1', e.target.value)} /></div>
+                    <small className="err">{err('line1')}</small></label>
+                  <label className={`${fld('line2')} full`}><span>Area, street, sector</span>
+                    <div className="inp"><input id="f-line2" autoComplete="address-line2" placeholder="Linking Road, Bandra West" value={form.line2} onChange={(e) => set('line2', e.target.value)} /></div>
+                    <small className="err">{err('line2')}</small></label>
+                  <label className="fld"><span>Landmark <i>(optional)</i></span>
+                    <div className="inp"><input placeholder="Near the post office" value={form.landmark} onChange={(e) => set('landmark', e.target.value)} /></div></label>
+                  <label className={fld('city')}><span>City</span>
+                    <div className="inp"><input id="f-city" autoComplete="address-level2" placeholder="City" value={form.city} onChange={(e) => set('city', e.target.value)} /></div>
+                    <small className="err">{err('city')}</small></label>
+                  <label className={fld('state')}><span>State</span>
+                    <div className="inp sel"><select id="f-state" autoComplete="address-level1" value={form.state} onChange={(e) => set('state', e.target.value)}>
+                      <option value="">Select state</option>
+                      {INDIAN_STATES.map((s) => <option key={s}>{s}</option>)}
+                    </select></div>
+                    <small className="err">{err('state')}</small></label>
+                  <label className={fld('phone')}><span>Mobile for delivery</span>
+                    <div className="inp pre"><em>+91</em><input id="f-phone" inputMode="numeric" maxLength={10} autoComplete="tel-national" placeholder="98765 43210" value={form.phone} onChange={(e) => set('phone', e.target.value.replace(/\D/g, '').slice(0, 10))} /></div>
+                    <small className="err">{err('phone')}</small></label>
+                  <div className="fld"><span>Save this address as</span>
+                    <div className="seg2">
+                      {(['home', 'work', 'other'] as const).map((t) => (
+                        <button key={t} type="button" aria-pressed={form.addressType === t} onClick={() => set('addressType', t)}>{t[0]!.toUpperCase() + t.slice(1)}</button>
+                      ))}
+                    </div></div>
+                  {me && <label className="chk full"><input type="checkbox" checked={saveAddress} onChange={(e) => setSaveAddress(e.target.checked)} /><span>Save this address for next time</span></label>}
+                </div>
+              )}
+              <div className="fgrid2" style={{ marginTop: 14 }}>
                 <label className="chk full"><input type="checkbox" checked={form.gstOn} onChange={(e) => set('gstOn', e.target.checked)} /><span>I need a GST invoice for my business</span></label>
                 {form.gstOn && (
                   <div className="full fgrid2">
@@ -274,7 +428,7 @@ export function CheckoutView({ offers }: { offers: Offer[] }) {
                   ['express', 'Express delivery', formatINR(RULES.expressShippingPaise)],
                 ] as const).map(([id, label, price]) => (
                   <label key={id} className={`ropt${ship === id ? ' on' : ''}`}>
-                    <input type="radio" name="ship" value={id} checked={ship === id} onChange={() => { setShip(id); setReady(null); }} />
+                    <input type="radio" name="ship" value={id} checked={ship === id} onChange={() => setShip(id)} />
                     <div><b>{label}</b><small>Arrives by {eta[id]}{okPin ? '' : ' · add your pincode for an exact date'}</small></div>
                     <span className={`rp${price === 'Free' ? ' free' : ''}`}>{price}</span>
                   </label>
@@ -295,7 +449,7 @@ export function CheckoutView({ offers }: { offers: Offer[] }) {
                   return (
                     <div key={p.id} className={`pm${pay === p.id ? ' on' : ''}${dis ? ' dis' : ''}`}>
                       <label>
-                        <input type="radio" name="pay" value={p.id} checked={pay === p.id} disabled={dis} onChange={() => { setPay(p.id); setReady(null); }} />
+                        <input type="radio" name="pay" value={p.id} checked={pay === p.id} disabled={dis} onChange={() => setPay(p.id)} />
                         <span className="pic" style={{ ['--c' as string]: p.colour }}>{p.icon}</span>
                         <div><b>{p.name}</b><small>{sub}</small></div>
                         {tag && <span className={`tagp${p.id === 'upi' ? '' : ' grey'}`}>{tag}</span>}
@@ -313,26 +467,24 @@ export function CheckoutView({ offers }: { offers: Offer[] }) {
               </div>
             </section>
 
+            {pending && (
+              <section className="co-card" id="pending" aria-live="polite">
+                <div className="opay">
+                  <Info />
+                  <span>Order <b>{pending.number}</b> is waiting for payment. {pending.reason} We’ll hold your pieces for 30 minutes.</span>
+                  <button className="btn btn-grad" type="button" disabled={placing} onClick={() => void retryPayment()}>Try again</button>
+                </div>
+                <p className="fine" style={{ margin: 0 }}>Want to pay another way? Pick a different payment method above and press pay.</p>
+              </section>
+            )}
+
             <div className="co-place">
               <button className="btn btn-grad big" type="submit" disabled={placing || problems}>
-                {placing ? <><span className="spin" /><span>Checking your order…</span></> : <><Lock /><span>{payLabel}</span></>}
+                {placing ? <><span className="spin" /><span>{pay === 'cod' ? 'Placing your order…' : 'Opening payment…'}</span></> : <><Lock /><span>{payLabel}</span></>}
               </button>
               <p className="fine">By placing this order you agree to our Terms and Refund policy. Personalised pieces can&apos;t be returned.</p>
             </div>
           </form>
-
-          {ready && (
-            <section className="co-card ready" id="ready" aria-live="polite">
-              <div className="co-h"><span className="n">✓</span><h2>All set: your order checks out</h2></div>
-              <p>The store has confirmed your prices, stock and address. Taking payment and creating the order is the next build step (Razorpay, phase 2), so <b>nothing has been charged</b>.</p>
-              <div className="kv">
-                <div><span>{pay === 'cod' ? 'To pay on delivery' : 'To pay'}</span><b>{formatINR(ready.total)}</b></div>
-                <div><span>Payment</span><b>{PAY_NAME[pay]}</b></div>
-                <div><span>Delivery</span><b>{ship === 'express' ? 'Express' : 'Standard'} · by {ready.eta}</b></div>
-                <div><span>Ship to</span><b>{form.name.trim()}, {form.city.trim()} {form.pincode}</b></div>
-              </div>
-            </section>
-          )}
         </div>
         <aside className="co-right" aria-label="Order summary"><div className="co-sum">{summary}</div></aside>
       </div>
@@ -341,12 +493,13 @@ export function CheckoutView({ offers }: { offers: Offer[] }) {
         <div><small>Total</small><b>{formatINR(T.totalPaise)}</b></div>
         <button className="btn btn-grad" type="submit" form="coForm" disabled={placing || problems}>{pay === 'cod' ? 'Place order' : 'Pay now'}</button>
       </div>
+      {payment.sheet}
     </main>
   );
 }
 
 /** Debounced server pricing for the bag; ignores answers to stale requests. */
-function useServerPrice(lines: CartLine[], coupon: string, ship: Ship, pay: Pay) {
+function useServerPrice(lines: CartLine[], coupon: string, ship: Ship, pay: Pay, refresh: string) {
   const [data, setData] = useState<CartPriceResponse | null>(null);
   const [busy, setBusy] = useState(false);
   const seq = useRef(0);
@@ -363,10 +516,10 @@ function useServerPrice(lines: CartLine[], coupon: string, ship: Ship, pay: Pay)
         .finally(() => n === seq.current && setBusy(false));
     }, 200);
     return () => clearTimeout(t);
-    // body captures every input that changes the price
+    // body captures every input that changes the price; refresh re-asks after login or a refused order
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [body]);
-  return { data, busy, set: (r: CartPriceResponse) => { seq.current++; setData(r); setBusy(false); } };
+  }, [body, refresh]);
+  return { data, busy };
 }
 
 function MobileSummary({ total, children }: { total: number; children: ReactNode }) {
@@ -399,7 +552,7 @@ function Summary(props: {
           const extra = p?.available ? p.extraPaise : (l.extraPaise ?? 0);
           return (
             <div className={`si${p && !p.available ? ' bad' : ''}`} key={l.key}>
-              <div className="th"><img src={l.image.startsWith('data:') ? l.image : media(l.image)} alt="" /><em>{l.qty}</em></div>
+              <div className="th"><img src={media(l.image)} alt="" /><em>{l.qty}</em></div>
               <div>
                 <b>{l.name}</b><small>{l.desc}</small>
                 {extra > 0 && <small>+ {formatINR(extra)} logo digitizing (one-time)</small>}

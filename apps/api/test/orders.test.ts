@@ -366,3 +366,42 @@ describe('account', () => {
     expect(updated.body.me).toMatchObject({ name: 'Priya S', email: 'priya@example.com' });
   });
 });
+
+describe('GST invoices', () => {
+  it('numbers invoices in sequence, splits the tax by state and keeps one invoice per order', async () => {
+    const { sid, phone } = await login();
+    const kit = await variant('poppy');
+    const tote = await variant('tote');
+    const local = await place(app, sid, phone, [{ variantId: kit.id, qty: 1 }, { variantId: tote.id, qty: 1, personalisation: { text: 'Mira', font: 'script', thread: 'rani' } }], { payment: 'upi' });
+    await call(app, 'POST', `/v1/orders/${local.body.order.number}/fake-payment`, { sid, body: { ok: true } });
+    const away = await call(app, 'POST', '/v1/orders', {
+      sid,
+      body: { items: [{ variantId: kit.id, qty: 1 }], shipping: 'express', payment: 'cod', details: { ...details(phone), pincode: '560001', city: 'Bengaluru', state: 'Karnataka' }, clientKey: `inv-${Date.now()}` },
+    });
+    const a = await db.order.findUniqueOrThrow({ where: { number: local.body.order.number } });
+    const b = await db.order.findUniqueOrThrow({ where: { number: away.body.order.number } });
+    const i1 = await app.invoices.issue(a.id);
+    const i2 = await app.invoices.issue(b.id);
+    expect(i1.number).toMatch(/^TK\/\d{4}-\d{2}\/\d{4}$/);
+    expect(i2.seq).toBe(i1.seq + 1);
+    expect((await app.invoices.issue(a.id)).id).toBe(i1.id);
+
+    const s1 = i1.snapshot as any;
+    expect(s1.interState).toBe(false);
+    expect(s1.totals.totalPaise).toBe(a.totalPaise);
+    expect(s1.totals.cgstPaise).toBeGreaterThan(0);
+    expect(s1.lines.map((l: any) => l.rateBp)).toEqual([500, 1800]);
+    const s2 = i2.snapshot as any;
+    expect(s2).toMatchObject({ interState: true, placeOfSupply: 'Karnataka (29)' });
+    expect(s2.totals).toMatchObject({ cgstPaise: 0, sgstPaise: 0, totalPaise: b.totalPaise });
+
+    const pdf = await app.invoices.pdf(i1);
+    expect(pdf.subarray(0, 5).toString()).toBe('%PDF-');
+    fs.writeFileSync(path.join(tmp, '..', `${path.basename(tmp)}-invoice.pdf`), pdf);
+    // the shopper sees a signed link to it
+    const mine = await call(app, 'GET', `/v1/me/orders/${a.number}`, { sid });
+    expect(mine.body.order.invoice.number).toBe(i1.number);
+    const file = await app.inject({ method: 'GET', url: mine.body.order.invoice.url });
+    expect(file.headers['content-type']).toBe('application/pdf');
+  });
+});

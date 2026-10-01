@@ -45,6 +45,7 @@ import {
   type StudioLineSpec,
   type StudioSize,
 } from '@store/shared';
+import { api, ApiError } from '@/lib/api';
 import { cart, ui } from '@/lib/store';
 import { engine, NAME_FONT_CSS } from '@/lib/stitch';
 import { Bag, Chat, Check, ChevronDown, Eye, Info } from '../icons';
@@ -79,7 +80,8 @@ export function StudioView({ start }: { start: StudioStart }) {
   const [mode, setMode] = useState<Mode>('front');
   /* ---- where the design comes from ---- */
   const [how, setHow] = useState<How>(start.how === 'motif' || start.how === 'name' ? 'make' : 'upload');
-  const [src, setSrc] = useState<{ img: Source; file: string; sample: SampleKind | '' } | null>(null);
+  const [src, setSrc] = useState<{ img: Source; file: string; sample: SampleKind | ''; blob?: Blob } | null>(null);
+  const [adding, setAdding] = useState(false);
   const [bgOn, setBgOn] = useState(true);
   const [k, setK] = useState<{ n: number; auto: boolean }>({ n: 4, auto: true });
   const [motif, setMotif] = useState<MotifKey | 'none'>(start.how === 'name' ? 'none' : 'gulaab');
@@ -217,7 +219,7 @@ export function StudioView({ start }: { start: StudioStart }) {
         setHow('upload');
         setK({ n: 4, auto: true });
         setOff([0, 0]);
-        setSrc({ img: im, file: f.name, sample: '' });
+        setSrc({ img: im, file: f.name, sample: '', blob: f });
         ui.toast('Your design is on the garment');
       };
       im.onerror = () => setFileWarn('We couldn’t read that image. Try saving it again as a PNG.');
@@ -349,32 +351,56 @@ export function StudioView({ start }: { start: StudioStart }) {
   const total = qty ? price.unitPaise * qty + price.digitizePaise : 0;
   const canAdd = qty > 0 && !!design;
 
-  const add = () => {
+  /** the logo file the studio's digitizer works from: the shopper's own file, or the sample drawn as a PNG */
+  const logoBlob = async (): Promise<{ blob: Blob; name: string } | null> => {
+    if (how !== 'upload' || !src) return null;
+    if (src.blob) return { blob: src.blob, name: src.file };
+    const c = src.img as HTMLCanvasElement;
+    const blob = await new Promise<Blob | null>((r) => c.toBlob(r, 'image/png'));
+    return blob ? { blob, name: `${src.sample || 'logo'}.png` } : null;
+  };
+
+  const add = async () => {
     if (!design) return ui.toast('Add a design first');
     if (!qty) return ui.toast('Choose how many you need');
-    const thumb = engine.snapshot(scene, 'front', 270).toDataURL('image/jpeg', 0.82);
-    const what = how === 'make' ? (debouncedName ? 'your name' : 'a motif') : 'your logo';
-    const sizes = g.sizes ? Object.fromEntries(STUDIO_SIZES.filter((s) => mix[s]).map((s) => [s, mix[s]])) : undefined;
-    const mixText = g.sizes ? STUDIO_SIZES.filter((s) => mix[s]).map((s) => `${s}×${mix[s]}`).join(', ') : `${qty} pcs`;
-    const spec: StudioLineSpec = {
-      garment: g.id, colour, view, placement: place, widthCm: size, stitches, source: how, label: label || 'design',
-      ...(sizes ? { sizes } : {}),
-    };
-    cart.add({
-      key: `studio-${Date.now()}`,
-      variantId: `studio:${g.id}`,
-      slug: 'studio',
-      name: `${g.name} with ${what}`,
-      image: thumb,
-      qty,
-      unitPricePaise: price.unitPaise,
-      unitMrpPaise: price.unitMrpPaise,
-      extraPaise: price.digitizePaise,
-      desc: `${GC[colour][0]} · ${P.n}, ${size} cm · ${label || 'design'} · ${mixText}`,
-      custom: true,
-      studio: spec,
-    });
-    ui.open('cart');
+    setAdding(true);
+    try {
+      const shot = engine.snapshot(scene, 'front', 270);
+      const thumb = shot.toDataURL('image/jpeg', 0.82);
+      // upload now, so the order carries the exact logo and the mockup the shopper approved
+      const logo = await logoBlob();
+      const preview = await new Promise<Blob | null>((r) => engine.snapshot(scene, 'front', 900).toBlob(r, 'image/jpeg', 0.88));
+      const uploads: string[] = [];
+      if (logo) uploads.push((await api.upload('logo', logo.blob, logo.name)).id);
+      if (preview) uploads.push((await api.upload('preview', preview, 'mockup.jpg')).id);
+      const what = how === 'make' ? (debouncedName ? 'your name' : 'a motif') : 'your logo';
+      const sizes = g.sizes ? Object.fromEntries(STUDIO_SIZES.filter((s) => mix[s]).map((s) => [s, mix[s]])) : undefined;
+      const mixText = g.sizes ? STUDIO_SIZES.filter((s) => mix[s]).map((s) => `${s}×${mix[s]}`).join(', ') : `${qty} pcs`;
+      const spec: StudioLineSpec = {
+        garment: g.id, colour, view, placement: place, widthCm: size, stitches, source: how, label: label || 'design',
+        ...(sizes ? { sizes } : {}),
+      };
+      cart.add({
+        key: `studio-${Date.now()}`,
+        variantId: `studio:${g.id}`,
+        slug: 'studio',
+        name: `${g.name} with ${what}`,
+        image: thumb,
+        qty,
+        unitPricePaise: price.unitPaise,
+        unitMrpPaise: price.unitMrpPaise,
+        extraPaise: price.digitizePaise,
+        desc: `${GC[colour][0]} · ${P.n}, ${size} cm · ${label || 'design'} · ${mixText}`,
+        custom: true,
+        studio: spec,
+        uploads,
+      });
+      ui.open('cart');
+    } catch (e) {
+      ui.toast(e instanceof ApiError ? e.message : 'We couldn’t add it to your bag. Please try again.');
+    } finally {
+      setAdding(false);
+    }
   };
   const quote = () => {
     const threads = design ? design.threads.map((t) => TPAL[t]![0]).join(', ') : '';
@@ -615,7 +641,7 @@ export function StudioView({ start }: { start: StudioStart }) {
                 {how === 'upload' && <div><span>{price.digitizePaise ? 'Logo digitizing (one-time)' : 'Logo digitizing · free on 25+'}</span><span>{price.digitizePaise ? formatINR(price.digitizePaise) : 'Free'}</span></div>}
               </div>
               <div className="total"><span>Total <small className="mut">incl. of all taxes</small></span><b>{formatINR(total)}</b></div>
-              <button className="btn btn-grad" type="button" style={{ width: '100%' }} disabled={!canAdd} onClick={add}><Bag /><span>{addLabel}</span></button>
+              <button className="btn btn-grad" type="button" style={{ width: '100%' }} disabled={!canAdd || adding} onClick={() => void add()}>{adding ? <span className="spin" /> : <Bag />}<span>{adding ? 'Adding your design…' : addLabel}</span></button>
               <div className="alt"><button className="pill" type="button" onClick={quote}><Chat />Bulk quote on WhatsApp</button></div>
               <ul className="notes">
                 <li><Check strokeWidth={2.4} />Our digitizer redraws your logo as a stitch file and WhatsApps you a proof within 24 hours</li>
@@ -642,7 +668,7 @@ export function StudioView({ start }: { start: StudioStart }) {
       )}
       <div className="up-mbar">
         <div><small>Total</small><b>{formatINR(total)}</b></div>
-        <button className="btn btn-grad" type="button" disabled={!canAdd} onClick={add}>Add to bag</button>
+        <button className="btn btn-grad" type="button" disabled={!canAdd || adding} onClick={() => void add()}>{adding ? 'Adding…' : 'Add to bag'}</button>
       </div>
     </>
   );

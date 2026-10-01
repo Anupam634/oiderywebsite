@@ -100,3 +100,13 @@ describe('scene geometry', () => {
     expect(cv.S).toBeCloseTo(900 / cv.cw, 10);
   });
 });
+
+describe('studio placements in @store/shared', () => {
+  it('match the garment photos (names and width limits)', async () => {
+    const { STUDIO_PLACEMENTS } = await import('../../shared/src/studio');
+    for (const view of GARMENT_VIEWS) {
+      const want = Object.fromEntries(Object.entries(GARMENTS[view].place).map(([k, p]) => [k, { name: p!.n, min: p!.min, max: p!.max }]));
+      expect(STUDIO_PLACEMENTS[view]).toEqual(want);
+    }
+  });
+});

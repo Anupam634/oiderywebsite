@@ -2,10 +2,11 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import { FREE_SHIPPING_MIN_PAISE, formatINR, type CategoryNode, type ProductCard } from '@store/shared';
+import { BRAND, FREE_SHIPPING_MIN_PAISE, formatINR, type CategoryNode, type ProductCard } from '@store/shared';
 import { api } from '@/lib/api';
 import { categoryHref, productHref, SHOP_LINKS } from '@/lib/links';
 import { media } from '@/lib/media';
+import { useMe } from '@/lib/session';
 import { cart, lineTotal, ui, useCart, useWishlist, wishlist } from '@/lib/store';
 import { addCardToBag } from './ProductCard';
 import { SearchRow, useSuggestions } from './HeaderClient';
@@ -174,6 +175,11 @@ function SearchOverlay({ onClose }: { onClose: () => void }) {
   );
 }
 
+function MenuAccountLink() {
+  const me = useMe();
+  return <Link href={me ? '/account' : '/login'}><b>{me ? 'My account & orders' : 'Log in / sign up'}</b></Link>;
+}
+
 function MobileMenu({ categories, onClose }: { categories: CategoryNode[]; onClose: () => void }) {
   const subs = categories.flatMap((c) => c.children.map((s) => ({ ...s, parent: c.slug })));
   return (
@@ -192,13 +198,14 @@ function MobileMenu({ categories, onClose }: { categories: CategoryNode[]; onClo
           ))}
         </div>
         <nav className="mp-links">
+          <MenuAccountLink />
           <Link href={SHOP_LINKS.all}>All products</Link>
           <Link href={SHOP_LINKS.new}>New arrivals</Link>
           <Link href={SHOP_LINKS.personalised}>Personalise with a name</Link>
           <Link href={SHOP_LINKS.under999}>Gifts under ₹999</Link>
           <Link href={categoryHref('corporate')}>Corporate &amp; bulk orders</Link>
         </nav>
-        <button className="btn btn-wa mp-wa" type="button" onClick={() => ui.toast('Opens a WhatsApp chat with the studio')}><Chat />Chat with the studio</button>
+        <a className="btn btn-wa mp-wa" href={`https://wa.me/${BRAND.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener"><Chat />Chat with the studio</a>
       </div>
     </div>
   );

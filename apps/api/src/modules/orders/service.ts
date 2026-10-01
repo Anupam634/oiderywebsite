@@ -370,8 +370,9 @@ export class OrderService {
       await tx.orderItem.update({ where: { id: i.id }, data: { stockReserved: 0 } });
     }
     if (o.couponCode) await tx.$executeRaw`UPDATE "Coupon" SET "usedCount" = GREATEST("usedCount" - 1, 0) WHERE "code" = ${o.couponCode}`;
-    await tx.order.update({ where: { id: o.id }, data: { status: 'CANCELLED', cancelledAt: new Date(), cancelReason: reason } });
-    await this.event(tx, o.id, 'cancelled', `Order cancelled: ${reason}`, { actor, adminId });
+    await tx.order.update({ where: { id: o.id }, data: { status: 'CANCELLED', cancelledAt: new Date(), cancelReason: reason || (actor === 'CUSTOMER' ? 'Cancelled by the customer' : null) } });
+    const message = actor === 'CUSTOMER' ? `You cancelled the order${reason ? ` (${reason})` : ''}` : `Order cancelled: ${reason}`;
+    await this.event(tx, o.id, 'cancelled', message, { actor, adminId });
     return true;
   }
 

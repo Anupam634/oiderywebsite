@@ -528,3 +528,4 @@ footer{background:#140A24;color:#E9E1F5;padding:56px 0 24px;overflow:hidden;marg
 /* phone search row (home + shop) */
 @media(max-width:1020px){.hdr.has-msrow .msrow{display:block;padding-bottom:10px}.hdr.has-msrow .ib.sbtn{display:none}}
 .fgrid .fsoon{display:block;padding:5px 0;color:rgba(233,225,245,.5);font-weight:550;font-size:15px}
+.icons .avatar{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#FF2E93,#FF8A00);color:#fff;font-size:13px;font-weight:800}

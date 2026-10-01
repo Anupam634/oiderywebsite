@@ -4,6 +4,7 @@ import { BRAND } from '@store/shared';
 import { Lock, Logo } from '@/components/icons';
 import { CheckoutSteps } from '@/components/checkout/CheckoutSteps';
 import '@/styles/checkout.css';
+import '@/styles/account.css';
 
 /* Checkout keeps a quiet header and footer: no menu or search to pull people away mid-payment. */
 export default function CheckoutLayout({ children }: { children: ReactNode }) {

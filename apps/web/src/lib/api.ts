@@ -1,26 +1,54 @@
-import type { CategoryNode, Facets, ProductCard, ProductDetail } from '@store/shared';
+import type {
+  AddressDto,
+  CategoryNode,
+  CheckoutDetails,
+  Facets,
+  Me,
+  OrderDto,
+  OrderSummaryDto,
+  PaymentStart,
+  PlaceOrderResult,
+  ProductCard,
+  ProductDetail,
+  StudioLineSpec,
+  Totals,
+} from '@store/shared';
 
-/* Talks to the store API. Server components use API_URL; the browser uses NEXT_PUBLIC_API_URL. */
-const base = () =>
-  (typeof window === 'undefined' ? process.env.API_URL : process.env.NEXT_PUBLIC_API_URL) ?? 'http://localhost:4000';
+/* Talks to the store API. Server components call API_URL directly; the browser goes through this site's
+   /api proxy (same origin, so the login cookie travels with it). */
+const base = () => (typeof window === 'undefined' ? (process.env.API_URL ?? 'http://localhost:4000') : '/api');
 
 export class ApiError extends Error {
   constructor(
     public status: number,
     message: string,
+    public code = 'error',
+    public details?: unknown,
   ) {
     super(message);
   }
 }
 
-async function request<T>(path: string, init?: RequestInit & { next?: { revalidate?: number | false; tags?: string[] } }): Promise<T> {
-  const res = await fetch(base() + path, { ...init, headers: { accept: 'application/json', ...(init?.body ? { 'content-type': 'application/json' } : {}), ...init?.headers } });
+type Init = RequestInit & { next?: { revalidate?: number | false; tags?: string[] } };
+
+async function request<T>(path: string, init?: Init): Promise<T> {
+  let res: Response;
+  try {
+    const json = init?.body && typeof init.body === 'string';
+    res = await fetch(base() + path, { ...init, headers: { accept: 'application/json', ...(json ? { 'content-type': 'application/json' } : {}), ...init?.headers } });
+  } catch {
+    throw new ApiError(0, 'You seem to be offline. Please check your connection.', 'offline');
+  }
   if (!res.ok) {
-    const body = (await res.json().catch(() => null)) as { error?: { message?: string } } | null;
-    throw new ApiError(res.status, body?.error?.message ?? res.statusText);
+    const body = (await res.json().catch(() => null)) as { error?: { message?: string; code?: string; details?: unknown } } | null;
+    throw new ApiError(res.status, body?.error?.message ?? res.statusText, body?.error?.code, body?.error?.details);
   }
   return res.json() as Promise<T>;
 }
+const post = <T>(path: string, body: unknown = {}) => request<T>(path, { method: 'POST', body: JSON.stringify(body), cache: 'no-store' });
+const patch = <T>(path: string, body: unknown) => request<T>(path, { method: 'PATCH', body: JSON.stringify(body), cache: 'no-store' });
+const del = <T>(path: string) => request<T>(path, { method: 'DELETE', cache: 'no-store' });
+const priv = <T>(path: string) => request<T>(path, { cache: 'no-store' });
 
 const CATALOG = { next: { revalidate: 60, tags: ['catalog'] } };
 
@@ -32,7 +60,53 @@ export interface Listing {
   facets: Facets;
 }
 
+export interface CartPriceLine {
+  variantId: string;
+  available: boolean;
+  problems: string[];
+  qty: number;
+  unitPricePaise: number;
+  unitMrpPaise: number;
+  extraPaise: number;
+  custom: boolean;
+}
+export interface CartPriceResponse {
+  lines: CartPriceLine[];
+  totals: Totals;
+  coupon: { code: string; valid: boolean; applied: boolean; message: string } | null;
+}
+
+export type CartItemRequest =
+  | { variantId: string; qty: number; personalisation?: { text: string; font: string; thread: string; flowers?: number } | null; giftWrap?: boolean; petName?: string; uploads?: string[] }
+  | { qty: number; studio: StudioLineSpec; uploads?: string[] };
+
+export interface CartPriceRequest {
+  items: CartItemRequest[];
+  coupon?: string;
+  shipping?: 'standard' | 'express';
+  payment?: 'upi' | 'card' | 'netbanking' | 'wallet' | 'cod';
+}
+
+export interface PlaceOrderRequest extends CartPriceRequest {
+  shipping: 'standard' | 'express';
+  payment: 'upi' | 'card' | 'netbanking' | 'wallet' | 'cod';
+  details: CheckoutDetails;
+  saveAddress: boolean;
+  clientKey: string;
+  expectedTotalPaise?: number;
+}
+
+export interface Offer {
+  code: string;
+  label: string;
+  percent: number;
+  maxDiscountPaise: number;
+  minSubtotalPaise: number;
+  firstOrderOnly: boolean;
+}
+
 export const api = {
+  /* catalogue */
   categories: () => request<{ items: CategoryNode[] }>('/v1/categories', CATALOG).then((r) => r.items),
   products: (params: URLSearchParams | string = '') => request<Listing>(`/v1/products?${params.toString()}`, CATALOG),
   product: async (slug: string) => {
@@ -45,30 +119,45 @@ export const api = {
   },
   search: (q: string, limit = 6) => request<{ items: ProductCard[]; total: number }>(`/v1/search?q=${encodeURIComponent(q)}&limit=${limit}`),
   coupons: () => request<{ items: Offer[] }>('/v1/coupons', { next: { revalidate: 60 } }).then((r) => r.items),
-  priceCart: (body: CartPriceRequest) => request<CartPriceResponse>('/v1/cart/price', { method: 'POST', body: JSON.stringify(body) }),
+  priceCart: (body: CartPriceRequest) => post<CartPriceResponse>('/v1/cart/price', body),
+
+  /* login */
+  sendOtp: (phone: string) => post<{ ok: true; length: number; resendInSeconds: number; devCode?: string }>('/v1/auth/otp', { phone }),
+  verifyOtp: (phone: string, code: string) => post<{ me: Me; isNew: boolean }>('/v1/auth/verify', { phone, code }),
+  logout: () => post<{ ok: true }>('/v1/auth/logout'),
+  me: () => priv<{ me: Me | null }>('/v1/me').then((r) => r.me),
+  updateMe: (body: Partial<Pick<Me, 'name' | 'email' | 'whatsappOptIn'>>) => patch<{ me: Me }>('/v1/me', body).then((r) => r.me),
+
+  /* account */
+  addresses: () => priv<{ items: AddressDto[] }>('/v1/me/addresses').then((r) => r.items),
+  addAddress: (a: Omit<AddressDto, 'id' | 'isDefault'> & { isDefault?: boolean }) => post<{ address: AddressDto }>('/v1/me/addresses', a).then((r) => r.address),
+  updateAddress: (id: string, a: Partial<Omit<AddressDto, 'id'>>) => patch<{ address: AddressDto }>(`/v1/me/addresses/${id}`, a).then((r) => r.address),
+  deleteAddress: (id: string) => del<{ ok: true }>(`/v1/me/addresses/${id}`),
+  myOrders: (page = 1) => priv<{ items: OrderSummaryDto[]; total: number; page: number; pageSize: number }>(`/v1/me/orders?page=${page}`),
+  myOrder: (number: string) => priv<{ order: OrderDto }>(`/v1/me/orders/${encodeURIComponent(number)}`).then((r) => r.order),
+  cancelOrder: (number: string, reason?: string) => post<{ order: OrderDto }>(`/v1/me/orders/${encodeURIComponent(number)}/cancel`, reason ? { reason } : {}).then((r) => r.order),
+
+  /* checkout */
+  placeOrder: (body: PlaceOrderRequest) => post<PlaceOrderResult>('/v1/orders', body),
+  payAgain: (number: string) => post<{ payment: PaymentStart }>(`/v1/orders/${encodeURIComponent(number)}/pay`).then((r) => r.payment),
+  confirmRazorpay: (number: string, body: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }) =>
+    post<{ order: OrderDto }>(`/v1/orders/${encodeURIComponent(number)}/razorpay`, body).then((r) => r.order),
+  fakePayment: (number: string, ok: boolean) => post<{ order: OrderDto }>(`/v1/orders/${encodeURIComponent(number)}/fake-payment`, { ok }).then((r) => r.order),
+  paymentFailed: (number: string, reason?: string) => post<{ ok: true }>(`/v1/orders/${encodeURIComponent(number)}/payment-failed`, reason ? { reason } : {}),
+
+  /** upload a logo, pet photo or preview render (multipart) */
+  upload: async (kind: 'logo' | 'pet' | 'preview', file: Blob, name = 'upload') => {
+    const fd = new FormData();
+    fd.append('kind', kind);
+    fd.append('file', file, name);
+    let res: Response;
+    try {
+      res = await fetch(`${base()}/v1/uploads`, { method: 'POST', body: fd });
+    } catch {
+      throw new ApiError(0, 'You seem to be offline. Please check your connection.', 'offline');
+    }
+    const body = (await res.json().catch(() => null)) as { id?: string; error?: { message?: string; code?: string } } | null;
+    if (!res.ok || !body?.id) throw new ApiError(res.status, body?.error?.message ?? 'Upload failed', body?.error?.code);
+    return body as { id: string; kind: string; width: number | null; height: number | null; bytes: number };
+  },
 };
-
-export interface CartPriceResponse {
-  lines: { variantId: string; available: boolean; problems: string[]; qty: number; unitPricePaise: number; unitMrpPaise: number; extraPaise: number; custom: boolean }[];
-  totals: import('@store/shared').Totals;
-  coupon: { code: string; valid: boolean; applied: boolean; message: string } | null;
-}
-
-export interface CartPriceRequest {
-  items: (
-    | { variantId: string; qty: number; personalisation?: { text: string; font: string; thread: string; flowers?: number } | null; giftWrap?: boolean }
-    | { qty: number; studio: import('@store/shared').StudioLineSpec }
-  )[];
-  coupon?: string;
-  shipping?: 'standard' | 'express';
-  payment?: 'upi' | 'card' | 'netbanking' | 'wallet' | 'cod';
-}
-
-export interface Offer {
-  code: string;
-  label: string;
-  percent: number;
-  maxDiscountPaise: number;
-  minSubtotalPaise: number;
-  firstOrderOnly: boolean;
-}
