@@ -13,15 +13,19 @@ export interface StudioGarment {
   sizes: boolean;
   /** garment colours from @store/stitch GC */
   colours: readonly string[];
+  /** GST: HSN code and rule (see gst.ts); confirm with your CA */
+  hsn: string;
+  gstRule: 'threshold' | 'flat';
+  gstRateBp: number;
 }
 
 export const STUDIO_GARMENTS: readonly StudioGarment[] = [
-  { id: 'tee', name: 'T-shirt', views: [['tee', 'On hanger'], ['model', 'On model']], pricePaise: 44_900, mrpPaise: 59_900, sizes: true, colours: ['white', 'kajal', 'neel', 'maroon', 'bottle', 'haldi', 'gulaab', 'chandi'] },
-  { id: 'polo', name: 'Polo', views: [['polo', 'On hanger']], pricePaise: 64_900, mrpPaise: 84_900, sizes: true, colours: ['white', 'kajal', 'neel', 'maroon', 'bottle', 'sky', 'chandi'] },
-  { id: 'shirt', name: 'Shirt', views: [['shirt', 'On hanger']], pricePaise: 89_900, mrpPaise: 119_900, sizes: true, colours: ['white', 'sky', 'neel', 'kajal', 'chandi', 'gulaab'] },
-  { id: 'hoodie', name: 'Hoodie', views: [['hoodie', 'On hanger']], pricePaise: 119_900, mrpPaise: 149_900, sizes: true, colours: ['white', 'kajal', 'neel', 'maroon', 'bottle', 'chandi', 'gulaab'] },
-  { id: 'cap', name: 'Cap', views: [['cap', 'Worn']], pricePaise: 34_900, mrpPaise: 44_900, sizes: false, colours: ['white', 'kajal', 'neel', 'maroon', 'bottle', 'haldi'] },
-  { id: 'tote', name: 'Tote bag', views: [['tote', 'Flat lay']], pricePaise: 24_900, mrpPaise: 34_900, sizes: false, colours: ['natural', 'kajal', 'neel', 'maroon', 'bottle', 'haldi'] },
+  { id: 'tee', name: 'T-shirt', views: [['tee', 'On hanger'], ['model', 'On model']], pricePaise: 44_900, mrpPaise: 59_900, sizes: true, colours: ['white', 'kajal', 'neel', 'maroon', 'bottle', 'haldi', 'gulaab', 'chandi'], hsn: '6109', gstRule: 'threshold', gstRateBp: 500 },
+  { id: 'polo', name: 'Polo', views: [['polo', 'On hanger']], pricePaise: 64_900, mrpPaise: 84_900, sizes: true, colours: ['white', 'kajal', 'neel', 'maroon', 'bottle', 'sky', 'chandi'], hsn: '6105', gstRule: 'threshold', gstRateBp: 500 },
+  { id: 'shirt', name: 'Shirt', views: [['shirt', 'On hanger']], pricePaise: 89_900, mrpPaise: 119_900, sizes: true, colours: ['white', 'sky', 'neel', 'kajal', 'chandi', 'gulaab'], hsn: '6205', gstRule: 'threshold', gstRateBp: 500 },
+  { id: 'hoodie', name: 'Hoodie', views: [['hoodie', 'On hanger']], pricePaise: 119_900, mrpPaise: 149_900, sizes: true, colours: ['white', 'kajal', 'neel', 'maroon', 'bottle', 'chandi', 'gulaab'], hsn: '6110', gstRule: 'threshold', gstRateBp: 500 },
+  { id: 'cap', name: 'Cap', views: [['cap', 'Worn']], pricePaise: 34_900, mrpPaise: 44_900, sizes: false, colours: ['white', 'kajal', 'neel', 'maroon', 'bottle', 'haldi'], hsn: '6505', gstRule: 'flat', gstRateBp: 500 },
+  { id: 'tote', name: 'Tote bag', views: [['tote', 'Flat lay']], pricePaise: 24_900, mrpPaise: 34_900, sizes: false, colours: ['natural', 'kajal', 'neel', 'maroon', 'bottle', 'haldi'], hsn: '4202', gstRule: 'flat', gstRateBp: 1800 },
 ];
 export const studioGarment = (id: string) => STUDIO_GARMENTS.find((g) => g.id === id);
 

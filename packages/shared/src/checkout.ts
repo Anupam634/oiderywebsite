@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { PHONE_RE } from './phone';
 
 /* Contact + delivery details. The web form and (phase 2) the orders API validate with the same schema. */
 
@@ -10,7 +11,6 @@ export const INDIAN_STATES = [
   'Uttar Pradesh', 'Uttarakhand', 'West Bengal',
 ] as const;
 
-export const PHONE_RE = /^[6-9]\d{9}$/;
 export const PINCODE_RE = /^[1-9]\d{5}$/;
 export const GSTIN_RE = /^\d{2}[A-Z]{5}\d{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/;
 

@@ -6,6 +6,8 @@ export class AppError extends Error {
     public statusCode: number,
     public code: string,
     message: string,
+    /** extra data for the client (e.g. the bag lines that need a look) */
+    public details?: unknown,
   ) {
     super(message);
   }
@@ -23,7 +25,8 @@ export function registerErrorHandler(app: FastifyInstance) {
         error: { code: 'invalid_request', message: 'The request is not valid', details: err.validation.map((v) => ({ path: v.instancePath, message: v.message })) },
       });
     }
-    if (err instanceof AppError) return reply.code(err.statusCode).send({ error: { code: err.code, message: err.message } });
+    if (err instanceof AppError)
+      return reply.code(err.statusCode).send({ error: { code: err.code, message: err.message, ...(err.details !== undefined ? { details: err.details } : {}) } });
     const status = (err as FastifyError).statusCode ?? 500;
     if (status >= 500) req.log.error({ err }, 'request failed');
     return reply.code(status).send({ error: { code: status === 429 ? 'rate_limited' : 'server_error', message: status >= 500 ? 'Something went wrong' : err.message } });

@@ -7,4 +7,6 @@ export const BRAND = {
   supportEmail: 'hello@example.com',
   gstin: null as string | null,
   currency: 'INR',
+  /** order numbers look like TK-7Q4M2X; invoices TK/2026-27/0001 */
+  orderPrefix: 'TK',
 } as const;

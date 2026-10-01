@@ -25,6 +25,31 @@ const zoomOf = (path: string) => {
 };
 const json = (v: object | null) => (v === null ? undefined : (v as never));
 
+/* GST defaults per product (HSN code + rule). "threshold" = textiles: 5% up to ₹2,500 a piece, 18% above.
+   These are starting points only: the studio's CA must confirm them, and the admin can change them. */
+const TAX: Record<string, { hsnCode: string; gstRule: 'threshold' | 'flat'; gstRateBp: number }> = {
+  kurta: { hsnCode: '6211', gstRule: 'threshold', gstRateBp: 500 },
+  lehenga: { hsnCode: '6204', gstRule: 'threshold', gstRateBp: 500 },
+  dupatta: { hsnCode: '6214', gstRule: 'threshold', gstRateBp: 500 },
+  denim: { hsnCode: '6202', gstRule: 'threshold', gstRateBp: 500 },
+  knit: { hsnCode: '6110', gstRule: 'threshold', gstRateBp: 500 },
+  nametee: { hsnCode: '6109', gstRule: 'threshold', gstRateBp: 500 },
+  peacock: { hsnCode: '6110', gstRule: 'threshold', gstRateBp: 500 },
+  logopolo: { hsnCode: '6105', gstRule: 'threshold', gstRateBp: 500 },
+  tulip: { hsnCode: '6304', gstRule: 'threshold', gstRateBp: 500 },
+  birds: { hsnCode: '6304', gstRule: 'threshold', gstRateBp: 500 },
+  poppy: { hsnCode: '6308', gstRule: 'threshold', gstRateBp: 500 },
+  tote: { hsnCode: '4202', gstRule: 'flat', gstRateBp: 1800 },
+  logotote: { hsnCode: '4202', gstRule: 'flat', gstRateBp: 1800 },
+  cap: { hsnCode: '6505', gstRule: 'flat', gstRateBp: 500 },
+  teamcap: { hsnCode: '6505', gstRule: 'flat', gstRateBp: 500 },
+  pet: { hsnCode: '5810', gstRule: 'flat', gstRateBp: 500 },
+  wreath: { hsnCode: '5810', gstRule: 'flat', gstRateBp: 500 },
+  cherry: { hsnCode: '5810', gstRule: 'flat', gstRateBp: 500 },
+  meadow: { hsnCode: '5810', gstRule: 'flat', gstRateBp: 500 },
+  phoolrani: { hsnCode: '5810', gstRule: 'flat', gstRateBp: 500 },
+};
+
 const COUPONS = [
   { code: 'TAANKA10', label: '10% off, first order', percent: 10, maxDiscountPaise: 30_000, minSubtotalPaise: 0, firstOrderOnly: true },
   { code: 'FESTIVE15', label: '15% off above ₹2,999', percent: 15, maxDiscountPaise: 60_000, minSubtotalPaise: 299_900, firstOrderOnly: false },
@@ -32,6 +57,11 @@ const COUPONS = [
 
 async function main() {
   const db = createPrisma(process.env.DATABASE_URL!);
+  // the seed overwrites products, prices and stock: on a live shop only run it on purpose
+  if (process.env.NODE_ENV === 'production' && !process.argv.includes('--force') && (await db.order.count()) > 0) {
+    console.error('This database already has orders. Refusing to reseed the catalogue (pass --force if you really mean it).');
+    process.exit(1);
+  }
   const catId = new Map<string, string>();
   for (const c of [...data.categories].sort((a, b) => Number(!!a.parent) - Number(!!b.parent))) {
     const row = { name: c.name, blurb: c.blurb, image: c.image, sortOrder: c.sortOrder, parentId: c.parent ? catId.get(c.parent)! : null };
@@ -49,6 +79,7 @@ async function main() {
       shipMode: p.shipMode, madeDays: p.madeDays, shipNote: p.shipNote, isUnique: p.isUnique, handMade: p.handMade, needsSize: p.needsSize,
       sizeLabel: p.sizeLabel, sizeGuide: p.sizeGuide, studioGarment: p.studioGarment, studioSample: p.studioSample, petPhoto: p.petPhoto,
       personalisation: json(p.personalisation), livePreview: json(p.livePreview), details: p.details as never,
+      ...(TAX[p.code] ?? {}),
     };
     const saved = await db.$transaction(async (tx) => {
       const prod = await tx.product.upsert({ where: { code: p.code }, create: { code: p.code, ...fields }, update: fields });

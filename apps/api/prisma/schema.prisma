@@ -102,11 +102,17 @@ model Product {
   details         Json
   seoTitle        String?
   seoDescription  String?
+  /// GST: HSN code and rule ("threshold" = textiles: 5% up to ₹2,500 a piece, 18% above; "flat" = gstRateBp). Confirm with your CA.
+  hsnCode         String            @default("6211")
+  gstRule         String            @default("threshold")
+  gstRateBp       Int               @default(500)
   images          ProductImage[]
   variants        ProductVariant[]
   reviews         Review[]
   relatedFrom     ProductRelation[] @relation("RelatedFrom")
   relatedTo       ProductRelation[] @relation("RelatedTo")
+  orderItems      OrderItem[]
+  stitchFiles     StitchFile[]
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
 
@@ -184,8 +190,489 @@ model Coupon {
   maxDiscountPaise Int
   minSubtotalPaise Int       @default(0)
   firstOrderOnly   Boolean   @default(false)
+  /// total redemptions allowed (null = no limit); usedCount counts placed orders
+  maxUses          Int?
+  usedCount        Int       @default(0)
   active           Boolean   @default(true)
   startsAt         DateTime?
   endsAt           DateTime?
   createdAt        DateTime  @default(now())
+}
+
+/**
+ * ================= customers and sign-in =================
+ */
+
+model Customer {
+  id            String    @id @default(cuid())
+  /// 10-digit Indian mobile number, verified by OTP
+  phone         String    @unique
+  name          String?
+  email         String?
+  whatsappOptIn Boolean   @default(true)
+  /// set by the studio after fake or abusive orders
+  codBlocked    Boolean   @default(false)
+  notes         String?
+  createdAt     DateTime  @default(now())
+  lastLoginAt   DateTime?
+  sessions      Session[]
+  addresses     Address[]
+  orders        Order[]
+  uploads       Upload[]
+}
+
+enum SessionKind {
+  CUSTOMER
+  ADMIN
+}
+
+/// Cookie sessions. Only a SHA-256 of the token is stored.
+model Session {
+  id         String      @id @default(cuid())
+  tokenHash  String      @unique
+  kind       SessionKind
+  customerId String?
+  customer   Customer?   @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  adminId    String?
+  admin      AdminUser?  @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  ip         String?
+  userAgent  String?
+  createdAt  DateTime    @default(now())
+  lastSeenAt DateTime    @default(now())
+  expiresAt  DateTime
+
+  @@index([customerId])
+  @@index([adminId])
+  @@index([expiresAt])
+}
+
+/// One OTP request. Codes we generate are stored hashed; delegated providers (Twilio Verify, MSG91) keep their own.
+model OtpChallenge {
+  id         String    @id @default(cuid())
+  phone      String
+  provider   String
+  codeHash   String?
+  attempts   Int       @default(0)
+  ip         String?
+  createdAt  DateTime  @default(now())
+  expiresAt  DateTime
+  consumedAt DateTime?
+
+  @@index([phone, createdAt])
+  @@index([ip, createdAt])
+}
+
+enum AddressType {
+  HOME
+  WORK
+  OTHER
+}
+
+model Address {
+  id         String      @id @default(cuid())
+  customerId String
+  customer   Customer    @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  name       String
+  phone      String
+  line1      String
+  line2      String
+  landmark   String      @default("")
+  city       String
+  state      String
+  pincode    String
+  type       AddressType @default(HOME)
+  isDefault  Boolean     @default(false)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  @@index([customerId])
+}
+
+/**
+ * ================= orders and payments =================
+ */
+
+enum OrderStatus {
+  /// prepaid order waiting for payment (cancelled automatically after a while)
+  PENDING_PAYMENT
+  /// paid, or cash on delivery confirmed
+  PLACED
+  IN_PRODUCTION
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentState {
+  PENDING
+  PAID
+  COD_PENDING
+  REFUNDED
+  PARTIALLY_REFUNDED
+}
+
+enum PayMethod {
+  UPI
+  CARD
+  NETBANKING
+  WALLET
+  COD
+}
+
+enum ShippingSpeed {
+  STANDARD
+  EXPRESS
+}
+
+enum ItemKind {
+  CATALOGUE
+  STUDIO
+}
+
+/// made-for-you pieces go through a stitch proof before production
+enum ProductionStatus {
+  NOT_NEEDED
+  AWAITING_PROOF
+  PROOF_SENT
+  CHANGES_REQUESTED
+  APPROVED
+  IN_PRODUCTION
+  DONE
+}
+
+model Order {
+  id               String        @id @default(cuid())
+  /// customer-facing number, e.g. TK-7Q4M2X
+  number           String        @unique
+  customerId       String
+  customer         Customer      @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  /// the checkout attempt that created it (makes "place order" safe to retry)
+  clientKey        String?
+  status           OrderStatus
+  paymentState     PaymentState
+  paymentMethod    PayMethod
+  shipping         ShippingSpeed
+  couponCode       String?
+  itemCount        Int
+  subtotalPaise    Int
+  mrpTotalPaise    Int
+  discountPaise    Int
+  discountLabel    String?
+  shippingPaise    Int
+  upiDiscountPaise Int
+  codFeePaise      Int
+  totalPaise       Int
+  refundedPaise    Int           @default(0)
+  phone            String
+  email            String?
+  whatsappUpdates  Boolean       @default(true)
+  shipName         String
+  shipPhone        String
+  shipLine1        String
+  shipLine2        String
+  shipLandmark     String        @default("")
+  shipCity         String
+  shipState        String
+  shipPincode      String
+  addressType      AddressType   @default(HOME)
+  gstin            String?
+  gstBusiness      String?
+  giftNote         String?
+  /// estimated delivery date shown at checkout
+  etaDate          DateTime?
+  courier          String?
+  awb              String?
+  trackingUrl      String?
+  /// studio's private notes
+  adminNotes       String?
+  cancelReason     String?
+  ip               String?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  placedAt         DateTime?
+  paidAt           DateTime?
+  shippedAt        DateTime?
+  deliveredAt      DateTime?
+  cancelledAt      DateTime?
+  items            OrderItem[]
+  payments         Payment[]
+  refunds          Refund[]
+  events           OrderEvent[]
+  invoice          Invoice?
+
+  @@unique([customerId, clientKey])
+  @@index([status, createdAt])
+  @@index([customerId, createdAt])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id               String           @id @default(cuid())
+  orderId          String
+  order            Order            @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  kind             ItemKind
+  productId        String?
+  product          Product?         @relation(fields: [productId], references: [id], onDelete: SetNull)
+  variantId        String?
+  sku              String
+  name             String
+  description      String
+  /// catalogue photo path (catalogue items) — previews of personalised pieces are uploads
+  imagePath        String?
+  qty              Int
+  unitPricePaise   Int
+  unitMrpPaise     Int
+  /// one-time charge on the line (logo digitizing)
+  extraPaise       Int              @default(0)
+  custom           Boolean
+  /// { text, font, thread, flowers? }
+  personalisation  Json?
+  /// StudioLineSpec
+  studio           Json?
+  petName          String?
+  giftWrap         Boolean          @default(false)
+  hsnCode          String
+  /// "threshold" or "flat" (see Product); the invoice works out the rate from the price actually paid
+  gstRule          String           @default("flat")
+  gstRateBp        Int
+  productionStatus ProductionStatus @default(NOT_NEEDED)
+  /// stock taken from this variant (given back if the order is cancelled)
+  stockReserved    Int              @default(0)
+  uploads          Upload[]
+  proofs           Proof[]
+  stitchFiles      StitchFile[]
+
+  @@index([orderId])
+  @@index([productionStatus])
+}
+
+enum PaymentStatus {
+  CREATED
+  AUTHORIZED
+  CAPTURED
+  FAILED
+  REFUNDED
+}
+
+model Payment {
+  id                String        @id @default(cuid())
+  orderId           String
+  order             Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  /// razorpay | fake
+  provider          String
+  providerOrderId   String?       @unique
+  providerPaymentId String?       @unique
+  status            PaymentStatus @default(CREATED)
+  /// what the customer actually paid with (upi, card…)
+  method            String?
+  amountPaise       Int
+  errorReason       String?
+  raw               Json?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  @@index([orderId])
+}
+
+enum RefundStatus {
+  PENDING
+  PROCESSED
+  FAILED
+}
+
+model Refund {
+  id               String       @id @default(cuid())
+  orderId          String
+  order            Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  paymentId        String?
+  amountPaise      Int
+  reason           String
+  providerRefundId String?      @unique
+  status           RefundStatus @default(PENDING)
+  createdById      String?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  @@index([orderId])
+}
+
+enum Actor {
+  CUSTOMER
+  ADMIN
+  SYSTEM
+}
+
+/// Order timeline. Customer-visible events show on their order page.
+model OrderEvent {
+  id        String   @id @default(cuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  type      String
+  message   String
+  actor     Actor    @default(SYSTEM)
+  adminId   String?
+  visible   Boolean  @default(true)
+  data      Json?
+  createdAt DateTime @default(now())
+
+  @@index([orderId, createdAt])
+}
+
+/// GST invoice (numbers are consecutive per financial year)
+model Invoice {
+  id          String   @id @default(cuid())
+  orderId     String   @unique
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  number      String   @unique
+  fy          String
+  seq         Int
+  issuedAt    DateTime @default(now())
+  /// the computed lines, taxes and seller details at the time of issue
+  snapshot    Json
+  pdfUploadId String?  @unique
+  pdf         Upload?  @relation(fields: [pdfUploadId], references: [id], onDelete: SetNull)
+
+  @@unique([fy, seq])
+}
+
+model InvoiceCounter {
+  fy   String @id
+  last Int    @default(0)
+}
+
+/**
+ * ================= files, proofs and stitch files =================
+ */
+
+enum UploadKind {
+  LOGO
+  PET_PHOTO
+  PREVIEW
+  PROOF
+  PRODUCT_IMAGE
+  STITCH_FILE
+  STITCH_PREVIEW
+  INVOICE
+}
+
+model Upload {
+  id           String     @id @default(cuid())
+  kind         UploadKind
+  /// storage key, e.g. "private/logo/ck…/file.png" or "public/products/ck….webp"
+  key          String     @unique
+  mime         String
+  bytes        Int
+  width        Int?
+  height       Int?
+  originalName String?
+  sha256       String
+  isPublic     Boolean    @default(false)
+  customerId   String?
+  customer     Customer?  @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  orderItemId  String?
+  orderItem    OrderItem? @relation(fields: [orderItemId], references: [id], onDelete: SetNull)
+  createdAt    DateTime   @default(now())
+  attachedAt   DateTime?
+  invoice      Invoice?
+  proofs       Proof[]
+
+  @@index([orderItemId])
+  @@index([attachedAt, createdAt])
+}
+
+enum ProofStatus {
+  SENT
+  APPROVED
+  CHANGES_REQUESTED
+  SUPERSEDED
+}
+
+model Proof {
+  id              String      @id @default(cuid())
+  orderItemId     String
+  orderItem       OrderItem   @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
+  version         Int
+  imageUploadId   String
+  image           Upload      @relation(fields: [imageUploadId], references: [id], onDelete: Restrict)
+  /// note from the studio shown with the proof
+  note            String      @default("")
+  /// secret for the customer's approval link
+  token           String      @unique
+  status          ProofStatus @default(SENT)
+  customerComment String?
+  sentAt          DateTime    @default(now())
+  respondedAt     DateTime?
+
+  @@unique([orderItemId, version])
+}
+
+/// A machine file (PES/DST/…) for an order item, or a library design attached to a product
+model StitchFile {
+  id              String     @id @default(cuid())
+  orderItemId     String?
+  orderItem       OrderItem? @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
+  productId       String?
+  product         Product?   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  label           String
+  format          String
+  sourceUploadId  String
+  pesUploadId     String?
+  previewUploadId String?
+  stitches        Int
+  colourChanges   Int
+  widthMm         Float
+  heightMm        Float
+  /// [{ hex, name, brand?, code? }]
+  threads         Json
+  createdById     String?
+  createdAt       DateTime   @default(now())
+
+  @@index([orderItemId])
+  @@index([productId])
+}
+
+/**
+ * ================= studio staff =================
+ */
+
+enum AdminRole {
+  OWNER
+  STAFF
+}
+
+model AdminUser {
+  id           String     @id @default(cuid())
+  email        String     @unique
+  name         String
+  /// scrypt
+  passwordHash String
+  role         AdminRole  @default(STAFF)
+  active       Boolean    @default(true)
+  failedLogins Int        @default(0)
+  lockedUntil  DateTime?
+  lastLoginAt  DateTime?
+  createdAt    DateTime   @default(now())
+  sessions     Session[]
+  audit        AuditLog[]
+}
+
+model AuditLog {
+  id        String     @id @default(cuid())
+  adminId   String?
+  admin     AdminUser? @relation(fields: [adminId], references: [id], onDelete: SetNull)
+  action    String
+  entity    String
+  entityId  String?
+  data      Json?
+  createdAt DateTime   @default(now())
+
+  @@index([entity, entityId])
+  @@index([createdAt])
+}
+
+/// Store-wide settings edited in the admin (seller details for invoices, contact numbers…)
+model Setting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
 }

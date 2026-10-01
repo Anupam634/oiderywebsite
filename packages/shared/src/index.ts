@@ -9,3 +9,7 @@ export * from './personalisation';
 export * from './size-guides';
 export * from './checkout';
 export * from './studio';
+export * from './phone';
+export * from './gst';
+export * from './orders';
+export * from './delivery';

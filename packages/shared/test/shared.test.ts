@@ -1,5 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import {
+  allocate,
+  amountInWords,
+  computeInvoice,
+  financialYear,
+  formatPhone,
+  gstRateBp,
+  invoiceNumber,
+  isValidGstin,
+  normalisePhone,
   studioGarment,
   studioPrice,
   checkoutErrors,
@@ -143,5 +152,58 @@ describe('studio pricing', () => {
   it('adds one-time charges once', () => {
     const t = computeTotals([{ qty: 3, pricePaise: 10_000, mrpPaise: 10_000, custom: true, extraPaise: 39_900 }]);
     expect(t.subtotalPaise).toBe(69_900);
+  });
+});
+
+describe('phone numbers', () => {
+  it('normalises Indian mobiles', () => {
+    expect(['+91 98765-43210', '098765 43210', '9876543210', '919876543210'].map(normalisePhone)).toEqual(Array(4).fill('9876543210'));
+    expect(normalisePhone('12345')).toBeNull();
+    expect(normalisePhone('5876543210')).toBeNull();
+    expect(formatPhone('9876543210')).toBe('+91 98765 43210');
+  });
+});
+
+describe('GST', () => {
+  it('checks GSTIN format and check digit', () => {
+    expect(['27AAPFU0939F1ZV', '29AAGCB7383J1Z4', '24AAACC1206D1ZM'].every(isValidGstin)).toBe(true);
+    expect(isValidGstin('27AAPFU0939F1ZW')).toBe(false);
+    expect(isValidGstin('27aapfu0939f1zv')).toBe(true);
+  });
+  it('uses 5% for textiles up to ₹2,500 before tax and 18% above', () => {
+    expect(gstRateBp('threshold', 500, 262_500)).toBe(500);
+    expect(gstRateBp('threshold', 500, 262_600)).toBe(1800);
+    expect(gstRateBp('flat', 1800, 50_000)).toBe(1800);
+  });
+  it('shares discounts over lines and adds up to the order total', () => {
+    const inv = computeInvoice({
+      lines: [
+        { name: 'Kurta', hsn: '6211', qty: 1, unitPricePaise: 249_900, extraPaise: 0, rule: 'threshold', flatBp: 500 },
+        { name: 'Tote', hsn: '4202', qty: 1, unitPricePaise: 119_900, extraPaise: 0, rule: 'flat', flatBp: 1800 },
+      ],
+      discountPaise: 42_000,
+      chargesPaise: 14_900,
+      interState: false,
+    });
+    expect(inv.totals.totalPaise).toBe(249_900 + 119_900 - 42_000 + 14_900);
+    expect(inv.lines.map((l) => l.rateBp)).toEqual([500, 1800]);
+    expect(inv.totals.cgstPaise + inv.totals.sgstPaise + inv.totals.taxablePaise).toBe(inv.totals.totalPaise);
+    const igst = computeInvoice({ lines: inv.lines, discountPaise: 0, chargesPaise: 0, interState: true });
+    expect(igst.totals.cgstPaise).toBe(0);
+    expect(igst.totals.igstPaise).toBeGreaterThan(0);
+  });
+  it('splits whole paise exactly', () => {
+    expect(allocate(100, [1, 1, 1])).toEqual([34, 33, 33]);
+    expect(allocate(0, [5, 5])).toEqual([0, 0]);
+  });
+  it('numbers invoices by financial year', () => {
+    expect(financialYear(new Date('2026-10-01'))).toBe('2026-27');
+    expect(financialYear(new Date('2027-03-31'))).toBe('2026-27');
+    expect(financialYear(new Date('2027-04-01'))).toBe('2027-28');
+    expect(invoiceNumber('TK', '2026-27', 7)).toBe('TK/2026-27/0007');
+  });
+  it('writes amounts in words with lakh and crore', () => {
+    expect(amountInWords(327_800)).toBe('Rupees Three Thousand Two Hundred Seventy Eight Only');
+    expect(amountInWords(1_234_567_800)).toBe('Rupees One Crore Twenty Three Lakh Forty Five Thousand Six Hundred Seventy Eight Only');
   });
 });
