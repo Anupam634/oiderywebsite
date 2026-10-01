@@ -81,6 +81,9 @@ export interface OrderItemDto {
   productionStatus: ProductionStatus;
   /** the latest stitch proof, if one was sent */
   proof: { status: ProofStatus; token: string; version: number; sentAt: string } | null;
+  /** delivered catalogue pieces can be reviewed once */
+  canReview: boolean;
+  reviewed: boolean;
 }
 
 export interface OrderEventDto {

@@ -13,3 +13,4 @@ export * from './phone';
 export * from './gst';
 export * from './orders';
 export * from './delivery';
+export * from './admin';

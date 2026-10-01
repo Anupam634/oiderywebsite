@@ -2,11 +2,13 @@ import { z } from 'zod';
 import {
   FLOWER_PRESETS,
   FONT_KEYS,
+  FONT_LABEL,
   MAKE_DAYS,
   STUDIO_MAX_QTY,
   STUDIO_PLACEMENTS,
   STUDIO_SIZES,
   THREAD_KEYS,
+  THREAD_LABEL,
   checkName,
   computeTotals,
   formatINR,
@@ -113,11 +115,6 @@ export interface PricedCart {
   couponStatus: CouponStatus | null;
 }
 
-const FONT_NAME: Record<string, string> = { script: 'Script', classic: 'Classic', bold: 'Bold', hindi: 'हिंदी' };
-const THREAD_NAME: Record<string, string> = {
-  rani: 'Rani', haldi: 'Haldi', mor: 'Mor', neel: 'Neel', sindoor: 'Sindoor', mehendi: 'Mehendi', kesar: 'Kesar', jamun: 'Jamun',
-  gulaab: 'Gulaab', moti: 'Moti', kajal: 'Kajal', sona: 'Sona',
-};
 const GARMENT_COLOUR: Record<string, string> = {
   white: 'White', natural: 'Natural canvas', kajal: 'Kajal black', neel: 'Neel navy', maroon: 'Maroon', bottle: 'Bottle green',
   haldi: 'Haldi yellow', gulaab: 'Gulaab pink', chandi: 'Chandi grey', sky: 'Sky blue',
@@ -168,7 +165,7 @@ export async function priceCart(db: Db, body: CartBody, ctx: { customerId?: stri
       v.colourName,
       v.size ?? '',
       it.personalisation && personalised
-        ? `“${it.personalisation.text.trim()}” in ${FONT_NAME[it.personalisation.font] ?? it.personalisation.font}, ${THREAD_NAME[it.personalisation.thread] ?? it.personalisation.thread} thread`
+        ? `“${it.personalisation.text.trim()}” in ${FONT_LABEL[it.personalisation.font]}, ${THREAD_LABEL[it.personalisation.thread]} thread`
         : '',
       it.personalisation?.flowers !== undefined ? `${FLOWER_PRESETS[it.personalisation.flowers]?.name ?? ''} flowers` : '',
       p.petPhoto && it.petName ? `“${it.petName}” stitched below` : '',

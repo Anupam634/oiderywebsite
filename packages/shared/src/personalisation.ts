@@ -5,6 +5,11 @@ export type FontKey = (typeof FONT_KEYS)[number];
 /** The 12 named threads customers can pick for names (hex values live in @store/stitch). */
 export const THREAD_KEYS = ['rani', 'gulaab', 'sindoor', 'kesar', 'haldi', 'mehendi', 'mor', 'neel', 'jamun', 'chandi', 'moti', 'kajal'] as const;
 export type ThreadKey = (typeof THREAD_KEYS)[number];
+export const THREAD_LABEL: Record<ThreadKey, string> = {
+  rani: 'Rani', gulaab: 'Gulaab', sindoor: 'Sindoor', kesar: 'Kesar', haldi: 'Haldi', mehendi: 'Mehendi',
+  mor: 'Mor', neel: 'Neel', jamun: 'Jamun', chandi: 'Chandi', moti: 'Moti', kajal: 'Kajal',
+};
+export const FONT_LABEL: Record<FontKey, string> = { script: 'Script', classic: 'Classic', bold: 'Bold', hindi: 'हिंदी' };
 
 /** Flower presets for the Phoolwari bouquet: [big rose, daisy, leaves, small rose] */
 export const FLOWER_PRESETS = [

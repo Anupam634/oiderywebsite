@@ -24,6 +24,8 @@ const schema = z.object({
   TRUST_PROXY: z.coerce.number().int().min(0).default(0),
   /** shared secret: the web app's /api proxy sends it with the shopper's address (x-client-ip) */
   PROXY_KEY: optional,
+  /** the storefront's cache-refresh hook (POST, with PROXY_KEY), called after catalogue edits */
+  WEB_REVALIDATE_URL: optional,
   /** secure cookies (on by default in production) */
   COOKIE_SECURE: bool.optional(),
   SESSION_DAYS: z.coerce.number().int().min(1).default(60),

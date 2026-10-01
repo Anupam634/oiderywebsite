@@ -13,6 +13,10 @@ import { registerAuth } from './lib/auth.ts';
 import { registerErrorHandler } from './lib/errors.ts';
 import type { Db } from './lib/prisma.ts';
 import { accountRoutes } from './modules/account/routes.ts';
+import { adminAuthRoutes } from './modules/admin/auth.ts';
+import { adminCatalogRoutes } from './modules/admin/catalog.ts';
+import { adminOrderRoutes } from './modules/admin/orders.ts';
+import { adminStoreRoutes } from './modules/admin/store.ts';
 import { authRoutes } from './modules/auth/routes.ts';
 import { createOtpProvider } from './modules/auth/otp.ts';
 import { cartRoutes } from './modules/cart/routes.ts';
@@ -24,9 +28,11 @@ import { createStorage } from './modules/files/storage.ts';
 import { InvoiceService } from './modules/invoice/service.ts';
 import { Notifications } from './modules/notify/messages.ts';
 import { Transport } from './modules/notify/transport.ts';
+import { Fulfilment } from './modules/orders/fulfil.ts';
 import { orderRoutes, webhookRoutes } from './modules/orders/routes.ts';
 import { OrderService } from './modules/orders/service.ts';
 import { createGateway, type PaymentGateway } from './modules/payments/gateway.ts';
+import { proofRoutes } from './modules/proofs/routes.ts';
 
 export async function buildApp({ config, db, gateway }: { config: Config; db: Db; gateway?: PaymentGateway }) {
   const app = Fastify({
@@ -61,12 +67,21 @@ export async function buildApp({ config, db, gateway }: { config: Config; db: Db
   const notify = new Notifications(new Transport(config, app.log), config);
   const orders = new OrderService(db, config, gateway ?? createGateway(config), files, notify, app.log);
   const invoices = new InvoiceService(db, files);
+  const fulfil = new Fulfilment(db, orders, invoices, notify, files);
+  // ask the storefront to drop its cached catalogue after admin edits (best effort)
+  const refreshWeb = () => {
+    if (!config.WEB_REVALIDATE_URL) return;
+    void fetch(config.WEB_REVALIDATE_URL, { method: 'POST', headers: { 'x-proxy-key': config.PROXY_KEY ?? '' }, signal: AbortSignal.timeout(5000) }).catch((err: unknown) =>
+      app.log.warn({ err }, 'storefront refresh failed'),
+    );
+  };
   const otp = createOtpProvider(config, (msg) => app.log.info(msg));
   app.decorate('catalog', catalog);
   app.decorate('files', files);
   app.decorate('orders', orders);
   app.decorate('notify', notify);
   app.decorate('invoices', invoices);
+  app.decorate('fulfil', fulfil);
 
   await app.register(catalogRoutes(catalog), { prefix: '/v1' });
   await app.register(cartRoutes(db), { prefix: '/v1' });
@@ -75,6 +90,11 @@ export async function buildApp({ config, db, gateway }: { config: Config; db: Db
   await app.register(orderRoutes(db, orders), { prefix: '/v1' });
   await app.register(fileRoutes(db, files), { prefix: '/v1' });
   await app.register(webhookRoutes(db, orders), { prefix: '/v1' });
+  await app.register(proofRoutes(db, files, fulfil), { prefix: '/v1' });
+  await app.register(adminAuthRoutes(db), { prefix: '/v1' });
+  await app.register(adminOrderRoutes(db, orders, fulfil, invoices, files), { prefix: '/v1' });
+  await app.register(adminCatalogRoutes(db, catalog, files, refreshWeb), { prefix: '/v1' });
+  await app.register(adminStoreRoutes(db, files), { prefix: '/v1' });
   return app;
 }
 
@@ -85,5 +105,6 @@ declare module 'fastify' {
     orders: OrderService;
     notify: Notifications;
     invoices: InvoiceService;
+    fulfil: Fulfilment;
   }
 }

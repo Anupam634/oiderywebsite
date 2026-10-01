@@ -113,8 +113,40 @@ export const accountRoutes =
     app.get('/me/orders/:number', { schema: { tags: ['account'], summary: 'One of my orders', params: z.object({ number: z.string().max(20) }) } }, async (req) => {
       const o = await orders.byNumber(req.params.number);
       if (!o || o.customerId !== me(req)) throw notFound('Order');
-      return { order: orders.dto(o) };
+      const dto = orders.dto(o);
+      if (o.status === 'DELIVERED') {
+        const done = new Set((await db.review.findMany({ where: { orderItemId: { in: o.items.map((i) => i.id) } }, select: { orderItemId: true } })).map((r) => r.orderItemId));
+        for (const i of dto.items) {
+          i.reviewed = done.has(i.id);
+          i.canReview = !i.reviewed && !!i.productSlug;
+        }
+      }
+      return { order: dto };
     });
+
+    app.post(
+      '/me/reviews',
+      {
+        schema: {
+          tags: ['account'],
+          summary: 'Review a delivered piece (checked by the studio before it shows)',
+          body: z.object({ itemId: z.string().max(40), rating: z.number().int().min(1).max(5), body: z.string().trim().min(10, 'Write at least a few words').max(1000) }),
+        },
+        config: { rateLimit: { max: 10, timeWindow: '10 minutes' } },
+      },
+      async (req, reply) => {
+        const item = await db.orderItem.findUnique({ where: { id: req.body.itemId }, include: { order: true } });
+        if (!item || item.order.customerId !== me(req)) throw notFound('Item');
+        if (item.order.status !== 'DELIVERED' || !item.productId) throw new AppError(409, 'not_reviewable', 'You can review a piece once it has been delivered');
+        if (await db.review.findUnique({ where: { orderItemId: item.id } })) throw new AppError(409, 'already_reviewed', 'You’ve already reviewed this piece');
+        const c = await db.customer.findUniqueOrThrow({ where: { id: me(req) } });
+        await db.review.create({
+          data: { productId: item.productId, customerId: c.id, orderItemId: item.id, authorName: (c.name ?? item.order.shipName).split(/\s+/).slice(0, 2).join(' '), city: item.order.shipCity, rating: req.body.rating, body: req.body.body, status: 'PENDING' },
+        });
+        reply.code(201);
+        return { ok: true };
+      },
+    );
 
     app.post(
       '/me/orders/:number/cancel',

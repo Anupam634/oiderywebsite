@@ -168,6 +168,9 @@ model Review {
   status       ReviewStatus @default(PENDING)
   /// demo content from the design phase; replace with real reviews
   isSample     Boolean      @default(false)
+  /// written by a verified buyer for this order line
+  customerId   String?
+  orderItemId  String?      @unique
   createdAt    DateTime     @default(now())
 
   @@index([productId, status, createdAt])

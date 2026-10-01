@@ -44,6 +44,8 @@ export function toItemDto(i: FullItem, files: Files): OrderItemDto {
     custom: i.custom,
     productionStatus: i.productionStatus,
     proof: p ? { status: p.status, token: p.token, version: p.version, sentAt: p.sentAt.toISOString() } : null,
+    canReview: false,
+    reviewed: false,
   };
 }
 
