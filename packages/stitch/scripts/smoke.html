@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>stitch engine smoke test</title>
+<!-- same Google Fonts links as the design prototype (design/src/head.html) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,400..800,100;1,9..144,400..800,100&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pacifico&family=Playfair+Display:ital,wght@1,700&family=Archivo+Black&family=Yatra+One&family=Mukta:wght@500;600;700;800&display=swap">
+<style>body{margin:0;background:#eee;font:14px system-ui}canvas,img{width:400px;height:auto;margin:4px}</style>
+</head>
+<body>
+<div id="out"></div>
+<script type="module">
+/* Loaded by smoke-check.mjs (scripts/out/stitch.bundle.js is the esbuild bundle of src/index.ts).
+   Open it by hand too: node scripts/smoke-check.mjs --serve, then visit the printed URL. */
+import * as stitch from './out/stitch.bundle.js';
+
+const engine = stitch.createStitchEngine({ assetBase: '/mockups/' });
+
+async function fontsReady() {
+  await Promise.all(stitch.FONT_PROBES.map((f) => document.fonts.load(f))); // no timeout: the test must not race the network
+  await engine.fontsLoaded();
+}
+
+const loadImg = (src) =>
+  new Promise((res, rej) => {
+    const im = new Image();
+    im.onload = () => res(im);
+    im.onerror = () => rej(new Error('could not load ' + src));
+    im.src = src;
+  });
+const pixelsOf = (src, w, h) => {
+  const c = document.createElement('canvas');
+  c.width = w;
+  c.height = h;
+  const x = c.getContext('2d', { willReadFrequently: true });
+  x.drawImage(src, 0, 0, w, h);
+  return x.getImageData(0, 0, w, h);
+};
+
+/* per-channel stats of a vs b, optionally inside a rectangle; also writes a diff heat map */
+function compare(a, b, rect) {
+  const W = a.width, H = a.height, r = rect || { x: 0, y: 0, w: W, h: H };
+  let sum = 0, sq = 0, max = 0, over = 0, n = 0;
+  for (let y = r.y; y < r.y + r.h; y++)
+    for (let x = r.x; x < r.x + r.w; x++) {
+      const j = (y * W + x) * 4;
+      let m = 0;
+      for (let k = 0; k < 3; k++) {
+        const d = Math.abs(a.data[j + k] - b.data[j + k]);
+        sum += d; sq += d * d; if (d > m) m = d;
+      }
+      if (m > max) max = m;
+      if (m > 16) over++;
+      n++;
+    }
+  const mse = sq / (n * 3);
+  return { mae: +(sum / (n * 3)).toFixed(3), psnr: mse ? +(10 * Math.log10((255 * 255) / mse)).toFixed(2) : Infinity, max, over16pct: +((over / n) * 100).toFixed(3) };
+}
+function diffMap(a, b) {
+  const c = document.createElement('canvas');
+  c.width = a.width; c.height = a.height;
+  const x = c.getContext('2d'), out = x.createImageData(a.width, a.height);
+  for (let j = 0; j < a.data.length; j += 4) {
+    const d = Math.max(Math.abs(a.data[j] - b.data[j]), Math.abs(a.data[j + 1] - b.data[j + 1]), Math.abs(a.data[j + 2] - b.data[j + 2]));
+    const v = Math.min(255, d * 8);
+    out.data.set([v, v * 0.3, 255 - v, 255], j);
+  }
+  x.putImageData(out, 0, 0);
+  return c.toDataURL('image/png');
+}
+
+/* render one scene the way design/src/render.js did: product-page sizing, front view, snapshot(800) */
+window.runScene = async ({ view, col, place, box, design, ref, width = 800 }) => {
+  await fontsReady();
+  const t0 = performance.now();
+  const scene = await engine.buildScene({ view, col, place, box, design });
+  const t1 = performance.now();
+  const canvas = engine.snapshot(scene, 'front', width);
+  const t2 = performance.now();
+  document.getElementById('out').append(canvas);
+  const W = canvas.width, H = canvas.height, mine = canvas.getContext('2d').getImageData(0, 0, W, H);
+  /* the reference is a JPEG (q 0.86) of the original engine's render: compare raw, and after the same JPEG step */
+  const refPx = pixelsOf(await loadImg(ref), W, H);
+  const jpeg = pixelsOf(await loadImg(canvas.toDataURL('image/jpeg', 0.86)), W, H);
+  const b = stitch.destBox(scene, { sx: 0, sy: 0, S: 1 }), k = W / stitch.OUT_W;
+  const rect = { x: Math.floor(b.x * k), y: Math.floor(b.y * k), w: Math.min(W - Math.floor(b.x * k), Math.ceil(b.w * k)), h: Math.min(H - Math.floor(b.y * k), Math.ceil(b.h * k)) };
+  return {
+    png: canvas.toDataURL('image/png'),
+    diff: diffMap(mine, refPx),
+    size: scene.size, D: { w: scene.D.w, h: scene.D.h, threads: scene.D.threads.map((t) => stitch.TPAL[t][0]), cov: scene.D.cov },
+    stitches: engine.stitchCount(scene), rect,
+    ms: { prepare: Math.round(t1 - t0), render: Math.round(t2 - t1) },
+    vsRef: { full: compare(mine, refPx), design: compare(mine, refPx, rect) },
+    jpegVsRef: { full: compare(jpeg, refPx), design: compare(jpeg, refPx, rect) },
+    jpegDataUrl: canvas.toDataURL('image/jpeg', 0.86),
+  };
+};
+
+/* exact comparison against a PNG rendered by the original engine (same browser) */
+window.comparePng = async (minePng, origPng) => {
+  const a = await loadImg(minePng), b = await loadImg(origPng);
+  const A = pixelsOf(a, a.naturalWidth, a.naturalHeight), B = pixelsOf(b, b.naturalWidth, b.naturalHeight);
+  let diffPx = 0;
+  for (let j = 0; j < A.data.length; j += 4)
+    if (A.data[j] !== B.data[j] || A.data[j + 1] !== B.data[j + 1] || A.data[j + 2] !== B.data[j + 2]) diffPx++;
+  return { ...compare(A, B), diffPx };
+};
+
+/* the kairi motif uses a fixed table: check it against this browser's SVG path probe */
+window.checkPaisley = () => {
+  const pts = stitch.sample(stitch.PAISLEY, 15);
+  return Math.max(...pts.map(([x, y], i) => Math.hypot(x - stitch.PAISLEY_POINTS[i][0], y - stitch.PAISLEY_POINTS[i][1])));
+};
+
+window.__stitchReady = true;
+</script>
+</body>
+</html>

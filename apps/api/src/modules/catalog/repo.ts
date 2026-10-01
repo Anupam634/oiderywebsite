@@ -17,7 +17,7 @@ import type { Prisma } from '../../generated/prisma/client.ts';
 const cardInclude = {
   category: { include: { parent: true } },
   images: { where: { role: { in: ['MAIN', 'HOVER'] } }, orderBy: { sortOrder: 'asc' } },
-  variants: { select: { colourHex: true, colourName: true }, orderBy: { sortOrder: 'asc' } },
+  variants: { select: { id: true, colourHex: true, colourName: true, stock: true, trackStock: true }, orderBy: { sortOrder: 'asc' } },
 } satisfies Prisma.ProductInclude;
 type CardRow = Prisma.ProductGetPayload<{ include: typeof cardInclude }>;
 
@@ -54,6 +54,7 @@ function toCard(p: CardRow): ProductCard {
     personalisable: p.type === 'PERSONALISE',
     studio: p.studioGarment ? { garment: p.studioGarment, sample: p.studioSample } : null,
     isUnique: p.isUnique,
+    defaultVariantId: (p.variants.find((v) => !v.trackStock || v.stock > 0) ?? p.variants[0])?.id ?? null,
   };
 }
 

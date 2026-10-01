@@ -46,6 +46,8 @@ export interface ProductCard {
   /** logo merch is designed in the studio instead of a product page */
   studio: { garment: string; sample: string | null } | null;
   isUnique: boolean;
+  /** first in-stock variant, for one-tap "Add to bag" on pieces without options */
+  defaultVariantId: string | null;
 }
 
 export interface Variant {
