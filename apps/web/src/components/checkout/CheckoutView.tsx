@@ -89,12 +89,22 @@ const fromAddress = (a: AddressDto): Partial<Form> => ({
   addressType: a.type.toLowerCase() as Form['addressType'],
 });
 
+/** data: URL → Blob without fetch() (our Content Security Policy doesn't allow fetching data: URLs) */
+function dataUrlToBlob(url: string): Blob {
+  const [head, b64 = ''] = url.split(',', 2);
+  const mime = /data:([^;]+)/.exec(head ?? '')?.[1] ?? 'image/jpeg';
+  const bin = atob(b64);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return new Blob([bytes], { type: mime });
+}
+
 /** a made-for-you line's preview (a data URL in the bag) is uploaded once, so the studio sees what was ordered */
 async function uploadPreviews(lines: CartLine[]) {
   for (const l of lines) {
     if (!l.image.startsWith('data:') || l.uploads?.length) continue;
     try {
-      const blob = await (await fetch(l.image)).blob();
+      const blob = dataUrlToBlob(l.image);
       const up = await api.upload('preview', blob, 'preview.jpg');
       cart.setUploads(l.key, [up.id]);
       l.uploads = [up.id];
@@ -482,7 +492,7 @@ export function CheckoutView({ offers }: { offers: Offer[] }) {
               <button className="btn btn-grad big" type="submit" disabled={placing || problems}>
                 {placing ? <><span className="spin" /><span>{pay === 'cod' ? 'Placing your order…' : 'Opening payment…'}</span></> : <><Lock /><span>{payLabel}</span></>}
               </button>
-              <p className="fine">By placing this order you agree to our Terms and Refund policy. Personalised pieces can&apos;t be returned.</p>
+              <p className="fine">By placing this order you agree to our <Link href="/policies/terms">Terms</Link> and <Link href="/policies/refunds">Refund policy</Link>. Personalised pieces can&apos;t be returned.</p>
             </div>
           </form>
         </div>

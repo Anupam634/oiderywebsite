@@ -1,0 +1,32 @@
+# Typecheck, test and build on every push and pull request.
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: corepack enable
+      - name: Install
+        run: pnpm install --frozen-lockfile
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: pyembroidery for the machine-file tests
+        run: python -m pip install --target apps/api/.data/pylib -r apps/api/tools/requirements.txt
+      - name: Typecheck
+        run: pnpm typecheck
+      - name: Test (the API tests start their own throwaway PostgreSQL)
+        run: pnpm test
+      - name: Build
+        run: pnpm build
+        env:
+          NEXT_TELEMETRY_DISABLED: '1'

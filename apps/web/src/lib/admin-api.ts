@@ -45,7 +45,7 @@ const get = <T>(p: string) => call<T>('GET', p);
 
 export interface Settings {
   legalName: string; tradeName: string; gstin: string; addressLine1: string; addressLine2: string; city: string; state: string;
-  pincode: string; phone: string; email: string; invoicePrefix: string; invoiceNote: string;
+  pincode: string; phone: string; email: string; invoicePrefix: string; invoiceNote: string; grievanceOfficer: string; jurisdictionCity: string;
 }
 
 export const adminApi = {

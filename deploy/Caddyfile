@@ -1,0 +1,15 @@
+# HTTPS certificates are automatic. The shop lives on the main domain; the API is only exposed on
+# api.<domain> for Razorpay webhooks (the browser reaches the API through the shop's /api proxy).
+{$DOMAIN}, www.{$DOMAIN} {
+	encode zstd gzip
+	@www host www.{$DOMAIN}
+	redir @www https://{$DOMAIN}{uri} permanent
+	reverse_proxy web:3000
+}
+
+api.{$DOMAIN} {
+	encode zstd gzip
+	@webhooks path /v1/webhooks/* /health
+	reverse_proxy @webhooks api:4000
+	respond 404
+}

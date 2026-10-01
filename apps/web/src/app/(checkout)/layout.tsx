@@ -22,7 +22,7 @@ export default function CheckoutLayout({ children }: { children: ReactNode }) {
         <div className="wrap co-foot-in">
           <span>© {new Date().getFullYear()} {BRAND.legalName} · placeholder name</span>
           <nav aria-label="Policies">
-            <span>Privacy</span><span>Terms</span><span>Refund policy</span><span>Shipping policy</span>
+            <Link href="/policies/privacy">Privacy</Link><Link href="/policies/terms">Terms</Link><Link href="/policies/refunds">Refund policy</Link><Link href="/policies/shipping">Shipping policy</Link>
             <a href={`https://wa.me/${BRAND.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener">Help on WhatsApp</a>
           </nav>
         </div>

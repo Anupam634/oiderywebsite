@@ -10,7 +10,9 @@ import { categoryHref, productHref, SHOP_LINKS } from '@/lib/links';
 import { media } from '@/lib/media';
 import '@/styles/home.css';
 
-export const revalidate = 60;
+// rendered per request (like shop and product pages): builds never depend on the API being up,
+// and the API's own catalogue cache keeps it fast
+export const dynamic = 'force-dynamic';
 
 const REVIEWS: [string, string, string, string][] = [
   ['tote', 'Ordered the Phoolwari tote with my sister’s name. The stitch proof on WhatsApp matched the live preview exactly.', 'Sneha R.', 'Pune'],

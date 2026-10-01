@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { applyListing, facetCounts, listingQuerySchema } from '@store/shared';
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import { notFound } from '../../lib/errors.ts';
+import { getStoreSettings, publicStore } from '../settings/service.ts';
 import type { CatalogRepo } from './repo.ts';
 
 const CACHE = 'public, max-age=30, stale-while-revalidate=300';
@@ -9,6 +10,11 @@ const CACHE = 'public, max-age=30, stale-while-revalidate=300';
 export const catalogRoutes =
   (repo: CatalogRepo): FastifyPluginAsyncZod =>
   async (app) => {
+    app.get('/store', { schema: { tags: ['catalog'], summary: 'Seller details for the policy and contact pages' } }, async (_req, reply) => {
+      reply.header('cache-control', 'public, max-age=300');
+      return publicStore(await getStoreSettings(repo.db));
+    });
+
     app.get('/categories', { schema: { tags: ['catalog'], summary: 'Category tree with product counts' } }, async (_req, reply) => {
       reply.header('cache-control', CACHE);
       return { items: await repo.categories() };

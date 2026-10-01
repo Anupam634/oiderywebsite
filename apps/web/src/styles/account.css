@@ -156,3 +156,21 @@
 .proofp .mini{display:flex;gap:12px;align-items:center;margin-top:16px;padding:12px;border-radius:18px;background:#fff;border:1px solid var(--line)}
 .proofp .mini img{width:64px;height:80px;border-radius:12px;object-fit:cover}
 @media(max-width:900px){.proofp{grid-template-columns:minmax(0,1fr);padding-top:16px}}
+
+/* ---------- policy pages ---------- */
+.legal{display:grid;grid-template-columns:240px minmax(0,1fr);gap:30px;align-items:start;padding:30px 0 70px}
+.legal nav{position:sticky;top:96px;display:grid;gap:6px}
+.legal nav a{padding:10px 14px;border-radius:14px;font-weight:750;color:var(--ink-2)}
+.legal nav a:hover{background:#fff}
+.legal nav a.on{background:linear-gradient(90deg,#FF2E93,#FF8A00);color:#fff}
+.legal article{background:#fff;border-radius:28px;border:1px solid var(--line);padding:34px clamp(20px,4vw,48px);box-shadow:0 22px 44px -40px rgba(27,16,48,.6);line-height:1.65;color:#3A2E4F}
+.legal article h1{font-size:clamp(32px,4vw,48px);line-height:1.05;margin:8px 0 6px;color:var(--ink)}
+.legal article h2{font-size:22px;margin:28px 0 8px;color:var(--ink)}
+.legal article ul{padding-left:20px}
+.legal article li{margin:4px 0}
+.legal article .upd{color:var(--mute);font-weight:650;font-size:14px}
+.legal article .draft{margin:16px 0 0;padding:12px 14px;border-radius:14px;background:#FFF6D6;border:1px dashed #E8B400;color:#6B4E00;font-weight:650;font-size:13.5px}
+.legal .contact-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0}
+.legal .contact-cards a,.legal .contact-cards div{display:grid;gap:4px;padding:16px;border-radius:18px;background:#FFF6EA;font-weight:650}
+.legal .contact-cards b{color:var(--ink);font-size:16px}
+@media(max-width:860px){.legal{grid-template-columns:minmax(0,1fr)}.legal nav{position:static;display:flex;flex-wrap:wrap}.legal .contact-cards{grid-template-columns:minmax(0,1fr)}}

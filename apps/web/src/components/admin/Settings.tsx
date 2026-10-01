@@ -55,6 +55,8 @@ function Store({ owner }: { owner: boolean }) {
           <label className="f"><span>Email</span><input value={s.email} onChange={(e) => set('email', e.target.value)} /></label>
           <label className="f"><span>Invoice prefix</span><input value={s.invoicePrefix} maxLength={5} onChange={(e) => set('invoicePrefix', e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''))} /></label>
           <label className="f full"><span>Note at the bottom of invoices</span><textarea value={s.invoiceNote} maxLength={300} onChange={(e) => set('invoiceNote', e.target.value)} /></label>
+          <label className="f"><span>Grievance officer <i>(name on the contact page; required by e-commerce rules)</i></span><input value={s.grievanceOfficer ?? ''} maxLength={80} onChange={(e) => set('grievanceOfficer', e.target.value)} /></label>
+          <label className="f"><span>Courts for disputes <i>(city)</i></span><input value={s.jurisdictionCity ?? ''} maxLength={60} onChange={(e) => set('jurisdictionCity', e.target.value)} placeholder={s.city || 'e.g. Pune'} /></label>
         </div>
       </fieldset>
       {owner ? (

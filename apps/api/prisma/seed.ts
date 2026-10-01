@@ -1,6 +1,7 @@
 /* Seeds categories, products, variants, images, sample reviews and coupons from prisma/seed/catalog.json.
    Idempotent: run it again after editing the JSON. Stock levels in the database are reset to the JSON values. */
 import fs from 'node:fs';
+import { fromApiRoot } from '../src/lib/paths.ts';
 import { createPrisma } from '../src/lib/prisma.ts';
 import type { ImageRole, ProductType, ShipMode } from '../src/generated/prisma/client.ts';
 
@@ -11,18 +12,14 @@ interface SeedProduct {
   ratingAvg: number; ratingCount: number; popularity: number; publishedAt: string; shipMode: ShipMode; madeDays: number | null;
   shipNote: string | null; isUnique: boolean; handMade: boolean; needsSize: boolean; sizeLabel: string | null; sizeGuide: string | null;
   studioGarment: string | null; studioSample: string | null; petPhoto: boolean; personalisation: object | null; livePreview: object | null;
-  details: object; images: { role: ImageRole; path: string; alt: string; caption: string | null; sortOrder: number }[];
+  details: object; images: { role: ImageRole; path: string; zoomPath: string | null; alt: string; caption: string | null; sortOrder: number }[];
   variants: { sku: string; colourName: string; colourValue: string; colourHex: string; size: string | null; sizeNote: string | null; priceDeltaPaise: number; stock: number; trackStock: boolean; sortOrder: number }[];
   reviews: { authorName: string; city: string | null; rating: number; createdAt: string; body: string; helpfulCount: number; isSample: boolean; photoPath: string | null; preview: object | null }[];
   related: string[];
 }
 
-const data = JSON.parse(fs.readFileSync(new URL('./seed/catalog.json', import.meta.url), 'utf8')) as { categories: SeedCategory[]; products: SeedProduct[] };
-const photosDir = new URL('../../web/public/', import.meta.url);
-const zoomOf = (path: string) => {
-  const z = path.replace(/^photos\//, 'photos/z/');
-  return fs.existsSync(new URL(z, photosDir)) ? z : null;
-};
+// read from the API folder so this works from prisma/ (dev) and from dist/seed.js (servers)
+const data = JSON.parse(fs.readFileSync(fromApiRoot('prisma', 'seed', 'catalog.json'), 'utf8')) as { categories: SeedCategory[]; products: SeedProduct[] };
 const json = (v: object | null) => (v === null ? undefined : (v as never));
 
 /* GST defaults per product (HSN code + rule). "threshold" = textiles: 5% up to ₹2,500 a piece, 18% above.
@@ -84,7 +81,7 @@ async function main() {
     const saved = await db.$transaction(async (tx) => {
       const prod = await tx.product.upsert({ where: { code: p.code }, create: { code: p.code, ...fields }, update: fields });
       await tx.productImage.deleteMany({ where: { productId: prod.id } });
-      await tx.productImage.createMany({ data: p.images.map((i) => ({ ...i, productId: prod.id, zoomPath: zoomOf(i.path) })) });
+      await tx.productImage.createMany({ data: p.images.map((i) => ({ ...i, productId: prod.id })) });
       await tx.productVariant.deleteMany({ where: { productId: prod.id, sku: { notIn: p.variants.map((v) => v.sku) } } });
       for (const v of p.variants) await tx.productVariant.upsert({ where: { sku: v.sku }, create: { ...v, productId: prod.id }, update: v });
       await tx.review.deleteMany({ where: { productId: prod.id, isSample: true } });

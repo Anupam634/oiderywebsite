@@ -14,8 +14,8 @@ export function Footer() {
           </div>
           <div><h5>Shop</h5><Link href={categoryHref('clothing')}>Clothing</Link><Link href={categoryHref('home')}>Home décor</Link><Link href={categoryHref('gifts')}>Gifts</Link><Link href={SHOP_LINKS.personalised}>Personalised</Link><Link href={SHOP_LINKS.new}>New arrivals</Link></div>
           <div><h5>Custom</h5><Link href="/studio">Design studio</Link><Link href="/studio?how=upload">Upload your logo</Link><Link href={categoryHref('corporate')}>Bulk &amp; corporate</Link><Link href="/p/custom-pet-portrait-hoop">Pet portraits</Link></div>
-          <div><h5>Help</h5><Link href="/account">Track your order</Link><span className="fsoon">Shipping</span><span className="fsoon">Returns &amp; exchanges</span><span className="fsoon">FAQ</span></div>
-          <div><h5>Studio</h5><span className="fsoon">Our story</span><span className="fsoon">Care guide</span><span className="fsoon">Contact us</span></div>
+          <div><h5>Help</h5><Link href="/account">Track your order</Link><Link href="/policies/shipping">Shipping</Link><Link href="/policies/refunds">Returns &amp; exchanges</Link><Link href="/policies/terms">Terms</Link><Link href="/policies/privacy">Privacy</Link></div>
+          <div><h5>Studio</h5><span className="fsoon">Our story</span><span className="fsoon">Care guide</span><Link href="/contact">Contact us</Link></div>
         </div>
         <div className="bigword" aria-hidden="true">taanka</div>
         <div className="fbot">

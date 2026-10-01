@@ -1,12 +1,12 @@
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import PDFDocument from 'pdfkit';
 import { formatINR, formatPhone, formatRate, type InvoiceLine, type InvoiceTotals } from '@store/shared';
+import { fromApiRoot } from '../../lib/paths.ts';
 import type { StoreSettings } from '../settings/service.ts';
 
 /* Draws the GST invoice (A4) with pdfkit. Mukta covers ₹ and Devanagari (Hindi names and addresses). */
 
-const FONTS = path.join(path.dirname(fileURLToPath(import.meta.url)), '../../../assets/fonts');
+const FONTS = fromApiRoot('assets', 'fonts');
 
 export interface InvoiceSnapshot {
   number: string;

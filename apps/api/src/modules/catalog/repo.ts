@@ -66,7 +66,7 @@ export function ratingDistribution(avg: number): number[] {
 export class CatalogRepo {
   private cache: TtlCache<unknown>;
   constructor(
-    private db: Db,
+    readonly db: Db,
     cacheSeconds: number,
   ) {
     this.cache = new TtlCache(cacheSeconds * 1000);

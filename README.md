@@ -1,56 +1,72 @@
 # Embroidery store platform
 
-The production code for the store (placeholder brand **Taanka**). The look and flows come from the
-approved design preview in `../design`; this repo is the real app.
+The production code for the store (placeholder brand **Taanka**): a colourful, shop-first storefront, a
+studio admin, and an API that takes orders, payments, stitch proofs and machine files.
 
 | Part | Path | Stack |
 | --- | --- | --- |
-| Storefront | `apps/web` | Next.js 16 (App Router), React 19, TypeScript, plain CSS |
-| API | `apps/api` | Node.js, Fastify 5, Zod, Prisma 7, PostgreSQL |
-| Shared rules | `packages/shared` | catalogue filters, pricing, coupons, checkout validation, studio pricing |
+| Storefront + admin | `apps/web` | Next.js 16 (App Router), React 19, TypeScript, plain CSS |
+| API | `apps/api` | Node.js, Fastify 5, Zod, Prisma 7, PostgreSQL; Python + pyembroidery for machine files |
+| Shared rules | `packages/shared` | catalogue filters, pricing, coupons, GST maths, checkout validation, studio pricing, API types |
 | Stitch engine | `packages/stitch` | turns a logo, motif or name into thread colours and renders it on real garment photos |
 
-Money is always integer **paise**. The browser shows an instant estimate, but the API's
-`POST /v1/cart/price` is the price we charge (it re-checks stock, names, coupons and studio pieces).
+Money is always integer **paise**. The browser shows instant estimates; the API's prices are the ones charged.
+
+## What it does
+
+- **Shop:** home, listings with filters, product pages with a live stitched preview of the customer's name,
+  design studio (upload a logo or pick a motif + name, see it on real garments), bag, wishlist.
+- **Accounts:** login with a mobile number and SMS code, saved addresses, order history, cancel, reviews.
+- **Checkout:** server-priced bag, coupons, delivery dates by pincode, UPI / card / net banking / wallet
+  through Razorpay, cash on delivery for ready-made pieces, GST invoice details.
+- **Orders:** stock reserved at checkout, unpaid orders released after 30 minutes, late payments reinstated
+  or refunded, refunds through Razorpay, emails and WhatsApp messages at each step, GST invoice PDFs.
+- **Made-for-you pieces:** stitch proofs sent from the admin; the customer approves or asks for changes from
+  a link; machine files (PES/DST/JEF/EXP) uploaded by the digitizer become a PES for the Brother machine
+  with the customer's thread colours, plus a preview and stitch count.
+- **Admin (`/admin`):** dashboard, orders, production board, packing slips, products (details, stock,
+  photos, personalisation, GST), categories, coupons, reviews, customers, store settings, staff, audit trail.
 
 ## Run it locally
 
-Needs Node 20.9+ and pnpm (`corepack enable`).
+Needs Node 20.9+, pnpm (`corepack enable`) and Python 3 (for machine files).
 
 ```sh
 pnpm install
-pnpm db:start              # local Postgres on :54329 (keep this running)
-pnpm db:migrate && pnpm db:seed
-pnpm dev                   # API on :4000 (docs at /docs), web on :3000
+cp apps/api/.env.example apps/api/.env
+cp apps/web/.env.example apps/web/.env.local
+pnpm db:start                                  # local PostgreSQL on :54329 (keep it running)
+pnpm db:migrate && pnpm --filter @store/api generate && pnpm db:seed   # tables, Prisma client, demo catalogue
+python3 -m pip install --target apps/api/.data/pylib -r apps/api/tools/requirements.txt
+ADMIN_PASSWORD='choose-a-password' pnpm --filter @store/api admin:create you@example.com "Your Name"
+pnpm dev                                       # API on :4000 (docs at /docs), web on :3000
 ```
 
-Copy `apps/api/.env.example` to `apps/api/.env` and `apps/web/.env.example` to `apps/web/.env.local` first.
+Local defaults send nothing real: login codes show on screen ("test mode"), payments use a test sheet,
+emails and WhatsApp messages are written to `apps/api/.data/outbox/`.
 
 ## Checks
 
 ```sh
 pnpm typecheck
-pnpm test                  # API tests start their own throwaway Postgres
+pnpm test        # API tests start their own throwaway PostgreSQL
 pnpm build
 ```
 
-Browser journeys (headless Chrome) live in `../.tooling/node`: `reactflow.js`, `checkoutflow.js`, `studioflow.js`.
+Browser journeys (headless Chrome) live in `../.tooling/node`: `reactflow.js` (product + shop),
+`studioflow.js` (design studio), `phase2flow.js` (login, checkout, payments, account) and
+`adminflow.js` (proof → approval → shipping → delivery, product editing).
 
 ## Pages
 
-- `/` home: offers, categories, product rails
-- `/shop/<category>/<sub>?type=&price=&occ=&fam=&rating=&sort=&q=` listing with filters
-- `/p/<slug>` product: gallery, zoom, live name preview, reviews
-- `/studio?g=<garment>&s=<sample>&how=upload|motif|name` design studio
-- `/checkout` server-priced summary, coupons, address, delivery speed, payment method
+- Shop: `/`, `/shop/<category>/<sub>?type=&price=&occ=&fam=&rating=&sort=&q=`, `/p/<slug>`,
+  `/studio?g=<garment>&s=<sample>&how=upload|motif|name`, `/checkout`
+- Account: `/login`, `/account`, `/account/orders/<number>`, `/proof/<token>`
+- Info: `/contact`, `/policies/shipping|refunds|terms|privacy`
+- Studio: `/admin` and its sections
 
-## Phases
+## Deploying
 
-1. **Storefront + catalogue API** (done): home, shop, product, bag, wishlist, studio, checkout up to payment.
-2. Phone OTP login, saved addresses, orders, Razorpay (test mode), COD, GST invoice.
-3. Admin panel: products, photos, stock, orders, coupons, studio prices.
-4. Studio orders: store uploaded logos, proof approval, PES files for the Brother machine.
-5. Hosting, backups, monitoring, security review.
-
-Not yet real: payment and order creation (phase 2), uploaded logo files are only kept in the
-browser (phase 4), delivery dates use demo pincode zones, garment photos are Unsplash demos.
+See [DEPLOY.md](DEPLOY.md): hosting options, the accounts to create, environment settings and the
+before-launch checklist. Docker images: `apps/api/Dockerfile`, `apps/web/Dockerfile`; a one-server setup
+with automatic HTTPS: `deploy/docker-compose.yml`.

@@ -243,21 +243,24 @@
      "path": "photos/r-tote.jpg",
      "alt": "Canvas tote with an embroidered flower bouquet and the name Priya",
      "caption": null,
-     "sortOrder": 0
+     "sortOrder": 0,
+     "zoomPath": null
     },
     {
      "role": "HOVER",
      "path": "photos/r-tote-d.jpg",
      "alt": "",
      "caption": null,
-     "sortOrder": 1
+     "sortOrder": 1,
+     "zoomPath": null
     },
     {
      "role": "GALLERY",
      "path": "photos/gift-kraft.jpg",
      "caption": "How it arrives",
      "alt": "How it arrives",
-     "sortOrder": 10
+     "sortOrder": 10,
+     "zoomPath": null
     }
    ],
    "variants": [
@@ -535,28 +538,32 @@
      "path": "photos/kurta.jpg",
      "alt": "Woman wearing a red kurta with an ivory embroidered yoke",
      "caption": "On model",
-     "sortOrder": 0
+     "sortOrder": 0,
+     "zoomPath": "photos/z/kurta.jpg"
     },
     {
      "role": "HOVER",
      "path": "photos/kurta-d.jpg",
      "alt": "",
      "caption": null,
-     "sortOrder": 1
+     "sortOrder": 1,
+     "zoomPath": "photos/z/kurta-d.jpg"
     },
     {
      "role": "GALLERY",
      "path": "photos/kurta-d.jpg",
      "caption": "The embroidered yoke",
      "alt": "The embroidered yoke",
-     "sortOrder": 10
+     "sortOrder": 10,
+     "zoomPath": "photos/z/kurta-d.jpg"
     },
     {
      "role": "GALLERY",
      "path": "photos/gift-kraft.jpg",
      "caption": "How it arrives",
      "alt": "How it arrives",
-     "sortOrder": 11
+     "sortOrder": 11,
+     "zoomPath": null
     }
    ],
    "variants": [
@@ -810,28 +817,32 @@
      "path": "photos/cat.jpg",
      "alt": "Embroidered portrait of a tabby cat in a wooden hoop",
      "caption": "The finished hoop",
-     "sortOrder": 0
+     "sortOrder": 0,
+     "zoomPath": "photos/z/cat.jpg"
     },
     {
      "role": "HOVER",
      "path": "photos/cat-d.jpg",
      "alt": "",
      "caption": null,
-     "sortOrder": 1
+     "sortOrder": 1,
+     "zoomPath": "photos/z/cat-d.jpg"
     },
     {
      "role": "GALLERY",
      "path": "photos/cat-d.jpg",
      "caption": "Fur, stitch by stitch",
      "alt": "Fur, stitch by stitch",
-     "sortOrder": 10
+     "sortOrder": 10,
+     "zoomPath": "photos/z/cat-d.jpg"
     },
     {
      "role": "GALLERY",
      "path": "photos/heart.jpg",
      "caption": "Threads matched to your pet",
      "alt": "Threads matched to your pet",
-     "sortOrder": 11
+     "sortOrder": 11,
+     "zoomPath": null
     }
    ],
    "variants": [
@@ -1046,28 +1057,32 @@
      "path": "photos/r-model.jpg",
      "alt": "Man in a white T-shirt with the name Rohan embroidered in pink",
      "caption": null,
-     "sortOrder": 0
+     "sortOrder": 0,
+     "zoomPath": null
     },
     {
      "role": "HOVER",
      "path": "photos/r-model-d.jpg",
      "alt": "",
      "caption": null,
-     "sortOrder": 1
+     "sortOrder": 1,
+     "zoomPath": null
     },
     {
      "role": "GALLERY",
      "path": "photos/r-teemono.jpg",
      "caption": "A monogram on a gulaab tee",
      "alt": "A monogram on a gulaab tee",
-     "sortOrder": 10
+     "sortOrder": 10,
+     "zoomPath": null
     },
     {
      "role": "GALLERY",
      "path": "photos/gift-kraft.jpg",
      "caption": "How it arrives",
      "alt": "How it arrives",
-     "sortOrder": 11
+     "sortOrder": 11,
+     "zoomPath": null
     }
    ],
    "variants": [
@@ -1667,28 +1682,32 @@
      "path": "photos/wreath.jpg",
      "alt": "Embroidery hoop with a wreath of roses and leaves",
      "caption": "Front",
-     "sortOrder": 0
+     "sortOrder": 0,
+     "zoomPath": "photos/z/wreath.jpg"
     },
     {
      "role": "HOVER",
      "path": "photos/wreath-d.jpg",
      "alt": "",
      "caption": null,
-     "sortOrder": 1
+     "sortOrder": 1,
+     "zoomPath": "photos/z/wreath-d.jpg"
     },
     {
      "role": "GALLERY",
      "path": "photos/wreath-d.jpg",
      "caption": "Stitch close-up",
      "alt": "Stitch close-up",
-     "sortOrder": 10
+     "sortOrder": 10,
+     "zoomPath": "photos/z/wreath-d.jpg"
     },
     {
      "role": "GALLERY",
      "path": "photos/wreath-2.jpg",
      "caption": "Another angle",
      "alt": "Another angle",
-     "sortOrder": 11
+     "sortOrder": 11,
+     "zoomPath": "photos/z/wreath-2.jpg"
     }
    ],
    "variants": [
@@ -1879,28 +1898,32 @@
      "path": "photos/r-cap.jpg",
      "alt": "Black cap with gold embroidered initials AK",
      "caption": null,
-     "sortOrder": 0
+     "sortOrder": 0,
+     "zoomPath": null
     },
     {
      "role": "HOVER",
      "path": "photos/r-cap-d.jpg",
      "alt": "",
      "caption": null,
-     "sortOrder": 1
+     "sortOrder": 1,
+     "zoomPath": null
     },
     {
      "role": "GALLERY",
      "path": "photos/r-capteam.jpg",
      "caption": "Team caps: order 25+",
      "alt": "Team caps: order 25+",
-     "sortOrder": 10
+     "sortOrder": 10,
+     "zoomPath": null
     },
     {
      "role": "GALLERY",
      "path": "photos/gift-kraft.jpg",
      "caption": "How it arrives",
      "alt": "How it arrives",
-     "sortOrder": 11
+     "sortOrder": 11,
+     "zoomPath": null
     }
    ],
    "variants": [
@@ -2161,21 +2184,24 @@
      "path": "photos/r-hoodie.jpg",
      "alt": "Maroon hoodie with an embroidered peacock feather",
      "caption": null,
-     "sortOrder": 0
+     "sortOrder": 0,
+     "zoomPath": null
     },
     {
      "role": "HOVER",
      "path": "photos/r-hoodie-d.jpg",
      "alt": "",
      "caption": null,
-     "sortOrder": 1
+     "sortOrder": 1,
+     "zoomPath": null
     },
     {
      "role": "GALLERY",
      "path": "photos/gift-kraft.jpg",
      "caption": "How it arrives",
      "alt": "How it arrives",
-     "sortOrder": 10
+     "sortOrder": 10,
+     "zoomPath": null
     }
    ],
    "variants": [
@@ -2655,28 +2681,32 @@
      "path": "photos/tulip.jpg",
      "alt": "Cushion with colourful embroidered tulips on a leather sofa",
      "caption": "On the sofa",
-     "sortOrder": 0
+     "sortOrder": 0,
+     "zoomPath": "photos/z/tulip.jpg"
     },
     {
      "role": "HOVER",
      "path": "photos/tulip-d.jpg",
      "alt": "",
      "caption": null,
-     "sortOrder": 1
+     "sortOrder": 1,
+     "zoomPath": "photos/z/tulip-d.jpg"
     },
     {
      "role": "GALLERY",
      "path": "photos/tulip-d.jpg",
      "caption": "Stitch close-up",
      "alt": "Stitch close-up",
-     "sortOrder": 10
+     "sortOrder": 10,
+     "zoomPath": "photos/z/tulip-d.jpg"
     },
     {
      "role": "GALLERY",
      "path": "photos/gift-kraft.jpg",
      "caption": "How it arrives",
      "alt": "How it arrives",
-     "sortOrder": 11
+     "sortOrder": 11,
+     "zoomPath": null
     }
    ],
    "variants": [
@@ -2863,28 +2893,32 @@
      "path": "photos/dupatta.jpg",
      "alt": "Woman wearing a rani pink dupatta with mirror work and embroidered flowers",
      "caption": "Styled",
-     "sortOrder": 0
+     "sortOrder": 0,
+     "zoomPath": "photos/z/dupatta.jpg"
     },
     {
      "role": "HOVER",
      "path": "photos/dupatta-d.jpg",
      "alt": "",
      "caption": null,
-     "sortOrder": 1
+     "sortOrder": 1,
+     "zoomPath": "photos/z/dupatta-d.jpg"
     },
     {
      "role": "GALLERY",
      "path": "photos/dupatta-d.jpg",
      "caption": "Mirror work, up close",
      "alt": "Mirror work, up close",
-     "sortOrder": 10
+     "sortOrder": 10,
+     "zoomPath": "photos/z/dupatta-d.jpg"
     },
     {
      "role": "GALLERY",
      "path": "photos/gift-kraft.jpg",
      "caption": "How it arrives",
      "alt": "How it arrives",
-     "sortOrder": 11
+     "sortOrder": 11,
+     "zoomPath": null
     }
    ],
    "variants": [
@@ -3059,21 +3093,24 @@
      "path": "photos/birds.jpg",
      "alt": "Stacked cushions with gold embroidered birds",
      "caption": "Styled on a bed",
-     "sortOrder": 0
+     "sortOrder": 0,
+     "zoomPath": "photos/z/birds.jpg"
     },
     {
      "role": "HOVER",
      "path": "photos/birds-d.jpg",
      "alt": "",
      "caption": null,
-     "sortOrder": 1
+     "sortOrder": 1,
+     "zoomPath": "photos/z/birds-d.jpg"
     },
     {
      "role": "GALLERY",
      "path": "photos/birds-d.jpg",
      "caption": "Zari and satin, up close",
      "alt": "Zari and satin, up close",
-     "sortOrder": 10
+     "sortOrder": 10,
+     "zoomPath": "photos/z/birds-d.jpg"
     }
    ],
    "variants": [
@@ -3264,21 +3301,24 @@
      "path": "photos/lehenga.jpg",
      "alt": "Woman in a bottle-green lehenga with an embroidered blouse",
      "caption": "On model",
-     "sortOrder": 0
+     "sortOrder": 0,
+     "zoomPath": "photos/z/lehenga.jpg"
     },
     {
      "role": "HOVER",
      "path": "photos/lehenga-d.jpg",
      "alt": "",
      "caption": null,
-     "sortOrder": 1
+     "sortOrder": 1,
+     "zoomPath": "photos/z/lehenga-d.jpg"
     },
     {
      "role": "GALLERY",
      "path": "photos/lehenga-d.jpg",
      "caption": "The embroidered blouse",
      "alt": "The embroidered blouse",
-     "sortOrder": 10
+     "sortOrder": 10,
+     "zoomPath": "photos/z/lehenga-d.jpg"
     }
    ],
    "variants": [
@@ -3511,21 +3551,24 @@
      "path": "photos/denim.jpg",
      "alt": "Denim jacket with an embroidered rose patch",
      "caption": "Front",
-     "sortOrder": 0
+     "sortOrder": 0,
+     "zoomPath": "photos/z/denim.jpg"
     },
     {
      "role": "HOVER",
      "path": "photos/denim-d.jpg",
      "alt": "",
      "caption": null,
-     "sortOrder": 1
+     "sortOrder": 1,
+     "zoomPath": "photos/z/denim-d.jpg"
     },
     {
      "role": "GALLERY",
      "path": "photos/denim-d.jpg",
      "caption": "The rose patch",
      "alt": "The rose patch",
-     "sortOrder": 10
+     "sortOrder": 10,
+     "zoomPath": "photos/z/denim-d.jpg"
     }
    ],
    "variants": [
@@ -3736,28 +3779,32 @@
      "path": "photos/cherry.jpg",
      "alt": "Hands holding an oval hoop embroidered with a pink cherry blossom branch",
      "caption": "In hand",
-     "sortOrder": 0
+     "sortOrder": 0,
+     "zoomPath": "photos/z/cherry.jpg"
     },
     {
      "role": "HOVER",
      "path": "photos/cherry-d.jpg",
      "alt": "",
      "caption": null,
-     "sortOrder": 1
+     "sortOrder": 1,
+     "zoomPath": "photos/z/cherry-d.jpg"
     },
     {
      "role": "GALLERY",
      "path": "photos/cherry-d.jpg",
      "caption": "Blossoms, up close",
      "alt": "Blossoms, up close",
-     "sortOrder": 10
+     "sortOrder": 10,
+     "zoomPath": "photos/z/cherry-d.jpg"
     },
     {
      "role": "GALLERY",
      "path": "photos/gift-kraft.jpg",
      "caption": "How it arrives",
      "alt": "How it arrives",
-     "sortOrder": 11
+     "sortOrder": 11,
+     "zoomPath": null
     }
    ],
    "variants": [
@@ -3931,28 +3978,32 @@
      "path": "photos/poppy.jpg",
      "alt": "Hands stitching red poppies on an embroidery hoop",
      "caption": "Stitching in progress",
-     "sortOrder": 0
+     "sortOrder": 0,
+     "zoomPath": "photos/z/poppy.jpg"
     },
     {
      "role": "HOVER",
      "path": "photos/poppy-d.jpg",
      "alt": "",
      "caption": null,
-     "sortOrder": 1
+     "sortOrder": 1,
+     "zoomPath": "photos/z/poppy-d.jpg"
     },
     {
      "role": "GALLERY",
      "path": "photos/poppy-d.jpg",
      "caption": "The poppies, up close",
      "alt": "The poppies, up close",
-     "sortOrder": 10
+     "sortOrder": 10,
+     "zoomPath": "photos/z/poppy-d.jpg"
     },
     {
      "role": "GALLERY",
      "path": "photos/heart.jpg",
      "caption": "Threads, pre-sorted",
      "alt": "Threads, pre-sorted",
-     "sortOrder": 11
+     "sortOrder": 11,
+     "zoomPath": null
     }
    ],
    "variants": [
@@ -4137,28 +4188,32 @@
      "path": "photos/knit.jpg",
      "alt": "Grey cable-knit cardigan with embroidered flowers",
      "caption": "Front",
-     "sortOrder": 0
+     "sortOrder": 0,
+     "zoomPath": "photos/z/knit.jpg"
     },
     {
      "role": "HOVER",
      "path": "photos/knit-d.jpg",
      "alt": "",
      "caption": null,
-     "sortOrder": 1
+     "sortOrder": 1,
+     "zoomPath": "photos/z/knit-d.jpg"
     },
     {
      "role": "GALLERY",
      "path": "photos/knit-d.jpg",
      "caption": "The flowers, up close",
      "alt": "The flowers, up close",
-     "sortOrder": 10
+     "sortOrder": 10,
+     "zoomPath": "photos/z/knit-d.jpg"
     },
     {
      "role": "GALLERY",
      "path": "photos/gift-kraft.jpg",
      "caption": "How it arrives",
      "alt": "How it arrives",
-     "sortOrder": 11
+     "sortOrder": 11,
+     "zoomPath": null
     }
    ],
    "variants": [
@@ -4368,28 +4423,32 @@
      "path": "photos/jungle.jpg",
      "alt": "Wildflowers embroidered on black fabric in a wooden hoop",
      "caption": "Front",
-     "sortOrder": 0
+     "sortOrder": 0,
+     "zoomPath": "photos/z/jungle.jpg"
     },
     {
      "role": "HOVER",
      "path": "photos/jungle-d.jpg",
      "alt": "",
      "caption": null,
-     "sortOrder": 1
+     "sortOrder": 1,
+     "zoomPath": "photos/z/jungle-d.jpg"
     },
     {
      "role": "GALLERY",
      "path": "photos/jungle-d.jpg",
      "caption": "Thread painting, up close",
      "alt": "Thread painting, up close",
-     "sortOrder": 10
+     "sortOrder": 10,
+     "zoomPath": "photos/z/jungle-d.jpg"
     },
     {
      "role": "GALLERY",
      "path": "photos/gift-kraft.jpg",
      "caption": "How it arrives",
      "alt": "How it arrives",
-     "sortOrder": 11
+     "sortOrder": 11,
+     "zoomPath": null
     }
    ],
    "variants": [
@@ -4542,14 +4601,16 @@
      "path": "photos/r-polo.jpg",
      "alt": "White polo shirt with an embroidered café logo on the chest",
      "caption": null,
-     "sortOrder": 0
+     "sortOrder": 0,
+     "zoomPath": null
     },
     {
      "role": "HOVER",
      "path": "photos/r-polo-d.jpg",
      "alt": "",
      "caption": null,
-     "sortOrder": 1
+     "sortOrder": 1,
+     "zoomPath": null
     }
    ],
    "variants": [
@@ -4717,28 +4778,32 @@
      "path": "photos/phoolrani.jpg",
      "alt": "Punch-needle portrait of a woman with a crown of roses",
      "caption": "Front",
-     "sortOrder": 0
+     "sortOrder": 0,
+     "zoomPath": "photos/z/phoolrani.jpg"
     },
     {
      "role": "HOVER",
      "path": "photos/phoolrani-d.jpg",
      "alt": "",
      "caption": null,
-     "sortOrder": 1
+     "sortOrder": 1,
+     "zoomPath": "photos/z/phoolrani-d.jpg"
     },
     {
      "role": "GALLERY",
      "path": "photos/phoolrani-d.jpg",
      "caption": "Wool loops, up close",
      "alt": "Wool loops, up close",
-     "sortOrder": 10
+     "sortOrder": 10,
+     "zoomPath": "photos/z/phoolrani-d.jpg"
     },
     {
      "role": "GALLERY",
      "path": "photos/gift-kraft.jpg",
      "caption": "How it arrives",
      "alt": "How it arrives",
-     "sortOrder": 11
+     "sortOrder": 11,
+     "zoomPath": null
     }
    ],
    "variants": [
@@ -4891,14 +4956,16 @@
      "path": "photos/r-capteam.jpg",
      "alt": "Navy cap with an embroidered team crest",
      "caption": null,
-     "sortOrder": 0
+     "sortOrder": 0,
+     "zoomPath": null
     },
     {
      "role": "HOVER",
      "path": "photos/r-capteam-d.jpg",
      "alt": "",
      "caption": null,
-     "sortOrder": 1
+     "sortOrder": 1,
+     "zoomPath": null
     }
    ],
    "variants": [
@@ -5046,14 +5113,16 @@
      "path": "photos/r-totechai.jpg",
      "alt": "Black canvas tote with an embroidered café logo",
      "caption": null,
-     "sortOrder": 0
+     "sortOrder": 0,
+     "zoomPath": null
     },
     {
      "role": "HOVER",
      "path": "photos/r-totechai-d.jpg",
      "alt": "",
      "caption": null,
-     "sortOrder": 1
+     "sortOrder": 1,
+     "zoomPath": null
     }
    ],
    "variants": [

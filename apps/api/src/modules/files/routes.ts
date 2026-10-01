@@ -66,7 +66,8 @@ export const fileRoutes =
       if (!u || !u.isPublic) throw notFound('File');
       const body = await files.read(u);
       if (!body) throw notFound('File');
-      reply.header('content-type', u.mime).header('cache-control', 'public, max-age=31536000, immutable').header('x-content-type-options', 'nosniff');
+      // s-maxage lets a CDN in front (e.g. Vercel's, through the shop's /api proxy) keep product photos too
+      reply.header('content-type', u.mime).header('cache-control', 'public, max-age=31536000, s-maxage=31536000, immutable').header('x-content-type-options', 'nosniff');
       return reply.send(body);
     });
   };

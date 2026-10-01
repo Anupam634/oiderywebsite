@@ -76,6 +76,13 @@ const schema = z.object({
   /** public base URL for public files (product photos), e.g. an R2 custom domain */
   S3_PUBLIC_URL: optional,
 
+  /** a second, public bucket for product photos (R2 public access is per bucket); private files stay in S3_BUCKET */
+  S3_PUBLIC_BUCKET: optional,
+
+  /* ---- first start on a new server: creates the owner login if there is none yet ---- */
+  ADMIN_BOOTSTRAP_EMAIL: optional,
+  ADMIN_BOOTSTRAP_PASSWORD: optional,
+
   /* ---- stitch files ---- */
   PYTHON_BIN: z.string().default('python3'),
   /** extra Python path where pyembroidery is installed (pip install --target .data/pylib -r tools/requirements.txt) */
@@ -102,6 +109,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
   if (c.EMAIL_PROVIDER === 'resend' && !c.RESEND_API_KEY) problems.push('RESEND_API_KEY is needed for Resend');
   if (c.WHATSAPP_PROVIDER === 'meta' && !(c.META_WA_TOKEN && c.META_WA_PHONE_NUMBER_ID)) problems.push('META_WA_TOKEN and META_WA_PHONE_NUMBER_ID are needed for WhatsApp');
   if (c.STORAGE === 's3' && !(c.S3_ENDPOINT && c.S3_BUCKET && c.S3_ACCESS_KEY_ID && c.S3_SECRET_ACCESS_KEY)) problems.push('S3 storage needs S3_ENDPOINT, S3_BUCKET, S3_ACCESS_KEY_ID and S3_SECRET_ACCESS_KEY');
+  if (c.S3_PUBLIC_URL && !c.S3_PUBLIC_BUCKET) problems.push('S3_PUBLIC_URL needs S3_PUBLIC_BUCKET (keep private files out of a public bucket)');
   if (c.NODE_ENV === 'production') {
     // a real shop must never run on test switches by accident; staging servers opt in explicitly
     if (c.PAYMENTS_PROVIDER === 'fake' && !c.ALLOW_FAKE_PAYMENTS) problems.push('PAYMENTS_PROVIDER=fake is not allowed in production (set ALLOW_FAKE_PAYMENTS=1 for a demo server)');

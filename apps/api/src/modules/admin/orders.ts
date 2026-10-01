@@ -171,7 +171,7 @@ export const adminOrderRoutes =
             to: z.enum(['IN_PRODUCTION', 'SHIPPED', 'DELIVERED']),
             courier: z.string().trim().max(40).optional(),
             awb: z.string().trim().max(40).optional(),
-            trackingUrl: z.union([z.literal(''), z.url().max(300)]).optional(),
+            trackingUrl: z.union([z.literal(''), z.url({ protocol: /^https?$/, error: 'Use an http(s) tracking link' }).max(300)]).optional(),
             force: z.boolean().optional(),
           }),
         },

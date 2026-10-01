@@ -2,17 +2,17 @@ import { execFile } from 'node:child_process';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { THREAD_LABEL, type StitchThread, type ThreadKey } from '@store/shared';
 import type { Config } from '../../config.ts';
 import { AppError, notFound } from '../../lib/errors.ts';
+import { fromApiRoot } from '../../lib/paths.ts';
 import type { Db } from '../../lib/prisma.ts';
 import type { Files } from '../files/service.ts';
 
 /* Machine files from the digitizer (PES, DST, JEF, EXP…). tools/stitchfile.py (pyembroidery) reads them,
    draws a preview and writes a PES for the Brother machine with the order's thread colours. */
 
-const TOOL = path.join(path.dirname(fileURLToPath(import.meta.url)), '../../../tools/stitchfile.py');
+const TOOL = fromApiRoot('tools', 'stitchfile.py');
 export const STITCH_FORMATS = ['pes', 'dst', 'jef', 'exp', 'vp3', 'xxx', 'pec', 'u01', 'tbf'];
 const THREAD_HEX: Record<string, string> = {
   rani: '#E4007C', gulaab: '#FF78B4', sindoor: '#FF4B2B', kesar: '#FF8A00', haldi: '#FFB300', mehendi: '#5DAA3A',

@@ -44,12 +44,14 @@ export class LocalStorage implements Storage {
 
 export class S3Storage implements Storage {
   private client: AwsClient;
-  private base: string;
+  private endpoint: string;
   constructor(private config: Config) {
     this.client = new AwsClient({ accessKeyId: config.S3_ACCESS_KEY_ID!, secretAccessKey: config.S3_SECRET_ACCESS_KEY!, service: 's3', region: config.S3_REGION });
-    this.base = `${config.S3_ENDPOINT!.replace(/\/$/, '')}/${config.S3_BUCKET}`;
+    this.endpoint = config.S3_ENDPOINT!.replace(/\/$/, '');
   }
-  private url = (key: string) => `${this.base}/${checkKey(key).split('/').map(encodeURIComponent).join('/')}`;
+  /** public/… keys go to the public bucket when there is one */
+  private bucket = (key: string) => (key.startsWith('public/') && this.config.S3_PUBLIC_BUCKET ? this.config.S3_PUBLIC_BUCKET : this.config.S3_BUCKET!);
+  private url = (key: string) => `${this.endpoint}/${this.bucket(key)}/${checkKey(key).split('/').map(encodeURIComponent).join('/')}`;
   async put(key: string, body: Buffer, contentType: string) {
     const res = await this.client.fetch(this.url(key), { method: 'PUT', body, headers: { 'content-type': contentType } });
     if (!res.ok) throw new Error(`storage put ${res.status}: ${(await res.text()).slice(0, 200)}`);
@@ -65,7 +67,8 @@ export class S3Storage implements Storage {
     if (!res.ok && res.status !== 404) throw new Error(`storage delete ${res.status}`);
   }
   publicUrl(key: string) {
-    return this.config.S3_PUBLIC_URL && key.startsWith('public/') ? `${this.config.S3_PUBLIC_URL.replace(/\/$/, '')}/${key}` : null;
+    // only a dedicated public bucket may be read directly; otherwise the API serves public files itself
+    return this.config.S3_PUBLIC_URL && this.config.S3_PUBLIC_BUCKET && key.startsWith('public/') ? `${this.config.S3_PUBLIC_URL.replace(/\/$/, '')}/${key}` : null;
   }
 }
 

@@ -20,6 +20,10 @@ export const storeSettingsSchema = z.object({
   invoicePrefix: z.string().trim().regex(/^[A-Z0-9]{1,5}$/, 'Use 1–5 capital letters or digits'),
   /** printed under the totals */
   invoiceNote: z.string().trim().max(300),
+  /** grievance officer (Consumer Protection (E-Commerce) Rules): name shown on the contact page */
+  grievanceOfficer: z.string().trim().max(80).default(''),
+  /** courts for disputes, e.g. "Pune" */
+  jurisdictionCity: z.string().trim().max(60).default(''),
 });
 export type StoreSettings = z.infer<typeof storeSettingsSchema>;
 
@@ -36,7 +40,22 @@ export const DEFAULT_SETTINGS: StoreSettings = {
   email: BRAND.supportEmail,
   invoicePrefix: BRAND.orderPrefix,
   invoiceNote: 'Thank you for shopping with us. Made-for-you pieces can’t be returned; ready-made pieces can be exchanged within 7 days.',
+  grievanceOfficer: '',
+  jurisdictionCity: '',
 };
+
+/** what the storefront may show publicly (policies, contact page) */
+export const publicStore = (s: StoreSettings) => ({
+  legalName: s.legalName,
+  tradeName: s.tradeName,
+  gstin: s.gstin || null,
+  address: [s.addressLine1, s.addressLine2, [s.city, s.state, s.pincode].filter(Boolean).join(', ')].filter(Boolean),
+  state: s.state,
+  phone: s.phone,
+  email: s.email,
+  grievanceOfficer: s.grievanceOfficer || null,
+  jurisdictionCity: s.jurisdictionCity || s.city || null,
+});
 
 export async function getStoreSettings(db: Db): Promise<StoreSettings> {
   const row = await db.setting.findUnique({ where: { key: 'store' } });

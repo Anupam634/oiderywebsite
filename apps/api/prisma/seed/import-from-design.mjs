@@ -61,11 +61,16 @@ const products = PRODUCTS.map((p) => {
   const gallery = [];
   if (d) d.gal.forEach(([img, cap], i) => gallery.push({ path: `photos/${img}.jpg`, caption: cap, alt: img === p.img ? p.alt : cap, sortOrder: i }));
   const mainCap = d?.gal?.find(([img]) => img === p.img)?.[1] ?? null;
+  // a sharper copy for the zoom lens, when the web app has one in public/photos/z/
+  const zoom = (path) => {
+    const z = path.replace(/^photos\//, 'photos/z/');
+    return fs.existsSync(new URL(`../../../web/public/${z}`, import.meta.url)) ? z : null;
+  };
   const images = [
     { role: 'MAIN', path: `photos/${p.img}.jpg`, alt: p.alt, caption: mainCap, sortOrder: 0 },
     { role: 'HOVER', path: `photos/${p.img}-d.jpg`, alt: '', caption: null, sortOrder: 1 },
     ...gallery.filter((g) => g.path !== `photos/${p.img}.jpg`).map((g, i) => ({ role: 'GALLERY', ...g, sortOrder: 10 + i })),
-  ];
+  ].map((im) => ({ ...im, zoomPath: zoom(im.path) }));
   const reviews = RVS.map((r, i) => {
     const vr = VAR[p.id]?.[i];
     return {
