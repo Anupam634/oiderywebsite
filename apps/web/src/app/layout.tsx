@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 import { BRAND } from '@store/shared';
-import { Footer } from '@/components/Footer';
 import { Overlays } from '@/components/Overlays';
 import { getCategories } from '@/lib/catalog';
 import { fraunces, jakarta, mukta } from '@/lib/fonts';
@@ -25,7 +24,6 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     <html lang="en-IN" className={`js ${fraunces.variable} ${jakarta.variable} ${mukta.variable}`}>
       <body>
         {children}
-        <Footer />
         <Overlays categories={categories} />
       </body>
     </html>

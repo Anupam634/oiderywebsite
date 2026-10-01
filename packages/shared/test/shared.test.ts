@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  checkoutErrors,
   applyListing,
   checkName,
   cleanName,
@@ -108,4 +109,22 @@ describe('pricing', () => {
     expect(computeTotals(lines, { payment: 'cod' }).codFeePaise).toBe(0); // COD silently not used for custom pieces
     expect(computeTotals([{ qty: 1, pricePaise: 89_900, mrpPaise: 99_900, custom: false }], { payment: 'cod' })).toMatchObject({ shippingPaise: 7_900, codFeePaise: 4_900, totalPaise: 89_900 + 7_900 + 4_900 });
   });
+});
+
+describe('checkout details', () => {
+  const good = {
+    phone: '9876543210', email: '', whatsappUpdates: true, pincode: '400050', name: 'Priya Sharma', line1: 'Flat 402',
+    line2: 'Linking Road', landmark: '', city: 'Mumbai', state: 'Maharashtra', addressType: 'home', gst: null, giftNote: null,
+  };
+  it('accepts a complete address', () => expect(checkoutErrors(good)).toEqual({}));
+  it('names each bad field once', () => {
+    expect(checkoutErrors({ ...good, phone: '12345', pincode: '012345', state: '', gst: { gstin: 'abc', business: '' } })).toEqual({
+      phone: 'Enter a 10-digit mobile number',
+      pincode: 'Enter a 6-digit pincode',
+      state: 'Choose your state',
+      gstin: 'Enter a valid 15-character GSTIN',
+      business: 'Enter your business name',
+    });
+  });
+  it('takes a lower-case GSTIN', () => expect(checkoutErrors({ ...good, gst: { gstin: '27abcde1234f1z5', business: 'Chai Co' } })).toEqual({}));
 });

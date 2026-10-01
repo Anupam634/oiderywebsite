@@ -5,8 +5,11 @@ import {
   THREAD_KEYS,
   checkName,
   computeTotals,
+  formatINR,
   unitPrice,
+  type Coupon,
   type PersonalisationConfig,
+  type Totals,
 } from '@store/shared';
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import type { Db } from '../../lib/prisma.ts';
@@ -84,21 +87,48 @@ export const cartRoutes =
           };
         });
 
-        let couponInfo: { code: string; valid: boolean; message: string } | null = null;
-        let coupon = null;
+        let coupon: Coupon | null = null;
+        let found = false;
         if (code) {
           const now = new Date();
           const c = await db.coupon.findUnique({ where: { code } });
-          const live = c && c.active && (!c.startsAt || c.startsAt <= now) && (!c.endsAt || c.endsAt >= now);
-          coupon = live ? { code: c.code, percent: c.percent, maxDiscountPaise: c.maxDiscountPaise, minSubtotalPaise: c.minSubtotalPaise, label: c.label } : null;
-          couponInfo = { code, valid: !!live, message: live ? c.label : 'This code is not valid' };
+          found = !!(c && c.active && (!c.startsAt || c.startsAt <= now) && (!c.endsAt || c.endsAt >= now));
+          if (found && c) coupon = { code: c.code, percent: c.percent, maxDiscountPaise: c.maxDiscountPaise, minSubtotalPaise: c.minSubtotalPaise, label: c.label };
         }
         const ok = lines.filter((l) => l.available);
         const totals = computeTotals(
           ok.map((l) => ({ qty: l.qty, pricePaise: l.unitPricePaise, mrpPaise: l.unitMrpPaise, custom: l.custom })),
           { coupon, ...(shipping ? { shipping } : {}), ...(payment ? { payment } : {}) },
         );
-        return { lines, totals, coupon: couponInfo };
+        return { lines, totals, coupon: code ? couponStatus(code, coupon, totals) : null };
+      },
+    );
+
+    app.get(
+      '/coupons',
+      { schema: { tags: ['cart'], summary: 'Offers a shopper can apply at checkout' } },
+      async (_req, reply) => {
+        const now = new Date();
+        const rows = await db.coupon.findMany({
+          where: { active: true, AND: [{ OR: [{ startsAt: null }, { startsAt: { lte: now } }] }, { OR: [{ endsAt: null }, { endsAt: { gte: now } }] }] },
+          orderBy: { minSubtotalPaise: 'asc' },
+        });
+        reply.header('cache-control', 'public, max-age=60');
+        return { items: rows.map((c) => ({ code: c.code, label: c.label, percent: c.percent, maxDiscountPaise: c.maxDiscountPaise, minSubtotalPaise: c.minSubtotalPaise, firstOrderOnly: c.firstOrderOnly })) };
       },
     );
   };
+
+/** What to tell the shopper about the code they typed. */
+function couponStatus(code: string, coupon: Coupon | null, totals: Totals) {
+  if (!coupon) return { code, valid: false, applied: false, message: 'This code is not valid' };
+  if (totals.subtotalPaise < coupon.minSubtotalPaise)
+    return { code, valid: false, applied: false, message: `${code} needs a bag of ${formatINR(coupon.minSubtotalPaise)} or more` };
+  const applied = totals.discountLabel === `Coupon ${code}`;
+  return {
+    code,
+    valid: true,
+    applied,
+    message: applied ? `${code} applied. You save ${formatINR(totals.discountPaise)}` : 'Your Buy 2 offer saves you more, so we kept that',
+  };
+}

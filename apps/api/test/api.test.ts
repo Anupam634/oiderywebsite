@@ -106,7 +106,7 @@ describe('cart pricing', () => {
       [189_900 + 14_900 + 4_900, true, true],
       [249_900, false, true],
     ]);
-    expect(body.coupon).toEqual({ code: 'TAANKA10', valid: true, message: '10% off, first order' });
+    expect(body.coupon).toEqual({ code: 'TAANKA10', valid: true, applied: false, message: 'Your Buy 2 offer saves you more, so we kept that' });
     expect(body.totals.discountLabel).toBe('Buy 2, get 10% off');
     expect(body.totals.codAllowed).toBe(false);
   });
@@ -132,6 +132,22 @@ describe('cart pricing', () => {
     ]);
     expect(body.coupon.valid).toBe(false);
     expect(body.totals.itemCount).toBe(0);
+  });
+
+  it('applies a coupon on one piece and explains a minimum', async () => {
+    const kurta = await variant('kurta', { size: 'M' });
+    let { body } = await price({ items: [{ variantId: kurta.id, qty: 1 }], coupon: 'TAANKA10' });
+    expect(body.coupon).toMatchObject({ valid: true, applied: true, message: 'TAANKA10 applied. You save ₹250' });
+    expect(body.totals.discountPaise).toBe(24_990);
+    ({ body } = await price({ items: [{ variantId: kurta.id, qty: 1 }], coupon: 'FESTIVE15' }));
+    expect(body.coupon).toMatchObject({ valid: false, message: 'FESTIVE15 needs a bag of ₹2,999 or more' });
+    expect(body.totals.discountPaise).toBe(0);
+  });
+
+  it('lists the offers shoppers can use', async () => {
+    const r = await app.inject({ method: 'GET', url: '/v1/coupons' });
+    expect(r.statusCode).toBe(200);
+    expect(r.json().items.map((c: any) => c.code)).toEqual(['TAANKA10', 'FESTIVE15']);
   });
 
   it('rejects malformed bags', async () => {

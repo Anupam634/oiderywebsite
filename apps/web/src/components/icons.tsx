@@ -34,6 +34,10 @@ export const Upi = make('<path d="M4 17L10 5M10 17l6-12M16 17l4-8"/>');
 export const Gift = make('<rect x="3.5" y="9" width="17" height="11" rx="1.5"/><path d="M12 9v11M3.5 13h17M12 9C9 9 7 7.8 7 6.2S8.6 4 10 5.2 12 9 12 9s.6-2.6 2-3.8S17 4.6 17 6.2 15 9 12 9z"/>');
 export const Home = make('<path d="M4 10.5L12 4l8 6.5V20h-5.5v-5.5h-5V20H4z"/>');
 export const Grid = make('<rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="3.5"/><rect x="4" y="13" width="7" height="7" rx="3.5"/><rect x="13" y="13" width="7" height="7" rx="2"/>');
+export const Lock = make('<rect x="5" y="10" width="14" height="10" rx="2.5"/><path d="M8 10V7.5a4 4 0 018 0V10"/>');
+export const Card = make('<rect x="2.5" y="5.5" width="19" height="13" rx="2.5"/><path d="M2.5 10h19M6.5 15h4"/>');
+export const Bank = make('<path d="M3 10l9-6 9 6M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20h18"/>');
+export const Wallet = make('<path d="M4 7h14a2 2 0 012 2v9a2 2 0 01-2 2H6a2 2 0 01-2-2z"/><path d="M4 7l11-3v3M16 13.5h2"/>');
 export const SparkFill = make('<path d="M12 2l2.2 6.6L21 10l-6.8 1.6L12 18l-2.2-6.4L3 10l6.8-1.4z"/>', { fill: 'currentColor', stroke: 'none' });
 
 export function Logo() {

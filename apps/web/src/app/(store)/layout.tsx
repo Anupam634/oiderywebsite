@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { BottomNav } from '@/components/BottomNav';
+import { Footer } from '@/components/Footer';
 import { Header } from '@/components/Header';
 import { getCategories } from '@/lib/catalog';
 
@@ -9,6 +10,7 @@ export default async function StoreLayout({ children }: { children: ReactNode })
     <div className="has-bnav">
       <Header categories={await getCategories()} showMobileSearch />
       {children}
+      <Footer />
       <BottomNav />
     </div>
   );

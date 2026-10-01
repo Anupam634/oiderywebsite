@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { Footer } from '@/components/Footer';
 import { Header } from '@/components/Header';
 import { getCategories } from '@/lib/catalog';
 
@@ -7,6 +8,7 @@ export default async function PagesLayout({ children }: { children: ReactNode })
     <>
       <Header categories={await getCategories()} />
       {children}
+      <Footer />
     </>
   );
 }

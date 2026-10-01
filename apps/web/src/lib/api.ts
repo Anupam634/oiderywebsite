@@ -44,11 +44,28 @@ export const api = {
     }
   },
   search: (q: string, limit = 6) => request<{ items: ProductCard[]; total: number }>(`/v1/search?q=${encodeURIComponent(q)}&limit=${limit}`),
-  priceCart: (body: unknown) => request<CartPriceResponse>('/v1/cart/price', { method: 'POST', body: JSON.stringify(body) }),
+  coupons: () => request<{ items: Offer[] }>('/v1/coupons', { next: { revalidate: 60 } }).then((r) => r.items),
+  priceCart: (body: CartPriceRequest) => request<CartPriceResponse>('/v1/cart/price', { method: 'POST', body: JSON.stringify(body) }),
 };
 
 export interface CartPriceResponse {
   lines: { variantId: string; available: boolean; problems: string[]; qty: number; unitPricePaise: number; unitMrpPaise: number; custom: boolean }[];
   totals: import('@store/shared').Totals;
-  coupon: { code: string; valid: boolean; message: string } | null;
+  coupon: { code: string; valid: boolean; applied: boolean; message: string } | null;
+}
+
+export interface CartPriceRequest {
+  items: { variantId: string; qty: number; personalisation?: { text: string; font: string; thread: string; flowers?: number } | null; giftWrap?: boolean }[];
+  coupon?: string;
+  shipping?: 'standard' | 'express';
+  payment?: 'upi' | 'card' | 'netbanking' | 'wallet' | 'cod';
+}
+
+export interface Offer {
+  code: string;
+  label: string;
+  percent: number;
+  maxDiscountPaise: number;
+  minSubtotalPaise: number;
+  firstOrderOnly: boolean;
 }
