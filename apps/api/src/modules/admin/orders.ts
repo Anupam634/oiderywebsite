@@ -11,6 +11,7 @@ import type { InvoiceService } from '../invoice/service.ts';
 import { itemImage, orderInclude, toItemDto, toSummaryDto, type FullOrder } from '../orders/dto.ts';
 import { NEXT_STATUS, type Fulfilment } from '../orders/fulfil.ts';
 import type { OrderService } from '../orders/service.ts';
+import type { StitchFiles } from '../stitchfiles/service.ts';
 
 const adminInclude = {
   ...orderInclude,
@@ -102,7 +103,7 @@ const STATUSES = ['PENDING_PAYMENT', 'PLACED', 'IN_PRODUCTION', 'SHIPPED', 'DELI
 
 /** Orders and production for the studio. */
 export const adminOrderRoutes =
-  (db: Db, orders: OrderService, fulfil: Fulfilment, invoices: InvoiceService, files: Files): FastifyPluginAsyncZod =>
+  (db: Db, orders: OrderService, fulfil: Fulfilment, invoices: InvoiceService, files: Files, stitch: StitchFiles): FastifyPluginAsyncZod =>
   async (app) => {
     app.addHook('preValidation', requireAdmin);
     app.addHook('onSend', async (_req, reply) => {
@@ -304,6 +305,23 @@ export const adminOrderRoutes =
         if (part.file.truncated) throw new AppError(413, 'file_too_big', 'That file is too big');
         await fulfil.sendProof(req.params.id, buf, note.slice(0, 500), req.admin!.adminId);
         await audit(db, req, 'proof_sent', 'order_item', req.params.id);
+        const item = await db.orderItem.findUniqueOrThrow({ where: { id: req.params.id }, include: { order: { select: { number: true } } } });
+        return { order: await detail(item.order.number) };
+      },
+    );
+
+    app.post(
+      '/admin/items/:id/stitch-files',
+      { schema: { tags: ['admin'], summary: 'Add a machine file from the digitizer (multipart: file + label)', params: z.object({ id: z.string().max(40) }), consumes: ['multipart/form-data'] } },
+      async (req) => {
+        if (!req.isMultipart()) throw new AppError(415, 'multipart_required', 'Send the file as multipart/form-data');
+        const part = await req.file({ limits: { fileSize: 15 << 20, files: 1, fields: 4 } });
+        if (!part) throw new AppError(400, 'no_file', 'Choose the machine file');
+        const label = part.fields.label && 'value' in part.fields.label ? String(part.fields.label.value) : '';
+        const buf = await part.toBuffer();
+        if (part.file.truncated) throw new AppError(413, 'file_too_big', 'Machine files can be up to 15 MB');
+        await stitch.addToItem(req.params.id, buf, part.filename, label, req.admin!.adminId);
+        await audit(db, req, 'stitch_file_added', 'order_item', req.params.id, { file: part.filename });
         const item = await db.orderItem.findUniqueOrThrow({ where: { id: req.params.id }, include: { order: { select: { number: true } } } });
         return { order: await detail(item.order.number) };
       },

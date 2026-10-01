@@ -53,6 +53,7 @@ export const studioLineSchema = z.object({
     source: z.enum(['upload', 'make']),
     sizes: z.partialRecord(z.enum(STUDIO_SIZES), z.number().int().min(0).max(STUDIO_MAX_QTY)).optional(),
     label: z.string().trim().max(120),
+    threads: z.array(z.object({ hex: z.string().regex(/^#[0-9a-fA-F]{6}$/), name: z.string().trim().max(30) })).max(12).optional(),
   }),
   uploads: z.array(z.string().max(40)).max(4).optional(),
 });

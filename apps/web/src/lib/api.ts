@@ -135,6 +135,7 @@ export const api = {
   deleteAddress: (id: string) => del<{ ok: true }>(`/v1/me/addresses/${id}`),
   myOrders: (page = 1) => priv<{ items: OrderSummaryDto[]; total: number; page: number; pageSize: number }>(`/v1/me/orders?page=${page}`),
   myOrder: (number: string) => priv<{ order: OrderDto }>(`/v1/me/orders/${encodeURIComponent(number)}`).then((r) => r.order),
+  addReview: (itemId: string, rating: number, body: string) => post<{ ok: true }>('/v1/me/reviews', { itemId, rating, body }),
   cancelOrder: (number: string, reason?: string) => post<{ order: OrderDto }>(`/v1/me/orders/${encodeURIComponent(number)}/cancel`, reason ? { reason } : {}).then((r) => r.order),
 
   /* checkout */

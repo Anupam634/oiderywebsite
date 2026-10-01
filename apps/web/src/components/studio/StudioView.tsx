@@ -376,8 +376,9 @@ export function StudioView({ start }: { start: StudioStart }) {
       const what = how === 'make' ? (debouncedName ? 'your name' : 'a motif') : 'your logo';
       const sizes = g.sizes ? Object.fromEntries(STUDIO_SIZES.filter((s) => mix[s]).map((s) => [s, mix[s]])) : undefined;
       const mixText = g.sizes ? STUDIO_SIZES.filter((s) => mix[s]).map((s) => `${s}×${mix[s]}`).join(', ') : `${qty} pcs`;
+      const threads = design.threads.filter((_, i) => !design.drop.has(i)).map((t) => ({ hex: TPAL[t]![1], name: TPAL[t]![0] }));
       const spec: StudioLineSpec = {
-        garment: g.id, colour, view, placement: place, widthCm: size, stitches, source: how, label: label || 'design',
+        garment: g.id, colour, view, placement: place, widthCm: size, stitches, source: how, label: label || 'design', threads,
         ...(sizes ? { sizes } : {}),
       };
       cart.add({

@@ -137,3 +137,22 @@
   .opay{flex-wrap:wrap}
   .opay .btn{margin-left:0;width:100%}
 }
+
+/* ---------- stitch proof page ---------- */
+.proofp{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:24px;align-items:start;padding:28px 0 70px}
+.proofp .pimg{position:relative;border-radius:28px;overflow:hidden;background:#fff;border:1px solid var(--line);box-shadow:0 30px 60px -44px rgba(27,16,48,.7)}
+.proofp .pimg img{display:block;width:100%;height:auto}
+.proofp .pimg .ver{position:absolute;top:14px;left:14px;padding:6px 12px;border-radius:999px;background:rgba(27,16,48,.82);color:#fff;font-weight:800;font-size:12.5px}
+.proofp h1{font-size:clamp(30px,3.6vw,46px);line-height:1.02;margin:10px 0 10px}
+.proofp h1 em{font-style:italic;background:linear-gradient(95deg,#E4007C,#FF8A00);-webkit-background-clip:text;background-clip:text;color:transparent;padding-right:.05em}
+.proofp .lead{color:var(--ink-2);margin:0 0 16px}
+.proofp .snote{padding:14px 16px;border-radius:18px;background:#FFF6EA;border:1px dashed #E8C9A8;margin-bottom:16px;font-size:14.5px}
+.proofp .acts{display:grid;gap:10px}
+.proofp .acts .btn{width:100%}
+.proofp .done-box{padding:18px;border-radius:20px;font-weight:700}
+.proofp .done-box.ok{background:#E9F7EC;color:#1F6F33;border:1px solid #BFE5C8}
+.proofp .done-box.chg{background:#FFF1E0;color:#9A3412;border:1px solid #FED7AA}
+.proofp textarea{width:100%;min-height:110px;padding:12px 14px;border-radius:14px;border:1.5px solid var(--line);font:inherit;resize:vertical}
+.proofp .mini{display:flex;gap:12px;align-items:center;margin-top:16px;padding:12px;border-radius:18px;background:#fff;border:1px solid var(--line)}
+.proofp .mini img{width:64px;height:80px;border-radius:12px;object-fit:cover}
+@media(max-width:900px){.proofp{grid-template-columns:minmax(0,1fr);padding-top:16px}}

@@ -102,4 +102,6 @@ export interface StudioLineSpec {
   sizes?: Partial<Record<StudioSize, number>>;
   /** what the design is, for the proof: file name or motif + name */
   label: string;
+  /** the thread colours chosen in the studio, in sewing order (for the production sheet and machine file) */
+  threads?: { hex: string; name: string }[];
 }

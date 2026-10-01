@@ -33,6 +33,7 @@ import { orderRoutes, webhookRoutes } from './modules/orders/routes.ts';
 import { OrderService } from './modules/orders/service.ts';
 import { createGateway, type PaymentGateway } from './modules/payments/gateway.ts';
 import { proofRoutes } from './modules/proofs/routes.ts';
+import { StitchFiles } from './modules/stitchfiles/service.ts';
 
 export async function buildApp({ config, db, gateway }: { config: Config; db: Db; gateway?: PaymentGateway }) {
   const app = Fastify({
@@ -68,6 +69,7 @@ export async function buildApp({ config, db, gateway }: { config: Config; db: Db
   const orders = new OrderService(db, config, gateway ?? createGateway(config), files, notify, app.log);
   const invoices = new InvoiceService(db, files);
   const fulfil = new Fulfilment(db, orders, invoices, notify, files);
+  const stitch = new StitchFiles(db, files, config);
   // ask the storefront to drop its cached catalogue after admin edits (best effort)
   const refreshWeb = () => {
     if (!config.WEB_REVALIDATE_URL) return;
@@ -92,7 +94,7 @@ export async function buildApp({ config, db, gateway }: { config: Config; db: Db
   await app.register(webhookRoutes(db, orders), { prefix: '/v1' });
   await app.register(proofRoutes(db, files, fulfil), { prefix: '/v1' });
   await app.register(adminAuthRoutes(db), { prefix: '/v1' });
-  await app.register(adminOrderRoutes(db, orders, fulfil, invoices, files), { prefix: '/v1' });
+  await app.register(adminOrderRoutes(db, orders, fulfil, invoices, files, stitch), { prefix: '/v1' });
   await app.register(adminCatalogRoutes(db, catalog, files, refreshWeb), { prefix: '/v1' });
   await app.register(adminStoreRoutes(db, files), { prefix: '/v1' });
   return app;

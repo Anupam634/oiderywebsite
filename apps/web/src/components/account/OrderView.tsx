@@ -187,6 +187,7 @@ export function OrderView({ number }: { number: string }) {
                     )}
                   </div>
                   <div className="pp">{formatINR(i.qty * i.unitPricePaise + i.extraPaise)}</div>
+                  {(i.canReview || i.reviewed) && <ReviewBox itemId={i.id} reviewed={i.reviewed} onDone={() => void load()} />}
                 </div>
               ))}
             </div>
@@ -245,5 +246,45 @@ export function OrderView({ number }: { number: string }) {
       </div>
       {payment.sheet}
     </>
+  );
+}
+
+/** a delivered piece can be reviewed once; the studio checks reviews before they show */
+function ReviewBox({ itemId, reviewed, onDone }: { itemId: string; reviewed: boolean; onDone: () => void }) {
+  const [open, setOpen] = useState(false);
+  const [rating, setRating] = useState(5);
+  const [body, setBody] = useState('');
+  const [busy, setBusy] = useState(false);
+  if (reviewed) return <div className="prod ok" style={{ gridColumn: '1 / -1' }}>Thanks for your review!</div>;
+  if (!open)
+    return (
+      <button className="link" type="button" style={{ gridColumn: '1 / -1', justifySelf: 'start' }} onClick={() => setOpen(true)}>
+        Write a review
+      </button>
+    );
+  return (
+    <div style={{ gridColumn: '1 / -1', display: 'grid', gap: 10 }}>
+      <div role="radiogroup" aria-label="Rating" style={{ display: 'flex', gap: 4, fontSize: 26 }}>
+        {[1, 2, 3, 4, 5].map((n) => (
+          <button key={n} type="button" role="radio" aria-checked={rating === n} aria-label={`${n} star${n > 1 ? 's' : ''}`} onClick={() => setRating(n)} style={{ color: n <= rating ? '#FFB300' : '#D9CFE3' }}>★</button>
+        ))}
+      </div>
+      <textarea value={body} maxLength={1000} onChange={(e) => setBody(e.target.value)} placeholder="How do you like it? What did people say?" style={{ width: '100%', minHeight: 90, padding: 12, borderRadius: 14, border: '1.5px solid var(--line)', font: 'inherit' }} />
+      <div style={{ display: 'flex', gap: 10 }}>
+        <button className="btn btn-grad" type="button" style={{ height: 44 }} disabled={busy || body.trim().length < 10} onClick={async () => {
+          setBusy(true);
+          try {
+            await api.addReview(itemId, rating, body.trim());
+            ui.toast('Thank you! We’ll publish it after a quick check.');
+            onDone();
+          } catch (e) {
+            ui.toast(e instanceof ApiError ? e.message : 'Could not send your review');
+          } finally {
+            setBusy(false);
+          }
+        }}>Send review</button>
+        <button className="btn" type="button" style={{ height: 44, border: '1.5px solid var(--line)' }} onClick={() => setOpen(false)}>Cancel</button>
+      </div>
+    </div>
   );
 }

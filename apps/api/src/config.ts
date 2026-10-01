@@ -78,6 +78,8 @@ const schema = z.object({
 
   /* ---- stitch files ---- */
   PYTHON_BIN: z.string().default('python3'),
+  /** extra Python path where pyembroidery is installed (pip install --target .data/pylib -r tools/requirements.txt) */
+  STITCH_PYTHONPATH: z.string().default('.data/pylib'),
 
   /* ---- safety switches for staging/demo servers ---- */
   ALLOW_FAKE_PAYMENTS: bool.default(false),

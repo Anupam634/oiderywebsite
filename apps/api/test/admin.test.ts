@@ -1,3 +1,4 @@
+import { createRequire } from 'node:module';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -10,6 +11,7 @@ import { createPrisma, type Db } from '../src/lib/prisma.ts';
 
 /* The studio admin, end to end: staff login, proofs, shipping, delivery, reviews, products, coupons. */
 
+const require = createRequire(import.meta.url);
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'store-admin-'));
 let app: Awaited<ReturnType<typeof buildApp>>;
 let db: Db;
@@ -287,5 +289,62 @@ describe('catalogue admin', () => {
     expect(saved.body.settings.gstin).toBe('27AAPFU0939F1ZV');
     const trail = (await call('GET', '/v1/admin/audit', { cookies: owner })).body.items.map((a: any) => a.action);
     expect(trail).toEqual(expect.arrayContaining(['settings_saved', 'product_created', 'order_shipped']));
+  });
+});
+
+describe('machine files (pyembroidery)', () => {
+  const python = (() => {
+    try {
+      require('node:child_process').execFileSync('python3', ['-c', 'import pyembroidery'], { env: { ...process.env, PYTHONPATH: path.resolve('.data/pylib') }, stdio: 'pipe' });
+      return true;
+    } catch {
+      return false;
+    }
+  })();
+
+  it.skipIf(!python)('turns a digitizer’s DST into a coloured PES with a preview', async () => {
+    const owner = ownerCookie;
+    // a 2-colour DST, made with pyembroidery
+    const dst = path.join(tmp, 'logo.dst');
+    require('node:child_process').execFileSync('python3', ['-c', `
+import pyembroidery
+p = pyembroidery.EmbPattern()
+for row, y in enumerate(range(0, 200, 4)):
+    for x in (range(0, 301, 30) if row % 2 == 0 else range(300, -1, -30)):
+        p.add_stitch_absolute(pyembroidery.STITCH, x, y)
+p.add_command(pyembroidery.COLOR_CHANGE)
+for i in range(60):
+    p.add_stitch_absolute(pyembroidery.STITCH, i * 5, 240 + (40 if i % 2 else 0))
+p.end()
+pyembroidery.write_dst(p, ${JSON.stringify(dst)})
+`], { env: { ...process.env, PYTHONPATH: path.resolve('.data/pylib') } });
+
+    const shopper = await customer();
+    const png = await sharp({ create: { width: 300, height: 300, channels: 4, background: '#0F766E' } }).png().toBuffer();
+    const m0 = multipart({ kind: 'logo' }, { name: 'logo.png', type: 'image/png', data: png });
+    const logo = (await app.inject({ method: 'POST', url: '/v1/uploads', payload: m0.payload, headers: m0.headers })).json() as any;
+    const studio = { garment: 'polo', colour: 'kajal', view: 'polo', placement: 'lc', widthCm: 8, stitches: 6100, source: 'upload', label: 'logo.png', sizes: { M: 1 }, threads: [{ hex: '#0F766E', name: 'Mor' }, { hex: '#FFB300', name: 'Haldi' }] };
+    const placed = await call('POST', '/v1/orders', { cookies: { sid: shopper.sid }, body: { items: [{ qty: 1, studio, uploads: [logo.id] }], shipping: 'standard', payment: 'upi', details: details(shopper.phone), clientKey: `stitch-${Date.now()}` } });
+    const number = placed.body.order.number;
+    const itemId = placed.body.order.items[0].id;
+
+    const m = multipart({ label: 'Chai Co logo 8cm' }, { name: 'chai-logo.dst', type: 'application/octet-stream', data: fs.readFileSync(dst) });
+    const r = await app.inject({ method: 'POST', url: `/v1/admin/items/${itemId}/stitch-files`, payload: m.payload, headers: m.headers, cookies: owner });
+    expect(r.statusCode).toBe(200);
+    const f = (r.json() as any).order.items[0].stitchFiles[0];
+    expect(f).toMatchObject({ label: 'Chai Co logo 8cm', format: 'dst', stitches: 610, colourChanges: 1, widthMm: 30, heightMm: 28 });
+    expect(f.threads).toEqual([{ hex: '#0F766E', name: 'Mor' }, { hex: '#FFB300', name: 'Haldi' }]);
+    const pes = await app.inject({ method: 'GET', url: f.pesUrl });
+    expect(pes.rawPayload.subarray(0, 8).toString()).toBe('#PES0060');
+    const prev = await app.inject({ method: 'GET', url: f.previewUrl });
+    expect(prev.headers['content-type']).toBe('image/png');
+
+    const bad = multipart({ label: 'x' }, { name: 'notes.txt', type: 'text/plain', data: Buffer.from('hello') });
+    const no = await app.inject({ method: 'POST', url: `/v1/admin/items/${itemId}/stitch-files`, payload: bad.payload, headers: bad.headers, cookies: owner });
+    expect((no.json() as any).error.code).toBe('bad_format');
+    const junk = multipart({ label: 'x' }, { name: 'broken.pes', type: 'application/octet-stream', data: Buffer.from('#PES0001 not really') });
+    const unread = await app.inject({ method: 'POST', url: `/v1/admin/items/${itemId}/stitch-files`, payload: junk.payload, headers: junk.headers, cookies: owner });
+    expect(unread.statusCode).toBe(400);
+    expect((await call('GET', `/v1/admin/orders/${number}`, { cookies: owner })).body.order.items[0].stitchFiles).toHaveLength(1);
   });
 });
