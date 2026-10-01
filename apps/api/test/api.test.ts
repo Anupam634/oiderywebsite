@@ -1,0 +1,141 @@
+import { afterAll, beforeAll, describe, expect, inject, it } from 'vitest';
+import type { CategoryNode, ProductDetail } from '@store/shared';
+import { buildApp } from '../src/app.ts';
+import { loadConfig } from '../src/config.ts';
+import { createPrisma, type Db } from '../src/lib/prisma.ts';
+
+let app: Awaited<ReturnType<typeof buildApp>>;
+let db: Db;
+
+beforeAll(async () => {
+  const config = loadConfig({ NODE_ENV: 'test', DATABASE_URL: inject('databaseUrl'), LOG_LEVEL: 'silent' });
+  db = createPrisma(config.DATABASE_URL);
+  app = await buildApp({ config, db });
+});
+afterAll(async () => {
+  await app.close();
+  await db.$disconnect();
+});
+
+const get = async <T = any>(url: string) => {
+  const r = await app.inject({ method: 'GET', url });
+  return { status: r.statusCode, body: r.json() as T, headers: r.headers };
+};
+const price = async (body: object) => {
+  const r = await app.inject({ method: 'POST', url: '/v1/cart/price', payload: body });
+  return { status: r.statusCode, body: r.json() };
+};
+
+describe('catalogue', () => {
+  it('health check reaches the database', async () => {
+    expect((await get('/health')).body).toEqual({ ok: true });
+  });
+
+  it('lists the category tree with counts', async () => {
+    const { body } = await get<{ items: CategoryNode[] }>('/v1/categories');
+    expect(body.items.map((c) => c.slug)).toEqual(['clothing', 'home', 'gifts', 'corporate']);
+    const gifts = body.items.find((c) => c.slug === 'gifts')!;
+    expect(gifts.productCount).toBe(4);
+    expect(gifts.children.map((c) => c.slug)).toEqual(['namegifts', 'pets', 'kits']);
+  });
+
+  it('lists products with facets, filters and sort', async () => {
+    const all = await get('/v1/products');
+    expect(all.body.total).toBe(20);
+    expect(all.body.items).toHaveLength(20);
+    expect(all.body.facets.cat).toMatchObject({ clothing: 7, home: 6, gifts: 4, corporate: 3 });
+    expect(all.headers['cache-control']).toContain('max-age');
+
+    const under999 = await get('/v1/products?price=u999&sort=price-asc');
+    expect(under999.body.total).toBe(6);
+    expect(under999.body.items[0].code).toBe('logotote');
+
+    const page2 = await get('/v1/products?pageSize=8&page=3');
+    expect(page2.body.items).toHaveLength(4);
+  });
+
+  it('serves a product page with variants, live preview, reviews and related pieces', async () => {
+    const { status, body } = await get<ProductDetail>('/v1/products/phoolwari-name-tote');
+    expect(status).toBe(200);
+    expect(body.variants).toHaveLength(8);
+    expect(body.personalisation).toMatchObject({ feePaise: 0, maxLength: 14, defaultOn: true, flowerPresets: true });
+    expect(body.livePreview).toMatchObject({ view: 'tote', place: 'cc', box: [20, 24], motif: 'phoolwari' });
+    expect(body.reviews.items).toHaveLength(5);
+    expect(body.related.map((r) => r.code)).toEqual(['cap', 'nametee', 'cherry', 'pet']);
+    expect(body.gallery[0]!.path).toBe('photos/r-tote.jpg');
+  });
+
+  it('adds sharp zoom photos where they exist', async () => {
+    const { body } = await get<ProductDetail>('/v1/products/lal-yoke-embroidered-kurta');
+    expect(body.gallery[0]!.zoomPath).toBe('photos/z/kurta.jpg');
+  });
+
+  it('returns clean 404 and 400 errors', async () => {
+    expect((await get('/v1/products/no-such-thing')).status).toBe(404);
+    const bad = await get('/v1/products/BAD_SLUG!');
+    expect(bad.status).toBe(400);
+    expect(bad.body.error.code).toBe('invalid_request');
+  });
+
+  it('search suggests matching products', async () => {
+    const { body } = await get('/v1/search?q=hoops');
+    expect(body.total).toBe(5);
+  });
+});
+
+describe('cart pricing', () => {
+  const variant = async (code: string, where: object = {}) =>
+    (await db.productVariant.findFirst({ where: { product: { code }, ...where }, orderBy: { sortOrder: 'asc' } }))!;
+
+  it('prices a personalised tote, a hoodie with a paid name and a kurta', async () => {
+    const tote = await variant('tote');
+    const hoodie = await variant('peacock', { size: 'M' });
+    const kurta = await variant('kurta', { size: 'M' });
+    const { status, body } = await price({
+      items: [
+        { variantId: tote.id, qty: 1, personalisation: { text: 'Priya', font: 'script', thread: 'rani', flowers: 1 } },
+        { variantId: hoodie.id, qty: 1, personalisation: { text: 'Kabir', font: 'classic', thread: 'haldi' }, giftWrap: true },
+        { variantId: kurta.id, qty: 1 },
+      ],
+      coupon: 'taanka10',
+      payment: 'upi',
+    });
+    expect(status).toBe(200);
+    expect(body.lines.map((l: any) => [l.unitPricePaise, l.custom, l.available])).toEqual([
+      [119_900, true, true],
+      [189_900 + 14_900 + 4_900, true, true],
+      [249_900, false, true],
+    ]);
+    expect(body.coupon).toEqual({ code: 'TAANKA10', valid: true, message: '10% off, first order' });
+    expect(body.totals.discountLabel).toBe('Buy 2, get 10% off');
+    expect(body.totals.codAllowed).toBe(false);
+  });
+
+  it('flags stock, one-of-a-kind, missing initials and bad codes', async () => {
+    const kurtaM = await variant('kurta', { size: 'M' });
+    const wreath = await variant('wreath');
+    const cap = await variant('cap');
+    const { body } = await price({
+      items: [
+        { variantId: kurtaM.id, qty: 9 },
+        { variantId: wreath.id, qty: 2 },
+        { variantId: cap.id, qty: 1 },
+        { variantId: 'nope', qty: 1 },
+      ],
+      coupon: 'NOPE',
+    });
+    expect(body.lines.map((l: any) => l.problems[0])).toEqual([
+      'Only 8 available',
+      'Only 1 available',
+      'This piece needs a name or initials',
+      'This piece is no longer available',
+    ]);
+    expect(body.coupon.valid).toBe(false);
+    expect(body.totals.itemCount).toBe(0);
+  });
+
+  it('rejects malformed bags', async () => {
+    const r = await price({ items: [{ variantId: 'x', qty: 0 }] });
+    expect(r.status).toBe(400);
+  });
+});

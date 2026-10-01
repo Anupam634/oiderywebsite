@@ -1,0 +1,5133 @@
+{
+ "generatedFrom": "design/src (static prototype)",
+ "categories": [
+  {
+   "slug": "clothing",
+   "name": "Clothing",
+   "blurb": "Kurtas, lehengas, dupattas and jackets, embroidered in our studio.",
+   "image": null,
+   "sortOrder": 0,
+   "parent": null
+  },
+  {
+   "slug": "home",
+   "name": "Home décor",
+   "blurb": "Cushions, hoop art and wall art. Many pieces are one of a kind.",
+   "image": null,
+   "sortOrder": 1,
+   "parent": null
+  },
+  {
+   "slug": "gifts",
+   "name": "Gifts",
+   "blurb": "Name gifts, pet portraits and DIY kits, gift-wrapped with a handwritten note.",
+   "image": null,
+   "sortOrder": 2,
+   "parent": null
+  },
+  {
+   "slug": "corporate",
+   "name": "Corporate",
+   "blurb": "Your logo on caps, polos and totes. Order one, or five hundred.",
+   "image": null,
+   "sortOrder": 3,
+   "parent": null
+  },
+  {
+   "slug": "kurtas",
+   "name": "Kurtas & sets",
+   "blurb": null,
+   "image": "photos/kurta.jpg",
+   "sortOrder": 0,
+   "parent": "clothing"
+  },
+  {
+   "slug": "lehengas",
+   "name": "Lehengas",
+   "blurb": null,
+   "image": "photos/lehenga.jpg",
+   "sortOrder": 1,
+   "parent": "clothing"
+  },
+  {
+   "slug": "dupattas",
+   "name": "Dupattas",
+   "blurb": null,
+   "image": "photos/dupatta.jpg",
+   "sortOrder": 2,
+   "parent": "clothing"
+  },
+  {
+   "slug": "jackets",
+   "name": "Jackets & knits",
+   "blurb": null,
+   "image": "photos/knit.jpg",
+   "sortOrder": 3,
+   "parent": "clothing"
+  },
+  {
+   "slug": "tees",
+   "name": "Tees & hoodies",
+   "blurb": null,
+   "image": "photos/r-model.jpg",
+   "sortOrder": 4,
+   "parent": "clothing"
+  },
+  {
+   "slug": "cushions",
+   "name": "Cushion covers",
+   "blurb": null,
+   "image": "photos/tulip.jpg",
+   "sortOrder": 5,
+   "parent": "home"
+  },
+  {
+   "slug": "hoops",
+   "name": "Hoop art",
+   "blurb": null,
+   "image": "photos/wreath.jpg",
+   "sortOrder": 6,
+   "parent": "home"
+  },
+  {
+   "slug": "wallart",
+   "name": "Wall art",
+   "blurb": null,
+   "image": "photos/phoolrani.jpg",
+   "sortOrder": 7,
+   "parent": "home"
+  },
+  {
+   "slug": "namegifts",
+   "name": "Name gifts",
+   "blurb": null,
+   "image": "photos/r-tote.jpg",
+   "sortOrder": 8,
+   "parent": "gifts"
+  },
+  {
+   "slug": "pets",
+   "name": "Pet portraits",
+   "blurb": null,
+   "image": "photos/cat.jpg",
+   "sortOrder": 9,
+   "parent": "gifts"
+  },
+  {
+   "slug": "kits",
+   "name": "DIY kits",
+   "blurb": null,
+   "image": "photos/poppy.jpg",
+   "sortOrder": 10,
+   "parent": "gifts"
+  },
+  {
+   "slug": "logo",
+   "name": "Logo merch",
+   "blurb": null,
+   "image": "photos/r-polo.jpg",
+   "sortOrder": 11,
+   "parent": "corporate"
+  }
+ ],
+ "products": [
+  {
+   "code": "tote",
+   "slug": "phoolwari-name-tote",
+   "name": "Phoolwari Name Tote",
+   "status": "ACTIVE",
+   "type": "PERSONALISE",
+   "category": "namegifts",
+   "pricePaise": 119900,
+   "mrpPaise": 149900,
+   "badgeText": "Personalise",
+   "badgeTone": "rani",
+   "techLine": "Satin stitch · French knots",
+   "story": "Phoolwari means “a garden of flowers”. A bouquet of gulaab roses and phool daisies with the name of your choice, stitched on sturdy cotton canvas.",
+   "colourFamily": "multi",
+   "occasions": [
+    "rakhi",
+    "birthday",
+    "diwali"
+   ],
+   "ratingAvg": 4.9,
+   "ratingCount": 302,
+   "popularity": 99,
+   "publishedAt": "2026-08-26T00:00:00.000Z",
+   "shipMode": "READY",
+   "madeDays": null,
+   "shipNote": null,
+   "isUnique": false,
+   "handMade": false,
+   "needsSize": false,
+   "sizeLabel": null,
+   "sizeGuide": null,
+   "studioGarment": null,
+   "studioSample": null,
+   "petPhoto": false,
+   "personalisation": {
+    "fee": 0,
+    "maxLength": 14,
+    "defaultText": "Priya",
+    "required": false,
+    "defaultOn": true,
+    "font": "script",
+    "thread": "rani",
+    "flowerPresets": true
+   },
+   "livePreview": {
+    "view": "tote",
+    "place": "cc",
+    "box": [
+     20,
+     24
+    ],
+    "motif": "phoolwari",
+    "motifColours": null,
+    "maxTextWidth": 700,
+    "closeCrop": 1.35
+   },
+   "details": {
+    "why": [
+     {
+      "title": "Colourfast",
+      "text": "Bright threads that stay bright, wash after wash"
+     },
+     {
+      "title": "Roomy",
+      "text": "Fits a 14-inch laptop, a book and snacks"
+     },
+     {
+      "title": "Lined",
+      "text": "A soft cotton lining covers the back of the stitches"
+     }
+    ],
+    "spec": [
+     {
+      "label": "Technique",
+      "value": "Satin stitch, French knots"
+     },
+     {
+      "label": "Stitches",
+      "value": "About 11,500, more with a long name"
+     },
+     {
+      "label": "Thread",
+      "value": "Up to 6 colours, colourfast polyester"
+     },
+     {
+      "label": "Base fabric",
+      "value": "12 oz cotton canvas, cotton lining"
+     },
+     {
+      "label": "Size",
+      "value": "38 × 42 cm, 25 cm handle drop"
+     },
+     {
+      "label": "Made",
+      "value": "Machine-embroidered in our studio, finished by hand"
+     }
+    ],
+    "care": [
+     "Hand wash in cold water, inside out",
+     "Dry flat in the shade",
+     "Iron on the reverse side only",
+     "No bleach"
+    ],
+    "faq": [],
+    "upClose": null
+   },
+   "images": [
+    {
+     "role": "MAIN",
+     "path": "photos/r-tote.jpg",
+     "alt": "Canvas tote with an embroidered flower bouquet and the name Priya",
+     "caption": null,
+     "sortOrder": 0
+    },
+    {
+     "role": "HOVER",
+     "path": "photos/r-tote-d.jpg",
+     "alt": "",
+     "caption": null,
+     "sortOrder": 1
+    },
+    {
+     "role": "GALLERY",
+     "path": "photos/gift-kraft.jpg",
+     "caption": "How it arrives",
+     "alt": "How it arrives",
+     "sortOrder": 10
+    }
+   ],
+   "variants": [
+    {
+     "sku": "TOTE-NATURAL-CANVAS-STANDARD",
+     "colourName": "Natural canvas",
+     "colourValue": "natural",
+     "colourHex": "#EFE6D6",
+     "size": "Standard",
+     "sizeNote": "38 × 42 cm",
+     "priceDeltaPaise": 0,
+     "stock": 9,
+     "trackStock": true,
+     "sortOrder": 0
+    },
+    {
+     "sku": "TOTE-NATURAL-CANVAS-LARGE",
+     "colourName": "Natural canvas",
+     "colourValue": "natural",
+     "colourHex": "#EFE6D6",
+     "size": "Large",
+     "sizeNote": "45 × 50 cm",
+     "priceDeltaPaise": 20000,
+     "stock": 3,
+     "trackStock": true,
+     "sortOrder": 1
+    },
+    {
+     "sku": "TOTE-KAJAL-BLACK-STANDARD",
+     "colourName": "Kajal black",
+     "colourValue": "kajal",
+     "colourHex": "#1d1b21",
+     "size": "Standard",
+     "sizeNote": "38 × 42 cm",
+     "priceDeltaPaise": 0,
+     "stock": 9,
+     "trackStock": true,
+     "sortOrder": 100
+    },
+    {
+     "sku": "TOTE-KAJAL-BLACK-LARGE",
+     "colourName": "Kajal black",
+     "colourValue": "kajal",
+     "colourHex": "#1d1b21",
+     "size": "Large",
+     "sizeNote": "45 × 50 cm",
+     "priceDeltaPaise": 20000,
+     "stock": 3,
+     "trackStock": true,
+     "sortOrder": 101
+    },
+    {
+     "sku": "TOTE-NEEL-NAVY-STANDARD",
+     "colourName": "Neel navy",
+     "colourValue": "neel",
+     "colourHex": "#1f2a4f",
+     "size": "Standard",
+     "sizeNote": "38 × 42 cm",
+     "priceDeltaPaise": 0,
+     "stock": 9,
+     "trackStock": true,
+     "sortOrder": 200
+    },
+    {
+     "sku": "TOTE-NEEL-NAVY-LARGE",
+     "colourName": "Neel navy",
+     "colourValue": "neel",
+     "colourHex": "#1f2a4f",
+     "size": "Large",
+     "sizeNote": "45 × 50 cm",
+     "priceDeltaPaise": 20000,
+     "stock": 3,
+     "trackStock": true,
+     "sortOrder": 201
+    },
+    {
+     "sku": "TOTE-MAROON-STANDARD",
+     "colourName": "Maroon",
+     "colourValue": "maroon",
+     "colourHex": "#6b1d2e",
+     "size": "Standard",
+     "sizeNote": "38 × 42 cm",
+     "priceDeltaPaise": 0,
+     "stock": 9,
+     "trackStock": true,
+     "sortOrder": 300
+    },
+    {
+     "sku": "TOTE-MAROON-LARGE",
+     "colourName": "Maroon",
+     "colourValue": "maroon",
+     "colourHex": "#6b1d2e",
+     "size": "Large",
+     "sizeNote": "45 × 50 cm",
+     "priceDeltaPaise": 20000,
+     "stock": 3,
+     "trackStock": true,
+     "sortOrder": 301
+    }
+   ],
+   "reviews": [
+    {
+     "authorName": "Riya S.",
+     "city": "Mumbai",
+     "rating": 5,
+     "createdAt": "2026-09-12T00:00:00.000Z",
+     "body": "Ordered the Phoolwari tote with my sister’s name. They sent a stitch proof on WhatsApp first, and it looks just like the preview here.",
+     "helpfulCount": 24,
+     "isSample": true,
+     "photoPath": null,
+     "preview": {
+      "colour": "natural",
+      "palette": 0,
+      "text": "Anu",
+      "font": "script",
+      "thread": "rani"
+     }
+    },
+    {
+     "authorName": "Kavya P.",
+     "city": "Hyderabad",
+     "rating": 5,
+     "createdAt": "2026-09-02T00:00:00.000Z",
+     "body": "They sent a stitch preview on WhatsApp before starting, which I loved. It came beautifully packed with a handwritten note.",
+     "helpfulCount": 17,
+     "isSample": true,
+     "photoPath": null,
+     "preview": {
+      "colour": "kajal",
+      "palette": 1,
+      "text": "Maa",
+      "font": "classic",
+      "thread": "haldi"
+     }
+    },
+    {
+     "authorName": "Neha G.",
+     "city": "Jaipur",
+     "rating": 4,
+     "createdAt": "2026-08-28T00:00:00.000Z",
+     "body": "Lovely quality and the thread really shines in the light. It took a few days longer than I hoped, but they told me that upfront.",
+     "helpfulCount": 9,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    },
+    {
+     "authorName": "Aditya R.",
+     "city": "Kolkata",
+     "rating": 5,
+     "createdAt": "2026-08-19T00:00:00.000Z",
+     "body": "Bought it as a Rakhi gift and my sister hasn’t stopped showing it off. Not a single loose thread.",
+     "helpfulCount": 6,
+     "isSample": true,
+     "photoPath": null,
+     "preview": {
+      "colour": "maroon",
+      "palette": 3,
+      "text": "मीरा",
+      "font": "hindi",
+      "thread": "haldi"
+     }
+    },
+    {
+     "authorName": "Sana M.",
+     "city": "Bengaluru",
+     "rating": 5,
+     "createdAt": "2026-08-04T00:00:00.000Z",
+     "body": "My second order from this studio. The colours are rich and nothing faded after washing.",
+     "helpfulCount": 4,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    }
+   ],
+   "related": [
+    "cap",
+    "nametee",
+    "cherry",
+    "pet"
+   ]
+  },
+  {
+   "code": "kurta",
+   "slug": "lal-yoke-embroidered-kurta",
+   "name": "Lal Yoke Embroidered Kurta",
+   "status": "ACTIVE",
+   "type": "READY",
+   "category": "kurtas",
+   "pricePaise": 249900,
+   "mrpPaise": 319900,
+   "badgeText": "Ready to ship",
+   "badgeTone": "mehendi",
+   "techLine": "Hand-finished yoke · Cotton silk",
+   "story": "A festive lal kurta with an ivory embroidered yoke: rows of tiny booti inside a fine chain-stitch border, with more booti scattered down the front.",
+   "colourFamily": "red",
+   "occasions": [
+    "diwali",
+    "shaadi",
+    "rakhi"
+   ],
+   "ratingAvg": 4.8,
+   "ratingCount": 126,
+   "popularity": 93,
+   "publishedAt": "2026-08-12T00:00:00.000Z",
+   "shipMode": "READY",
+   "madeDays": 7,
+   "shipNote": null,
+   "isUnique": false,
+   "handMade": false,
+   "needsSize": true,
+   "sizeLabel": null,
+   "sizeGuide": "kurta",
+   "studioGarment": null,
+   "studioSample": null,
+   "petPhoto": false,
+   "personalisation": null,
+   "livePreview": null,
+   "details": {
+    "why": [
+     {
+      "title": "Festive-ready",
+      "text": "Rich red with an ivory yoke that glows in photos"
+     },
+     {
+      "title": "Hand-finished",
+      "text": "Every booti on the yoke is checked by hand"
+     },
+     {
+      "title": "Custom size",
+      "text": "Send your measurements and we stitch to fit"
+     }
+    ],
+    "spec": [
+     {
+      "label": "Technique",
+      "value": "Booti fill and chain stitch on the yoke"
+     },
+     {
+      "label": "Fabric",
+      "value": "Cotton silk with a soft cotton lining"
+     },
+     {
+      "label": "Fit",
+      "value": "Straight fit, 44\" long, ¾ sleeves"
+     },
+     {
+      "label": "Neck",
+      "value": "Round neck with an embroidered yoke"
+     },
+     {
+      "label": "Dupatta",
+      "value": "Not included"
+     },
+     {
+      "label": "Made",
+      "value": "Stitched in our studio, finished by hand"
+     }
+    ],
+    "care": [
+     "Dry clean the first time",
+     "After that, hand wash gently in cold water, inside out",
+     "Iron on the reverse of the embroidery",
+     "Dry in the shade"
+    ],
+    "faq": [],
+    "upClose": {
+     "path": "photos/kurta-d.jpg",
+     "caption": "Ivory booti on the yoke, each one finished and checked by hand."
+    }
+   },
+   "images": [
+    {
+     "role": "MAIN",
+     "path": "photos/kurta.jpg",
+     "alt": "Woman wearing a red kurta with an ivory embroidered yoke",
+     "caption": "On model",
+     "sortOrder": 0
+    },
+    {
+     "role": "HOVER",
+     "path": "photos/kurta-d.jpg",
+     "alt": "",
+     "caption": null,
+     "sortOrder": 1
+    },
+    {
+     "role": "GALLERY",
+     "path": "photos/kurta-d.jpg",
+     "caption": "The embroidered yoke",
+     "alt": "The embroidered yoke",
+     "sortOrder": 10
+    },
+    {
+     "role": "GALLERY",
+     "path": "photos/gift-kraft.jpg",
+     "caption": "How it arrives",
+     "alt": "How it arrives",
+     "sortOrder": 11
+    }
+   ],
+   "variants": [
+    {
+     "sku": "KURTA-LAL-WITH-IVORY-YOKE-XS",
+     "colourName": "Lal with ivory yoke",
+     "colourValue": "#C21A2B",
+     "colourHex": "#C21A2B",
+     "size": "XS",
+     "sizeNote": "34\"",
+     "priceDeltaPaise": 0,
+     "stock": 4,
+     "trackStock": true,
+     "sortOrder": 0
+    },
+    {
+     "sku": "KURTA-LAL-WITH-IVORY-YOKE-S",
+     "colourName": "Lal with ivory yoke",
+     "colourValue": "#C21A2B",
+     "colourHex": "#C21A2B",
+     "size": "S",
+     "sizeNote": "36\"",
+     "priceDeltaPaise": 0,
+     "stock": 6,
+     "trackStock": true,
+     "sortOrder": 1
+    },
+    {
+     "sku": "KURTA-LAL-WITH-IVORY-YOKE-M",
+     "colourName": "Lal with ivory yoke",
+     "colourValue": "#C21A2B",
+     "colourHex": "#C21A2B",
+     "size": "M",
+     "sizeNote": "38\"",
+     "priceDeltaPaise": 0,
+     "stock": 8,
+     "trackStock": true,
+     "sortOrder": 2
+    },
+    {
+     "sku": "KURTA-LAL-WITH-IVORY-YOKE-L",
+     "colourName": "Lal with ivory yoke",
+     "colourValue": "#C21A2B",
+     "colourHex": "#C21A2B",
+     "size": "L",
+     "sizeNote": "40\"",
+     "priceDeltaPaise": 0,
+     "stock": 2,
+     "trackStock": true,
+     "sortOrder": 3
+    },
+    {
+     "sku": "KURTA-LAL-WITH-IVORY-YOKE-XL",
+     "colourName": "Lal with ivory yoke",
+     "colourValue": "#C21A2B",
+     "colourHex": "#C21A2B",
+     "size": "XL",
+     "sizeNote": "42\"",
+     "priceDeltaPaise": 0,
+     "stock": 5,
+     "trackStock": true,
+     "sortOrder": 4
+    },
+    {
+     "sku": "KURTA-LAL-WITH-IVORY-YOKE-XXL",
+     "colourName": "Lal with ivory yoke",
+     "colourValue": "#C21A2B",
+     "colourHex": "#C21A2B",
+     "size": "XXL",
+     "sizeNote": "44\"",
+     "priceDeltaPaise": 0,
+     "stock": 0,
+     "trackStock": true,
+     "sortOrder": 5
+    },
+    {
+     "sku": "KURTA-LAL-WITH-IVORY-YOKE-CUSTOM",
+     "colourName": "Lal with ivory yoke",
+     "colourValue": "#C21A2B",
+     "colourHex": "#C21A2B",
+     "size": "Custom",
+     "sizeNote": "your size",
+     "priceDeltaPaise": 30000,
+     "stock": 99,
+     "trackStock": false,
+     "sortOrder": 6
+    }
+   ],
+   "reviews": [
+    {
+     "authorName": "Riya S.",
+     "city": "Mumbai",
+     "rating": 5,
+     "createdAt": "2026-09-12T00:00:00.000Z",
+     "body": "Wore it to my cousin’s mehendi and got asked about it all evening. The yoke embroidery is even finer in person.",
+     "helpfulCount": 24,
+     "isSample": true,
+     "photoPath": "photos/kurta.jpg",
+     "preview": null
+    },
+    {
+     "authorName": "Kavya P.",
+     "city": "Hyderabad",
+     "rating": 5,
+     "createdAt": "2026-09-02T00:00:00.000Z",
+     "body": "They sent a stitch preview on WhatsApp before starting, which I loved. It came beautifully packed with a handwritten note.",
+     "helpfulCount": 17,
+     "isSample": true,
+     "photoPath": "photos/kurta-d.jpg",
+     "preview": null
+    },
+    {
+     "authorName": "Neha G.",
+     "city": "Jaipur",
+     "rating": 4,
+     "createdAt": "2026-08-28T00:00:00.000Z",
+     "body": "Lovely quality and the thread really shines in the light. It took a few days longer than I hoped, but they told me that upfront.",
+     "helpfulCount": 9,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    },
+    {
+     "authorName": "Aditya R.",
+     "city": "Kolkata",
+     "rating": 5,
+     "createdAt": "2026-08-19T00:00:00.000Z",
+     "body": "Bought it as a Rakhi gift and my sister hasn’t stopped showing it off. Not a single loose thread.",
+     "helpfulCount": 6,
+     "isSample": true,
+     "photoPath": "photos/kurta.jpg",
+     "preview": null
+    },
+    {
+     "authorName": "Sana M.",
+     "city": "Bengaluru",
+     "rating": 5,
+     "createdAt": "2026-08-04T00:00:00.000Z",
+     "body": "My second order from this studio. The colours are rich and nothing faded after washing.",
+     "helpfulCount": 4,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    }
+   ],
+   "related": [
+    "dupatta",
+    "lehenga",
+    "tote",
+    "knit"
+   ]
+  },
+  {
+   "code": "pet",
+   "slug": "custom-pet-portrait-hoop",
+   "name": "Custom Pet Portrait Hoop",
+   "status": "ACTIVE",
+   "type": "PERSONALISE",
+   "category": "pets",
+   "pricePaise": 349900,
+   "mrpPaise": 399900,
+   "badgeText": "Made for you · 10 days",
+   "badgeTone": "neel",
+   "techLine": "Thread painting",
+   "story": "Your pet, in thread. Our artist sketches their face from your photo, matches the thread to their fur shade by shade, and stitches every whisker in a wooden hoop.",
+   "colourFamily": "neutral",
+   "occasions": [
+    "birthday"
+   ],
+   "ratingAvg": 4.9,
+   "ratingCount": 58,
+   "popularity": 91,
+   "publishedAt": "2026-08-26T00:00:00.000Z",
+   "shipMode": "CUSTOM",
+   "madeDays": 10,
+   "shipNote": "Sketch in 48 hours",
+   "isUnique": false,
+   "handMade": true,
+   "needsSize": false,
+   "sizeLabel": "Hoop",
+   "sizeGuide": null,
+   "studioGarment": null,
+   "studioSample": null,
+   "petPhoto": true,
+   "personalisation": null,
+   "livePreview": null,
+   "details": {
+    "why": [
+     {
+      "title": "Sketch first",
+      "text": "You approve a pencil sketch before we stitch"
+     },
+     {
+      "title": "Fur-matched",
+      "text": "Up to 14 thread shades per portrait"
+     },
+     {
+      "title": "Ready to hang",
+      "text": "Felt-backed, in a keepsake box"
+     }
+    ],
+    "spec": [
+     {
+      "label": "Technique",
+      "value": "Thread painting (long and short stitch)"
+     },
+     {
+      "label": "Shades",
+      "value": "Up to 14 thread colours"
+     },
+     {
+      "label": "Hoop",
+      "value": "Beech wood: 6\", 8\" or 10\""
+     },
+     {
+      "label": "Back",
+      "value": "Felt-backed, ready to hang"
+     },
+     {
+      "label": "Approval",
+      "value": "Pencil sketch on WhatsApp within 48 hours"
+     },
+     {
+      "label": "Made",
+      "value": "Hand-embroidered in about 10 days"
+     }
+    ],
+    "care": [
+     "Dust with a soft, dry brush",
+     "Keep out of direct sunlight",
+     "Do not wash"
+    ],
+    "faq": [
+     {
+      "q": "What kind of photo works best?",
+      "a": "A sharp, well-lit photo taken at your pet’s eye level, with both eyes clearly visible. Daylight from a window is perfect. You can send up to 3 photos on WhatsApp."
+     },
+     {
+      "q": "Can you stitch two pets in one hoop?",
+      "a": "Yes, in the 10\" hoop. WhatsApp us both photos before you order and we’ll confirm the price."
+     }
+    ],
+    "upClose": {
+     "path": "photos/cat-d.jpg",
+     "caption": "Hundreds of tiny straight stitches in up to 14 shades build the fur, one layer at a time."
+    }
+   },
+   "images": [
+    {
+     "role": "MAIN",
+     "path": "photos/cat.jpg",
+     "alt": "Embroidered portrait of a tabby cat in a wooden hoop",
+     "caption": "The finished hoop",
+     "sortOrder": 0
+    },
+    {
+     "role": "HOVER",
+     "path": "photos/cat-d.jpg",
+     "alt": "",
+     "caption": null,
+     "sortOrder": 1
+    },
+    {
+     "role": "GALLERY",
+     "path": "photos/cat-d.jpg",
+     "caption": "Fur, stitch by stitch",
+     "alt": "Fur, stitch by stitch",
+     "sortOrder": 10
+    },
+    {
+     "role": "GALLERY",
+     "path": "photos/heart.jpg",
+     "caption": "Threads matched to your pet",
+     "alt": "Threads matched to your pet",
+     "sortOrder": 11
+    }
+   ],
+   "variants": [
+    {
+     "sku": "PET-NATURAL-LINEN-6-HOOP",
+     "colourName": "Natural linen",
+     "colourValue": "#E9E1D2",
+     "colourHex": "#E9E1D2",
+     "size": "6\" hoop",
+     "sizeNote": "15 cm",
+     "priceDeltaPaise": 0,
+     "stock": 9,
+     "trackStock": true,
+     "sortOrder": 0
+    },
+    {
+     "sku": "PET-NATURAL-LINEN-8-HOOP",
+     "colourName": "Natural linen",
+     "colourValue": "#E9E1D2",
+     "colourHex": "#E9E1D2",
+     "size": "8\" hoop",
+     "sizeNote": "20 cm",
+     "priceDeltaPaise": 100000,
+     "stock": 9,
+     "trackStock": true,
+     "sortOrder": 1
+    },
+    {
+     "sku": "PET-NATURAL-LINEN-10-HOOP",
+     "colourName": "Natural linen",
+     "colourValue": "#E9E1D2",
+     "colourHex": "#E9E1D2",
+     "size": "10\" hoop",
+     "sizeNote": "25 cm",
+     "priceDeltaPaise": 200000,
+     "stock": 9,
+     "trackStock": true,
+     "sortOrder": 2
+    }
+   ],
+   "reviews": [
+    {
+     "authorName": "Riya S.",
+     "city": "Mumbai",
+     "rating": 5,
+     "createdAt": "2026-09-12T00:00:00.000Z",
+     "body": "They sent a pencil sketch of our Simba first and fixed his ear when I asked. The finished hoop made my mother cry, in a good way.",
+     "helpfulCount": 24,
+     "isSample": true,
+     "photoPath": "photos/cat.jpg",
+     "preview": null
+    },
+    {
+     "authorName": "Kavya P.",
+     "city": "Hyderabad",
+     "rating": 5,
+     "createdAt": "2026-09-02T00:00:00.000Z",
+     "body": "They sent a stitch preview on WhatsApp before starting, which I loved. It came beautifully packed with a handwritten note.",
+     "helpfulCount": 17,
+     "isSample": true,
+     "photoPath": "photos/cat-d.jpg",
+     "preview": null
+    },
+    {
+     "authorName": "Neha G.",
+     "city": "Jaipur",
+     "rating": 4,
+     "createdAt": "2026-08-28T00:00:00.000Z",
+     "body": "Lovely quality and the thread really shines in the light. It took a few days longer than I hoped, but they told me that upfront.",
+     "helpfulCount": 9,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    },
+    {
+     "authorName": "Aditya R.",
+     "city": "Kolkata",
+     "rating": 5,
+     "createdAt": "2026-08-19T00:00:00.000Z",
+     "body": "Bought it as a Rakhi gift and my sister hasn’t stopped showing it off. Not a single loose thread.",
+     "helpfulCount": 6,
+     "isSample": true,
+     "photoPath": "photos/cat.jpg",
+     "preview": null
+    },
+    {
+     "authorName": "Sana M.",
+     "city": "Bengaluru",
+     "rating": 5,
+     "createdAt": "2026-08-04T00:00:00.000Z",
+     "body": "My second order from this studio. The colours are rich and nothing faded after washing.",
+     "helpfulCount": 4,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    }
+   ],
+   "related": [
+    "cherry",
+    "tote",
+    "nametee",
+    "wreath"
+   ]
+  },
+  {
+   "code": "nametee",
+   "slug": "name-t-shirt",
+   "name": "Name T-Shirt",
+   "status": "ACTIVE",
+   "type": "PERSONALISE",
+   "category": "tees",
+   "pricePaise": 79900,
+   "mrpPaise": 99900,
+   "badgeText": "Personalise",
+   "badgeTone": "rani",
+   "techLine": "Raised satin name · Cotton",
+   "story": "A soft cotton tee with any name stitched across the chest in raised satin. Type it, pick the font and thread, and see it on the tee right away.",
+   "colourFamily": "multi",
+   "occasions": [
+    "birthday",
+    "rakhi"
+   ],
+   "ratingAvg": 4.7,
+   "ratingCount": 212,
+   "popularity": 89,
+   "publishedAt": "2026-09-02T00:00:00.000Z",
+   "shipMode": "CUSTOM",
+   "madeDays": null,
+   "shipNote": null,
+   "isUnique": false,
+   "handMade": false,
+   "needsSize": true,
+   "sizeLabel": null,
+   "sizeGuide": "tee",
+   "studioGarment": null,
+   "studioSample": null,
+   "petPhoto": false,
+   "personalisation": {
+    "fee": 0,
+    "maxLength": 12,
+    "defaultText": "Rohan",
+    "required": true,
+    "defaultOn": true,
+    "font": "script",
+    "thread": "rani",
+    "flowerPresets": false
+   },
+   "livePreview": {
+    "view": "model",
+    "place": "cc",
+    "box": [
+     20,
+     12
+    ],
+    "motif": "none",
+    "motifColours": null,
+    "maxTextWidth": null,
+    "closeCrop": 1.4
+   },
+   "details": {
+    "why": [
+     {
+      "title": "Any name",
+      "text": "English or हिंदी, up to 12 letters"
+     },
+     {
+      "title": "Soft cotton",
+      "text": "180 GSM bio-washed cotton"
+     },
+     {
+      "title": "Lasts",
+      "text": "Raised satin that survives the washing machine"
+     }
+    ],
+    "spec": [
+     {
+      "label": "Technique",
+      "value": "Raised satin stitch"
+     },
+     {
+      "label": "Fabric",
+      "value": "100% cotton, 180 GSM, bio-washed"
+     },
+     {
+      "label": "Fit",
+      "value": "Regular, unisex"
+     },
+     {
+      "label": "Name",
+      "value": "Up to 12 letters"
+     },
+     {
+      "label": "Placement",
+      "value": "Centre chest, about 20 cm wide"
+     },
+     {
+      "label": "Made",
+      "value": "Personalised in our studio"
+     }
+    ],
+    "care": [
+     "Machine wash cold, inside out",
+     "Do not iron directly on the name",
+     "Dry in the shade"
+    ],
+    "faq": [],
+    "upClose": null
+   },
+   "images": [
+    {
+     "role": "MAIN",
+     "path": "photos/r-model.jpg",
+     "alt": "Man in a white T-shirt with the name Rohan embroidered in pink",
+     "caption": null,
+     "sortOrder": 0
+    },
+    {
+     "role": "HOVER",
+     "path": "photos/r-model-d.jpg",
+     "alt": "",
+     "caption": null,
+     "sortOrder": 1
+    },
+    {
+     "role": "GALLERY",
+     "path": "photos/r-teemono.jpg",
+     "caption": "A monogram on a gulaab tee",
+     "alt": "A monogram on a gulaab tee",
+     "sortOrder": 10
+    },
+    {
+     "role": "GALLERY",
+     "path": "photos/gift-kraft.jpg",
+     "caption": "How it arrives",
+     "alt": "How it arrives",
+     "sortOrder": 11
+    }
+   ],
+   "variants": [
+    {
+     "sku": "NAMETEE-WHITE-S",
+     "colourName": "White",
+     "colourValue": "white",
+     "colourHex": "#F4F4F2",
+     "size": "S",
+     "sizeNote": "38\"",
+     "priceDeltaPaise": 0,
+     "stock": 20,
+     "trackStock": true,
+     "sortOrder": 0
+    },
+    {
+     "sku": "NAMETEE-WHITE-M",
+     "colourName": "White",
+     "colourValue": "white",
+     "colourHex": "#F4F4F2",
+     "size": "M",
+     "sizeNote": "40\"",
+     "priceDeltaPaise": 0,
+     "stock": 20,
+     "trackStock": true,
+     "sortOrder": 1
+    },
+    {
+     "sku": "NAMETEE-WHITE-L",
+     "colourName": "White",
+     "colourValue": "white",
+     "colourHex": "#F4F4F2",
+     "size": "L",
+     "sizeNote": "42\"",
+     "priceDeltaPaise": 0,
+     "stock": 20,
+     "trackStock": true,
+     "sortOrder": 2
+    },
+    {
+     "sku": "NAMETEE-WHITE-XL",
+     "colourName": "White",
+     "colourValue": "white",
+     "colourHex": "#F4F4F2",
+     "size": "XL",
+     "sizeNote": "44\"",
+     "priceDeltaPaise": 0,
+     "stock": 20,
+     "trackStock": true,
+     "sortOrder": 3
+    },
+    {
+     "sku": "NAMETEE-WHITE-XXL",
+     "colourName": "White",
+     "colourValue": "white",
+     "colourHex": "#F4F4F2",
+     "size": "XXL",
+     "sizeNote": "46\"",
+     "priceDeltaPaise": 0,
+     "stock": 12,
+     "trackStock": true,
+     "sortOrder": 4
+    },
+    {
+     "sku": "NAMETEE-KAJAL-BLACK-S",
+     "colourName": "Kajal black",
+     "colourValue": "kajal",
+     "colourHex": "#1d1b21",
+     "size": "S",
+     "sizeNote": "38\"",
+     "priceDeltaPaise": 0,
+     "stock": 20,
+     "trackStock": true,
+     "sortOrder": 100
+    },
+    {
+     "sku": "NAMETEE-KAJAL-BLACK-M",
+     "colourName": "Kajal black",
+     "colourValue": "kajal",
+     "colourHex": "#1d1b21",
+     "size": "M",
+     "sizeNote": "40\"",
+     "priceDeltaPaise": 0,
+     "stock": 20,
+     "trackStock": true,
+     "sortOrder": 101
+    },
+    {
+     "sku": "NAMETEE-KAJAL-BLACK-L",
+     "colourName": "Kajal black",
+     "colourValue": "kajal",
+     "colourHex": "#1d1b21",
+     "size": "L",
+     "sizeNote": "42\"",
+     "priceDeltaPaise": 0,
+     "stock": 20,
+     "trackStock": true,
+     "sortOrder": 102
+    },
+    {
+     "sku": "NAMETEE-KAJAL-BLACK-XL",
+     "colourName": "Kajal black",
+     "colourValue": "kajal",
+     "colourHex": "#1d1b21",
+     "size": "XL",
+     "sizeNote": "44\"",
+     "priceDeltaPaise": 0,
+     "stock": 20,
+     "trackStock": true,
+     "sortOrder": 103
+    },
+    {
+     "sku": "NAMETEE-KAJAL-BLACK-XXL",
+     "colourName": "Kajal black",
+     "colourValue": "kajal",
+     "colourHex": "#1d1b21",
+     "size": "XXL",
+     "sizeNote": "46\"",
+     "priceDeltaPaise": 0,
+     "stock": 12,
+     "trackStock": true,
+     "sortOrder": 104
+    },
+    {
+     "sku": "NAMETEE-NEEL-NAVY-S",
+     "colourName": "Neel navy",
+     "colourValue": "neel",
+     "colourHex": "#1f2a4f",
+     "size": "S",
+     "sizeNote": "38\"",
+     "priceDeltaPaise": 0,
+     "stock": 20,
+     "trackStock": true,
+     "sortOrder": 200
+    },
+    {
+     "sku": "NAMETEE-NEEL-NAVY-M",
+     "colourName": "Neel navy",
+     "colourValue": "neel",
+     "colourHex": "#1f2a4f",
+     "size": "M",
+     "sizeNote": "40\"",
+     "priceDeltaPaise": 0,
+     "stock": 20,
+     "trackStock": true,
+     "sortOrder": 201
+    },
+    {
+     "sku": "NAMETEE-NEEL-NAVY-L",
+     "colourName": "Neel navy",
+     "colourValue": "neel",
+     "colourHex": "#1f2a4f",
+     "size": "L",
+     "sizeNote": "42\"",
+     "priceDeltaPaise": 0,
+     "stock": 20,
+     "trackStock": true,
+     "sortOrder": 202
+    },
+    {
+     "sku": "NAMETEE-NEEL-NAVY-XL",
+     "colourName": "Neel navy",
+     "colourValue": "neel",
+     "colourHex": "#1f2a4f",
+     "size": "XL",
+     "sizeNote": "44\"",
+     "priceDeltaPaise": 0,
+     "stock": 20,
+     "trackStock": true,
+     "sortOrder": 203
+    },
+    {
+     "sku": "NAMETEE-NEEL-NAVY-XXL",
+     "colourName": "Neel navy",
+     "colourValue": "neel",
+     "colourHex": "#1f2a4f",
+     "size": "XXL",
+     "sizeNote": "46\"",
+     "priceDeltaPaise": 0,
+     "stock": 12,
+     "trackStock": true,
+     "sortOrder": 204
+    },
+    {
+     "sku": "NAMETEE-MAROON-S",
+     "colourName": "Maroon",
+     "colourValue": "maroon",
+     "colourHex": "#6b1d2e",
+     "size": "S",
+     "sizeNote": "38\"",
+     "priceDeltaPaise": 0,
+     "stock": 20,
+     "trackStock": true,
+     "sortOrder": 300
+    },
+    {
+     "sku": "NAMETEE-MAROON-M",
+     "colourName": "Maroon",
+     "colourValue": "maroon",
+     "colourHex": "#6b1d2e",
+     "size": "M",
+     "sizeNote": "40\"",
+     "priceDeltaPaise": 0,
+     "stock": 20,
+     "trackStock": true,
+     "sortOrder": 301
+    },
+    {
+     "sku": "NAMETEE-MAROON-L",
+     "colourName": "Maroon",
+     "colourValue": "maroon",
+     "colourHex": "#6b1d2e",
+     "size": "L",
+     "sizeNote": "42\"",
+     "priceDeltaPaise": 0,
+     "stock": 20,
+     "trackStock": true,
+     "sortOrder": 302
+    },
+    {
+     "sku": "NAMETEE-MAROON-XL",
+     "colourName": "Maroon",
+     "colourValue": "maroon",
+     "colourHex": "#6b1d2e",
+     "size": "XL",
+     "sizeNote": "44\"",
+     "priceDeltaPaise": 0,
+     "stock": 20,
+     "trackStock": true,
+     "sortOrder": 303
+    },
+    {
+     "sku": "NAMETEE-MAROON-XXL",
+     "colourName": "Maroon",
+     "colourValue": "maroon",
+     "colourHex": "#6b1d2e",
+     "size": "XXL",
+     "sizeNote": "46\"",
+     "priceDeltaPaise": 0,
+     "stock": 12,
+     "trackStock": true,
+     "sortOrder": 304
+    },
+    {
+     "sku": "NAMETEE-BOTTLE-GREEN-S",
+     "colourName": "Bottle green",
+     "colourValue": "bottle",
+     "colourHex": "#1e4d3a",
+     "size": "S",
+     "sizeNote": "38\"",
+     "priceDeltaPaise": 0,
+     "stock": 20,
+     "trackStock": true,
+     "sortOrder": 400
+    },
+    {
+     "sku": "NAMETEE-BOTTLE-GREEN-M",
+     "colourName": "Bottle green",
+     "colourValue": "bottle",
+     "colourHex": "#1e4d3a",
+     "size": "M",
+     "sizeNote": "40\"",
+     "priceDeltaPaise": 0,
+     "stock": 20,
+     "trackStock": true,
+     "sortOrder": 401
+    },
+    {
+     "sku": "NAMETEE-BOTTLE-GREEN-L",
+     "colourName": "Bottle green",
+     "colourValue": "bottle",
+     "colourHex": "#1e4d3a",
+     "size": "L",
+     "sizeNote": "42\"",
+     "priceDeltaPaise": 0,
+     "stock": 20,
+     "trackStock": true,
+     "sortOrder": 402
+    },
+    {
+     "sku": "NAMETEE-BOTTLE-GREEN-XL",
+     "colourName": "Bottle green",
+     "colourValue": "bottle",
+     "colourHex": "#1e4d3a",
+     "size": "XL",
+     "sizeNote": "44\"",
+     "priceDeltaPaise": 0,
+     "stock": 20,
+     "trackStock": true,
+     "sortOrder": 403
+    },
+    {
+     "sku": "NAMETEE-BOTTLE-GREEN-XXL",
+     "colourName": "Bottle green",
+     "colourValue": "bottle",
+     "colourHex": "#1e4d3a",
+     "size": "XXL",
+     "sizeNote": "46\"",
+     "priceDeltaPaise": 0,
+     "stock": 12,
+     "trackStock": true,
+     "sortOrder": 404
+    },
+    {
+     "sku": "NAMETEE-HALDI-YELLOW-S",
+     "colourName": "Haldi yellow",
+     "colourValue": "haldi",
+     "colourHex": "#dfa51c",
+     "size": "S",
+     "sizeNote": "38\"",
+     "priceDeltaPaise": 0,
+     "stock": 20,
+     "trackStock": true,
+     "sortOrder": 500
+    },
+    {
+     "sku": "NAMETEE-HALDI-YELLOW-M",
+     "colourName": "Haldi yellow",
+     "colourValue": "haldi",
+     "colourHex": "#dfa51c",
+     "size": "M",
+     "sizeNote": "40\"",
+     "priceDeltaPaise": 0,
+     "stock": 20,
+     "trackStock": true,
+     "sortOrder": 501
+    },
+    {
+     "sku": "NAMETEE-HALDI-YELLOW-L",
+     "colourName": "Haldi yellow",
+     "colourValue": "haldi",
+     "colourHex": "#dfa51c",
+     "size": "L",
+     "sizeNote": "42\"",
+     "priceDeltaPaise": 0,
+     "stock": 20,
+     "trackStock": true,
+     "sortOrder": 502
+    },
+    {
+     "sku": "NAMETEE-HALDI-YELLOW-XL",
+     "colourName": "Haldi yellow",
+     "colourValue": "haldi",
+     "colourHex": "#dfa51c",
+     "size": "XL",
+     "sizeNote": "44\"",
+     "priceDeltaPaise": 0,
+     "stock": 20,
+     "trackStock": true,
+     "sortOrder": 503
+    },
+    {
+     "sku": "NAMETEE-HALDI-YELLOW-XXL",
+     "colourName": "Haldi yellow",
+     "colourValue": "haldi",
+     "colourHex": "#dfa51c",
+     "size": "XXL",
+     "sizeNote": "46\"",
+     "priceDeltaPaise": 0,
+     "stock": 12,
+     "trackStock": true,
+     "sortOrder": 504
+    },
+    {
+     "sku": "NAMETEE-GULAAB-PINK-S",
+     "colourName": "Gulaab pink",
+     "colourValue": "gulaab",
+     "colourHex": "#f2a0bd",
+     "size": "S",
+     "sizeNote": "38\"",
+     "priceDeltaPaise": 0,
+     "stock": 20,
+     "trackStock": true,
+     "sortOrder": 600
+    },
+    {
+     "sku": "NAMETEE-GULAAB-PINK-M",
+     "colourName": "Gulaab pink",
+     "colourValue": "gulaab",
+     "colourHex": "#f2a0bd",
+     "size": "M",
+     "sizeNote": "40\"",
+     "priceDeltaPaise": 0,
+     "stock": 20,
+     "trackStock": true,
+     "sortOrder": 601
+    },
+    {
+     "sku": "NAMETEE-GULAAB-PINK-L",
+     "colourName": "Gulaab pink",
+     "colourValue": "gulaab",
+     "colourHex": "#f2a0bd",
+     "size": "L",
+     "sizeNote": "42\"",
+     "priceDeltaPaise": 0,
+     "stock": 20,
+     "trackStock": true,
+     "sortOrder": 602
+    },
+    {
+     "sku": "NAMETEE-GULAAB-PINK-XL",
+     "colourName": "Gulaab pink",
+     "colourValue": "gulaab",
+     "colourHex": "#f2a0bd",
+     "size": "XL",
+     "sizeNote": "44\"",
+     "priceDeltaPaise": 0,
+     "stock": 20,
+     "trackStock": true,
+     "sortOrder": 603
+    },
+    {
+     "sku": "NAMETEE-GULAAB-PINK-XXL",
+     "colourName": "Gulaab pink",
+     "colourValue": "gulaab",
+     "colourHex": "#f2a0bd",
+     "size": "XXL",
+     "sizeNote": "46\"",
+     "priceDeltaPaise": 0,
+     "stock": 12,
+     "trackStock": true,
+     "sortOrder": 604
+    }
+   ],
+   "reviews": [
+    {
+     "authorName": "Riya S.",
+     "city": "Mumbai",
+     "rating": 5,
+     "createdAt": "2026-09-12T00:00:00.000Z",
+     "body": "Ordered one with my son’s name. The stitching is neat and it still looks new after many washes.",
+     "helpfulCount": 24,
+     "isSample": true,
+     "photoPath": null,
+     "preview": {
+      "colour": "white",
+      "palette": 0,
+      "text": "Anu",
+      "font": "script",
+      "thread": "rani"
+     }
+    },
+    {
+     "authorName": "Kavya P.",
+     "city": "Hyderabad",
+     "rating": 5,
+     "createdAt": "2026-09-02T00:00:00.000Z",
+     "body": "They sent a stitch preview on WhatsApp before starting, which I loved. It came beautifully packed with a handwritten note.",
+     "helpfulCount": 17,
+     "isSample": true,
+     "photoPath": null,
+     "preview": {
+      "colour": "kajal",
+      "palette": 0,
+      "text": "Kabir",
+      "font": "bold",
+      "thread": "haldi"
+     }
+    },
+    {
+     "authorName": "Neha G.",
+     "city": "Jaipur",
+     "rating": 4,
+     "createdAt": "2026-08-28T00:00:00.000Z",
+     "body": "Lovely quality and the thread really shines in the light. It took a few days longer than I hoped, but they told me that upfront.",
+     "helpfulCount": 9,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    },
+    {
+     "authorName": "Aditya R.",
+     "city": "Kolkata",
+     "rating": 5,
+     "createdAt": "2026-08-19T00:00:00.000Z",
+     "body": "Bought it as a Rakhi gift and my sister hasn’t stopped showing it off. Not a single loose thread.",
+     "helpfulCount": 6,
+     "isSample": true,
+     "photoPath": null,
+     "preview": {
+      "colour": "maroon",
+      "palette": 0,
+      "text": "मीरा",
+      "font": "hindi",
+      "thread": "haldi"
+     }
+    },
+    {
+     "authorName": "Sana M.",
+     "city": "Bengaluru",
+     "rating": 5,
+     "createdAt": "2026-08-04T00:00:00.000Z",
+     "body": "My second order from this studio. The colours are rich and nothing faded after washing.",
+     "helpfulCount": 4,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    }
+   ],
+   "related": [
+    "peacock",
+    "cap",
+    "tote",
+    "pet"
+   ]
+  },
+  {
+   "code": "wreath",
+   "slug": "gulaab-wreath-hoop-art",
+   "name": "Gulaab Wreath Hoop Art",
+   "status": "ACTIVE",
+   "type": "READY",
+   "category": "hoops",
+   "pricePaise": 189900,
+   "mrpPaise": 229900,
+   "badgeText": "One of a kind",
+   "badgeTone": "jamun",
+   "techLine": "Ribbon roses · Bullion knots",
+   "story": "A wreath of tiny roses: deep red buds, blush ribbon roses and sage leaves on soft linen, framed in a beech wood hoop. Stitched once, never repeated.",
+   "colourFamily": "neutral",
+   "occasions": [
+    "housewarming",
+    "birthday"
+   ],
+   "ratingAvg": 5,
+   "ratingCount": 41,
+   "popularity": 86,
+   "publishedAt": "2026-08-05T00:00:00.000Z",
+   "shipMode": "READY",
+   "madeDays": null,
+   "shipNote": null,
+   "isUnique": true,
+   "handMade": true,
+   "needsSize": false,
+   "sizeLabel": null,
+   "sizeGuide": null,
+   "studioGarment": null,
+   "studioSample": null,
+   "petPhoto": false,
+   "personalisation": null,
+   "livePreview": null,
+   "details": {
+    "why": [
+     {
+      "title": "One of a kind",
+      "text": "Stitched once, never repeated"
+     },
+     {
+      "title": "Ready to hang",
+      "text": "Felt-backed with a ribbon loop"
+     },
+     {
+      "title": "Gift-ready",
+      "text": "Arrives in a keepsake box"
+     }
+    ],
+    "spec": [
+     {
+      "label": "Technique",
+      "value": "Ribbon roses, bullion knots, fishbone leaves"
+     },
+     {
+      "label": "Hoop",
+      "value": "Beech wood, 20 cm (8\")"
+     },
+     {
+      "label": "Fabric",
+      "value": "Sage linen"
+     },
+     {
+      "label": "Back",
+      "value": "Felt-backed, ready to hang"
+     },
+     {
+      "label": "Edition",
+      "value": "One of a kind"
+     },
+     {
+      "label": "Made",
+      "value": "Hand-embroidered in our studio"
+     }
+    ],
+    "care": [
+     "Dust with a soft, dry brush",
+     "Keep out of direct sunlight",
+     "Do not wash"
+    ],
+    "faq": [],
+    "upClose": {
+     "path": "photos/wreath-d.jpg",
+     "caption": "Ribbon roses and bullion buds sit up off the linen. You can feel every petal."
+    }
+   },
+   "images": [
+    {
+     "role": "MAIN",
+     "path": "photos/wreath.jpg",
+     "alt": "Embroidery hoop with a wreath of roses and leaves",
+     "caption": "Front",
+     "sortOrder": 0
+    },
+    {
+     "role": "HOVER",
+     "path": "photos/wreath-d.jpg",
+     "alt": "",
+     "caption": null,
+     "sortOrder": 1
+    },
+    {
+     "role": "GALLERY",
+     "path": "photos/wreath-d.jpg",
+     "caption": "Stitch close-up",
+     "alt": "Stitch close-up",
+     "sortOrder": 10
+    },
+    {
+     "role": "GALLERY",
+     "path": "photos/wreath-2.jpg",
+     "caption": "Another angle",
+     "alt": "Another angle",
+     "sortOrder": 11
+    }
+   ],
+   "variants": [
+    {
+     "sku": "WREATH-SAGE-LINEN-8-HOOP",
+     "colourName": "Sage linen",
+     "colourValue": "#D9DDD0",
+     "colourHex": "#D9DDD0",
+     "size": "8\" hoop",
+     "sizeNote": "20 cm across",
+     "priceDeltaPaise": 0,
+     "stock": 1,
+     "trackStock": true,
+     "sortOrder": 0
+    }
+   ],
+   "reviews": [
+    {
+     "authorName": "Riya S.",
+     "city": "Mumbai",
+     "rating": 5,
+     "createdAt": "2026-09-12T00:00:00.000Z",
+     "body": "It’s even prettier in person. The roses actually stand up off the fabric, and the thread shines when the light hits it.",
+     "helpfulCount": 24,
+     "isSample": true,
+     "photoPath": "photos/wreath.jpg",
+     "preview": null
+    },
+    {
+     "authorName": "Kavya P.",
+     "city": "Hyderabad",
+     "rating": 5,
+     "createdAt": "2026-09-02T00:00:00.000Z",
+     "body": "They sent a stitch preview on WhatsApp before starting, which I loved. It came beautifully packed with a handwritten note.",
+     "helpfulCount": 17,
+     "isSample": true,
+     "photoPath": "photos/wreath-2.jpg",
+     "preview": null
+    },
+    {
+     "authorName": "Neha G.",
+     "city": "Jaipur",
+     "rating": 4,
+     "createdAt": "2026-08-28T00:00:00.000Z",
+     "body": "Lovely quality and the thread really shines in the light. It took a few days longer than I hoped, but they told me that upfront.",
+     "helpfulCount": 9,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    },
+    {
+     "authorName": "Aditya R.",
+     "city": "Kolkata",
+     "rating": 5,
+     "createdAt": "2026-08-19T00:00:00.000Z",
+     "body": "Bought it as a Rakhi gift and my sister hasn’t stopped showing it off. Not a single loose thread.",
+     "helpfulCount": 6,
+     "isSample": true,
+     "photoPath": "photos/wreath.jpg",
+     "preview": null
+    },
+    {
+     "authorName": "Sana M.",
+     "city": "Bengaluru",
+     "rating": 5,
+     "createdAt": "2026-08-04T00:00:00.000Z",
+     "body": "My second order from this studio. The colours are rich and nothing faded after washing.",
+     "helpfulCount": 4,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    }
+   ],
+   "related": [
+    "cherry",
+    "meadow",
+    "tulip",
+    "pet"
+   ]
+  },
+  {
+   "code": "cap",
+   "slug": "monogram-cap",
+   "name": "Monogram Cap",
+   "status": "ACTIVE",
+   "type": "PERSONALISE",
+   "category": "namegifts",
+   "pricePaise": 89900,
+   "mrpPaise": 99900,
+   "badgeText": "Personalise",
+   "badgeTone": "rani",
+   "techLine": "Raised satin initials",
+   "story": "A structured cotton cap with your initials in raised satin. Pick the cap colour, the thread and the font, and watch the photo change.",
+   "colourFamily": "multi",
+   "occasions": [
+    "birthday",
+    "rakhi"
+   ],
+   "ratingAvg": 4.6,
+   "ratingCount": 73,
+   "popularity": 84,
+   "publishedAt": "2026-08-12T00:00:00.000Z",
+   "shipMode": "CUSTOM",
+   "madeDays": null,
+   "shipNote": null,
+   "isUnique": false,
+   "handMade": false,
+   "needsSize": false,
+   "sizeLabel": null,
+   "sizeGuide": null,
+   "studioGarment": null,
+   "studioSample": null,
+   "petPhoto": false,
+   "personalisation": {
+    "fee": 0,
+    "maxLength": 3,
+    "defaultText": "AK",
+    "required": true,
+    "defaultOn": true,
+    "font": "classic",
+    "thread": "haldi",
+    "flowerPresets": false
+   },
+   "livePreview": {
+    "view": "cap",
+    "place": "fr",
+    "box": [
+     7.5,
+     4.4
+    ],
+    "motif": "none",
+    "motifColours": null,
+    "maxTextWidth": null,
+    "closeCrop": 1.5
+   },
+   "details": {
+    "why": [
+     {
+      "title": "Raised satin",
+      "text": "Initials that stand up off the cap"
+     },
+     {
+      "title": "Adjustable",
+      "text": "Fits most heads, 54 to 60 cm"
+     },
+     {
+      "title": "Team-ready",
+      "text": "Order 25 or more for corporate pricing"
+     }
+    ],
+    "spec": [
+     {
+      "label": "Technique",
+      "value": "Raised satin (3D look)"
+     },
+     {
+      "label": "Fabric",
+      "value": "Cotton twill, 5 panels"
+     },
+     {
+      "label": "Fit",
+      "value": "Adjustable, 54–60 cm"
+     },
+     {
+      "label": "Letters",
+      "value": "Up to 3 initials"
+     },
+     {
+      "label": "Bulk",
+      "value": "25+ caps get corporate pricing"
+     },
+     {
+      "label": "Made",
+      "value": "Personalised in our studio"
+     }
+    ],
+    "care": [
+     "Spot clean only",
+     "Do not machine wash",
+     "Reshape while damp"
+    ],
+    "faq": [],
+    "upClose": null
+   },
+   "images": [
+    {
+     "role": "MAIN",
+     "path": "photos/r-cap.jpg",
+     "alt": "Black cap with gold embroidered initials AK",
+     "caption": null,
+     "sortOrder": 0
+    },
+    {
+     "role": "HOVER",
+     "path": "photos/r-cap-d.jpg",
+     "alt": "",
+     "caption": null,
+     "sortOrder": 1
+    },
+    {
+     "role": "GALLERY",
+     "path": "photos/r-capteam.jpg",
+     "caption": "Team caps: order 25+",
+     "alt": "Team caps: order 25+",
+     "sortOrder": 10
+    },
+    {
+     "role": "GALLERY",
+     "path": "photos/gift-kraft.jpg",
+     "caption": "How it arrives",
+     "alt": "How it arrives",
+     "sortOrder": 11
+    }
+   ],
+   "variants": [
+    {
+     "sku": "CAP-KAJAL-BLACK-ONE-SIZE",
+     "colourName": "Kajal black",
+     "colourValue": "kajal",
+     "colourHex": "#1d1b21",
+     "size": "One size",
+     "sizeNote": "Adjustable",
+     "priceDeltaPaise": 0,
+     "stock": 20,
+     "trackStock": true,
+     "sortOrder": 0
+    },
+    {
+     "sku": "CAP-WHITE-ONE-SIZE",
+     "colourName": "White",
+     "colourValue": "white",
+     "colourHex": "#F4F4F2",
+     "size": "One size",
+     "sizeNote": "Adjustable",
+     "priceDeltaPaise": 0,
+     "stock": 20,
+     "trackStock": true,
+     "sortOrder": 100
+    },
+    {
+     "sku": "CAP-NEEL-NAVY-ONE-SIZE",
+     "colourName": "Neel navy",
+     "colourValue": "neel",
+     "colourHex": "#1f2a4f",
+     "size": "One size",
+     "sizeNote": "Adjustable",
+     "priceDeltaPaise": 0,
+     "stock": 20,
+     "trackStock": true,
+     "sortOrder": 200
+    },
+    {
+     "sku": "CAP-MAROON-ONE-SIZE",
+     "colourName": "Maroon",
+     "colourValue": "maroon",
+     "colourHex": "#6b1d2e",
+     "size": "One size",
+     "sizeNote": "Adjustable",
+     "priceDeltaPaise": 0,
+     "stock": 20,
+     "trackStock": true,
+     "sortOrder": 300
+    },
+    {
+     "sku": "CAP-BOTTLE-GREEN-ONE-SIZE",
+     "colourName": "Bottle green",
+     "colourValue": "bottle",
+     "colourHex": "#1e4d3a",
+     "size": "One size",
+     "sizeNote": "Adjustable",
+     "priceDeltaPaise": 0,
+     "stock": 20,
+     "trackStock": true,
+     "sortOrder": 400
+    }
+   ],
+   "reviews": [
+    {
+     "authorName": "Riya S.",
+     "city": "Mumbai",
+     "rating": 5,
+     "createdAt": "2026-09-12T00:00:00.000Z",
+     "body": "Got caps with initials for my brothers. The raised satin looks premium, nothing like a cheap print.",
+     "helpfulCount": 24,
+     "isSample": true,
+     "photoPath": null,
+     "preview": {
+      "colour": "kajal",
+      "palette": 0,
+      "text": "RS",
+      "font": "classic",
+      "thread": "haldi"
+     }
+    },
+    {
+     "authorName": "Kavya P.",
+     "city": "Hyderabad",
+     "rating": 5,
+     "createdAt": "2026-09-02T00:00:00.000Z",
+     "body": "They sent a stitch preview on WhatsApp before starting, which I loved. It came beautifully packed with a handwritten note.",
+     "helpfulCount": 17,
+     "isSample": true,
+     "photoPath": null,
+     "preview": {
+      "colour": "white",
+      "palette": 0,
+      "text": "MJ",
+      "font": "bold",
+      "thread": "neel"
+     }
+    },
+    {
+     "authorName": "Neha G.",
+     "city": "Jaipur",
+     "rating": 4,
+     "createdAt": "2026-08-28T00:00:00.000Z",
+     "body": "Lovely quality and the thread really shines in the light. It took a few days longer than I hoped, but they told me that upfront.",
+     "helpfulCount": 9,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    },
+    {
+     "authorName": "Aditya R.",
+     "city": "Kolkata",
+     "rating": 5,
+     "createdAt": "2026-08-19T00:00:00.000Z",
+     "body": "Bought it as a Rakhi gift and my sister hasn’t stopped showing it off. Not a single loose thread.",
+     "helpfulCount": 6,
+     "isSample": true,
+     "photoPath": null,
+     "preview": {
+      "colour": "maroon",
+      "palette": 0,
+      "text": "अ",
+      "font": "hindi",
+      "thread": "haldi"
+     }
+    },
+    {
+     "authorName": "Sana M.",
+     "city": "Bengaluru",
+     "rating": 5,
+     "createdAt": "2026-08-04T00:00:00.000Z",
+     "body": "My second order from this studio. The colours are rich and nothing faded after washing.",
+     "helpfulCount": 4,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    }
+   ],
+   "related": [
+    "tote",
+    "nametee",
+    "peacock",
+    "teamcap"
+   ]
+  },
+  {
+   "code": "peacock",
+   "slug": "mor-pankh-hoodie",
+   "name": "Mor Pankh Hoodie",
+   "status": "ACTIVE",
+   "type": "PERSONALISE",
+   "category": "tees",
+   "pricePaise": 189900,
+   "mrpPaise": 229900,
+   "badgeText": "Bestseller",
+   "badgeTone": "sindoor",
+   "techLine": "Satin peacock feather · Fleece",
+   "story": "A brushed-fleece hoodie with a Mor Pankh (peacock feather) stitched across the chest in haldi, neel and mor thread. Add a name underneath if you like.",
+   "colourFamily": "red",
+   "occasions": [
+    "diwali",
+    "birthday"
+   ],
+   "ratingAvg": 4.8,
+   "ratingCount": 97,
+   "popularity": 82,
+   "publishedAt": "2026-09-02T00:00:00.000Z",
+   "shipMode": "READY",
+   "madeDays": null,
+   "shipNote": null,
+   "isUnique": false,
+   "handMade": false,
+   "needsSize": true,
+   "sizeLabel": null,
+   "sizeGuide": "hoodie",
+   "studioGarment": null,
+   "studioSample": null,
+   "petPhoto": false,
+   "personalisation": {
+    "fee": 14900,
+    "maxLength": 12,
+    "defaultText": "Kabir",
+    "required": false,
+    "defaultOn": false,
+    "font": "classic",
+    "thread": "haldi",
+    "flowerPresets": false
+   },
+   "livePreview": {
+    "view": "hoodie",
+    "place": "cc",
+    "box": [
+     18,
+     24
+    ],
+    "motif": "mor",
+    "motifColours": [
+     "haldi",
+     "neel",
+     "mor"
+    ],
+    "maxTextWidth": 620,
+    "closeCrop": 1.35
+   },
+   "details": {
+    "why": [
+     {
+      "title": "Bestseller",
+      "text": "Our most-gifted hoodie"
+     },
+     {
+      "title": "Brushed fleece",
+      "text": "Warm and soft inside"
+     },
+     {
+      "title": "Add a name",
+      "text": "+₹149, stitched under the feather"
+     }
+    ],
+    "spec": [
+     {
+      "label": "Technique",
+      "value": "Satin fill and running stitch"
+     },
+     {
+      "label": "Stitches",
+      "value": "About 21,000"
+     },
+     {
+      "label": "Fabric",
+      "value": "Cotton-poly fleece, 320 GSM"
+     },
+     {
+      "label": "Fit",
+      "value": "Regular, unisex"
+     },
+     {
+      "label": "Pocket",
+      "value": "Front kangaroo pocket"
+     },
+     {
+      "label": "Made",
+      "value": "Machine-embroidered in our studio"
+     }
+    ],
+    "care": [
+     "Machine wash cold, inside out",
+     "Do not iron on the embroidery",
+     "Dry in the shade"
+    ],
+    "faq": [],
+    "upClose": null
+   },
+   "images": [
+    {
+     "role": "MAIN",
+     "path": "photos/r-hoodie.jpg",
+     "alt": "Maroon hoodie with an embroidered peacock feather",
+     "caption": null,
+     "sortOrder": 0
+    },
+    {
+     "role": "HOVER",
+     "path": "photos/r-hoodie-d.jpg",
+     "alt": "",
+     "caption": null,
+     "sortOrder": 1
+    },
+    {
+     "role": "GALLERY",
+     "path": "photos/gift-kraft.jpg",
+     "caption": "How it arrives",
+     "alt": "How it arrives",
+     "sortOrder": 10
+    }
+   ],
+   "variants": [
+    {
+     "sku": "PEACOCK-MAROON-S",
+     "colourName": "Maroon",
+     "colourValue": "maroon",
+     "colourHex": "#6b1d2e",
+     "size": "S",
+     "sizeNote": "40\"",
+     "priceDeltaPaise": 0,
+     "stock": 9,
+     "trackStock": true,
+     "sortOrder": 0
+    },
+    {
+     "sku": "PEACOCK-MAROON-M",
+     "colourName": "Maroon",
+     "colourValue": "maroon",
+     "colourHex": "#6b1d2e",
+     "size": "M",
+     "sizeNote": "42\"",
+     "priceDeltaPaise": 0,
+     "stock": 12,
+     "trackStock": true,
+     "sortOrder": 1
+    },
+    {
+     "sku": "PEACOCK-MAROON-L",
+     "colourName": "Maroon",
+     "colourValue": "maroon",
+     "colourHex": "#6b1d2e",
+     "size": "L",
+     "sizeNote": "44\"",
+     "priceDeltaPaise": 0,
+     "stock": 8,
+     "trackStock": true,
+     "sortOrder": 2
+    },
+    {
+     "sku": "PEACOCK-MAROON-XL",
+     "colourName": "Maroon",
+     "colourValue": "maroon",
+     "colourHex": "#6b1d2e",
+     "size": "XL",
+     "sizeNote": "46\"",
+     "priceDeltaPaise": 0,
+     "stock": 5,
+     "trackStock": true,
+     "sortOrder": 3
+    },
+    {
+     "sku": "PEACOCK-MAROON-XXL",
+     "colourName": "Maroon",
+     "colourValue": "maroon",
+     "colourHex": "#6b1d2e",
+     "size": "XXL",
+     "sizeNote": "48\"",
+     "priceDeltaPaise": 0,
+     "stock": 3,
+     "trackStock": true,
+     "sortOrder": 4
+    },
+    {
+     "sku": "PEACOCK-KAJAL-BLACK-S",
+     "colourName": "Kajal black",
+     "colourValue": "kajal",
+     "colourHex": "#1d1b21",
+     "size": "S",
+     "sizeNote": "40\"",
+     "priceDeltaPaise": 0,
+     "stock": 9,
+     "trackStock": true,
+     "sortOrder": 100
+    },
+    {
+     "sku": "PEACOCK-KAJAL-BLACK-M",
+     "colourName": "Kajal black",
+     "colourValue": "kajal",
+     "colourHex": "#1d1b21",
+     "size": "M",
+     "sizeNote": "42\"",
+     "priceDeltaPaise": 0,
+     "stock": 12,
+     "trackStock": true,
+     "sortOrder": 101
+    },
+    {
+     "sku": "PEACOCK-KAJAL-BLACK-L",
+     "colourName": "Kajal black",
+     "colourValue": "kajal",
+     "colourHex": "#1d1b21",
+     "size": "L",
+     "sizeNote": "44\"",
+     "priceDeltaPaise": 0,
+     "stock": 8,
+     "trackStock": true,
+     "sortOrder": 102
+    },
+    {
+     "sku": "PEACOCK-KAJAL-BLACK-XL",
+     "colourName": "Kajal black",
+     "colourValue": "kajal",
+     "colourHex": "#1d1b21",
+     "size": "XL",
+     "sizeNote": "46\"",
+     "priceDeltaPaise": 0,
+     "stock": 5,
+     "trackStock": true,
+     "sortOrder": 103
+    },
+    {
+     "sku": "PEACOCK-KAJAL-BLACK-XXL",
+     "colourName": "Kajal black",
+     "colourValue": "kajal",
+     "colourHex": "#1d1b21",
+     "size": "XXL",
+     "sizeNote": "48\"",
+     "priceDeltaPaise": 0,
+     "stock": 3,
+     "trackStock": true,
+     "sortOrder": 104
+    },
+    {
+     "sku": "PEACOCK-NEEL-NAVY-S",
+     "colourName": "Neel navy",
+     "colourValue": "neel",
+     "colourHex": "#1f2a4f",
+     "size": "S",
+     "sizeNote": "40\"",
+     "priceDeltaPaise": 0,
+     "stock": 9,
+     "trackStock": true,
+     "sortOrder": 200
+    },
+    {
+     "sku": "PEACOCK-NEEL-NAVY-M",
+     "colourName": "Neel navy",
+     "colourValue": "neel",
+     "colourHex": "#1f2a4f",
+     "size": "M",
+     "sizeNote": "42\"",
+     "priceDeltaPaise": 0,
+     "stock": 12,
+     "trackStock": true,
+     "sortOrder": 201
+    },
+    {
+     "sku": "PEACOCK-NEEL-NAVY-L",
+     "colourName": "Neel navy",
+     "colourValue": "neel",
+     "colourHex": "#1f2a4f",
+     "size": "L",
+     "sizeNote": "44\"",
+     "priceDeltaPaise": 0,
+     "stock": 8,
+     "trackStock": true,
+     "sortOrder": 202
+    },
+    {
+     "sku": "PEACOCK-NEEL-NAVY-XL",
+     "colourName": "Neel navy",
+     "colourValue": "neel",
+     "colourHex": "#1f2a4f",
+     "size": "XL",
+     "sizeNote": "46\"",
+     "priceDeltaPaise": 0,
+     "stock": 5,
+     "trackStock": true,
+     "sortOrder": 203
+    },
+    {
+     "sku": "PEACOCK-NEEL-NAVY-XXL",
+     "colourName": "Neel navy",
+     "colourValue": "neel",
+     "colourHex": "#1f2a4f",
+     "size": "XXL",
+     "sizeNote": "48\"",
+     "priceDeltaPaise": 0,
+     "stock": 3,
+     "trackStock": true,
+     "sortOrder": 204
+    },
+    {
+     "sku": "PEACOCK-BOTTLE-GREEN-S",
+     "colourName": "Bottle green",
+     "colourValue": "bottle",
+     "colourHex": "#1e4d3a",
+     "size": "S",
+     "sizeNote": "40\"",
+     "priceDeltaPaise": 0,
+     "stock": 9,
+     "trackStock": true,
+     "sortOrder": 300
+    },
+    {
+     "sku": "PEACOCK-BOTTLE-GREEN-M",
+     "colourName": "Bottle green",
+     "colourValue": "bottle",
+     "colourHex": "#1e4d3a",
+     "size": "M",
+     "sizeNote": "42\"",
+     "priceDeltaPaise": 0,
+     "stock": 12,
+     "trackStock": true,
+     "sortOrder": 301
+    },
+    {
+     "sku": "PEACOCK-BOTTLE-GREEN-L",
+     "colourName": "Bottle green",
+     "colourValue": "bottle",
+     "colourHex": "#1e4d3a",
+     "size": "L",
+     "sizeNote": "44\"",
+     "priceDeltaPaise": 0,
+     "stock": 8,
+     "trackStock": true,
+     "sortOrder": 302
+    },
+    {
+     "sku": "PEACOCK-BOTTLE-GREEN-XL",
+     "colourName": "Bottle green",
+     "colourValue": "bottle",
+     "colourHex": "#1e4d3a",
+     "size": "XL",
+     "sizeNote": "46\"",
+     "priceDeltaPaise": 0,
+     "stock": 5,
+     "trackStock": true,
+     "sortOrder": 303
+    },
+    {
+     "sku": "PEACOCK-BOTTLE-GREEN-XXL",
+     "colourName": "Bottle green",
+     "colourValue": "bottle",
+     "colourHex": "#1e4d3a",
+     "size": "XXL",
+     "sizeNote": "48\"",
+     "priceDeltaPaise": 0,
+     "stock": 3,
+     "trackStock": true,
+     "sortOrder": 304
+    },
+    {
+     "sku": "PEACOCK-CHANDI-GREY-S",
+     "colourName": "Chandi grey",
+     "colourValue": "chandi",
+     "colourHex": "#9ba1a9",
+     "size": "S",
+     "sizeNote": "40\"",
+     "priceDeltaPaise": 0,
+     "stock": 9,
+     "trackStock": true,
+     "sortOrder": 400
+    },
+    {
+     "sku": "PEACOCK-CHANDI-GREY-M",
+     "colourName": "Chandi grey",
+     "colourValue": "chandi",
+     "colourHex": "#9ba1a9",
+     "size": "M",
+     "sizeNote": "42\"",
+     "priceDeltaPaise": 0,
+     "stock": 12,
+     "trackStock": true,
+     "sortOrder": 401
+    },
+    {
+     "sku": "PEACOCK-CHANDI-GREY-L",
+     "colourName": "Chandi grey",
+     "colourValue": "chandi",
+     "colourHex": "#9ba1a9",
+     "size": "L",
+     "sizeNote": "44\"",
+     "priceDeltaPaise": 0,
+     "stock": 8,
+     "trackStock": true,
+     "sortOrder": 402
+    },
+    {
+     "sku": "PEACOCK-CHANDI-GREY-XL",
+     "colourName": "Chandi grey",
+     "colourValue": "chandi",
+     "colourHex": "#9ba1a9",
+     "size": "XL",
+     "sizeNote": "46\"",
+     "priceDeltaPaise": 0,
+     "stock": 5,
+     "trackStock": true,
+     "sortOrder": 403
+    },
+    {
+     "sku": "PEACOCK-CHANDI-GREY-XXL",
+     "colourName": "Chandi grey",
+     "colourValue": "chandi",
+     "colourHex": "#9ba1a9",
+     "size": "XXL",
+     "sizeNote": "48\"",
+     "priceDeltaPaise": 0,
+     "stock": 3,
+     "trackStock": true,
+     "sortOrder": 404
+    }
+   ],
+   "reviews": [
+    {
+     "authorName": "Riya S.",
+     "city": "Mumbai",
+     "rating": 5,
+     "createdAt": "2026-09-12T00:00:00.000Z",
+     "body": "The peacock feather has so much detail. I added my name underneath and it looks like a designer piece.",
+     "helpfulCount": 24,
+     "isSample": true,
+     "photoPath": null,
+     "preview": {
+      "colour": "maroon",
+      "palette": 0,
+      "text": "",
+      "font": null,
+      "thread": null
+     }
+    },
+    {
+     "authorName": "Kavya P.",
+     "city": "Hyderabad",
+     "rating": 5,
+     "createdAt": "2026-09-02T00:00:00.000Z",
+     "body": "They sent a stitch preview on WhatsApp before starting, which I loved. It came beautifully packed with a handwritten note.",
+     "helpfulCount": 17,
+     "isSample": true,
+     "photoPath": null,
+     "preview": {
+      "colour": "kajal",
+      "palette": 0,
+      "text": "Kabir",
+      "font": "classic",
+      "thread": "haldi"
+     }
+    },
+    {
+     "authorName": "Neha G.",
+     "city": "Jaipur",
+     "rating": 4,
+     "createdAt": "2026-08-28T00:00:00.000Z",
+     "body": "Lovely quality and the thread really shines in the light. It took a few days longer than I hoped, but they told me that upfront.",
+     "helpfulCount": 9,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    },
+    {
+     "authorName": "Aditya R.",
+     "city": "Kolkata",
+     "rating": 5,
+     "createdAt": "2026-08-19T00:00:00.000Z",
+     "body": "Bought it as a Rakhi gift and my sister hasn’t stopped showing it off. Not a single loose thread.",
+     "helpfulCount": 6,
+     "isSample": true,
+     "photoPath": null,
+     "preview": {
+      "colour": "bottle",
+      "palette": 0,
+      "text": "Ira",
+      "font": "script",
+      "thread": "haldi"
+     }
+    },
+    {
+     "authorName": "Sana M.",
+     "city": "Bengaluru",
+     "rating": 5,
+     "createdAt": "2026-08-04T00:00:00.000Z",
+     "body": "My second order from this studio. The colours are rich and nothing faded after washing.",
+     "helpfulCount": 4,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    }
+   ],
+   "related": [
+    "nametee",
+    "cap",
+    "knit",
+    "tote"
+   ]
+  },
+  {
+   "code": "tulip",
+   "slug": "kesar-tulip-cushion-cover",
+   "name": "Kesar Tulip Cushion Cover",
+   "status": "ACTIVE",
+   "type": "READY",
+   "category": "cushions",
+   "pricePaise": 139900,
+   "mrpPaise": 179900,
+   "badgeText": "Only 3 left",
+   "badgeTone": "sindoor",
+   "techLine": "Chain stitch · Satin fill",
+   "story": "Bold tulips in kesar, rust and indigo, inspired by old Suzani work, with a twisting vine border all around. A heavy cotton cover with a hidden zip.",
+   "colourFamily": "multi",
+   "occasions": [
+    "housewarming",
+    "diwali"
+   ],
+   "ratingAvg": 4.7,
+   "ratingCount": 88,
+   "popularity": 79,
+   "publishedAt": "2026-08-05T00:00:00.000Z",
+   "shipMode": "READY",
+   "madeDays": null,
+   "shipNote": null,
+   "isUnique": false,
+   "handMade": false,
+   "needsSize": false,
+   "sizeLabel": null,
+   "sizeGuide": null,
+   "studioGarment": null,
+   "studioSample": null,
+   "petPhoto": false,
+   "personalisation": null,
+   "livePreview": null,
+   "details": {
+    "why": [
+     {
+      "title": "Hidden zip",
+      "text": "A clean back that’s easy to wash"
+     },
+     {
+      "title": "Bold colour",
+      "text": "Seven thread colours that stay bright"
+     },
+     {
+      "title": "Heavy cotton",
+      "text": "Keeps its shape on sofas and floors"
+     }
+    ],
+    "spec": [
+     {
+      "label": "Technique",
+      "value": "Chain-stitch outlines, satin fill"
+     },
+     {
+      "label": "Stitches",
+      "value": "About 38,000"
+     },
+     {
+      "label": "Fabric",
+      "value": "Cotton, 280 GSM"
+     },
+     {
+      "label": "Closure",
+      "value": "Hidden zip"
+     },
+     {
+      "label": "Insert",
+      "value": "Cover only, insert not included"
+     },
+     {
+      "label": "Made",
+      "value": "Machine-embroidered, hand-finished"
+     }
+    ],
+    "care": [
+     "Machine wash cold on gentle, inside out",
+     "Do not bleach",
+     "Iron on the reverse only"
+    ],
+    "faq": [],
+    "upClose": {
+     "path": "photos/tulip-d.jpg",
+     "caption": "Chain-stitch outlines filled with satin stitch, in seven thread colours."
+    }
+   },
+   "images": [
+    {
+     "role": "MAIN",
+     "path": "photos/tulip.jpg",
+     "alt": "Cushion with colourful embroidered tulips on a leather sofa",
+     "caption": "On the sofa",
+     "sortOrder": 0
+    },
+    {
+     "role": "HOVER",
+     "path": "photos/tulip-d.jpg",
+     "alt": "",
+     "caption": null,
+     "sortOrder": 1
+    },
+    {
+     "role": "GALLERY",
+     "path": "photos/tulip-d.jpg",
+     "caption": "Stitch close-up",
+     "alt": "Stitch close-up",
+     "sortOrder": 10
+    },
+    {
+     "role": "GALLERY",
+     "path": "photos/gift-kraft.jpg",
+     "caption": "How it arrives",
+     "alt": "How it arrives",
+     "sortOrder": 11
+    }
+   ],
+   "variants": [
+    {
+     "sku": "TULIP-IVORY-16-16",
+     "colourName": "Ivory",
+     "colourValue": "#F3EEE2",
+     "colourHex": "#F3EEE2",
+     "size": "16 × 16\"",
+     "sizeNote": "40 × 40 cm",
+     "priceDeltaPaise": 0,
+     "stock": 3,
+     "trackStock": true,
+     "sortOrder": 0
+    },
+    {
+     "sku": "TULIP-IVORY-18-18",
+     "colourName": "Ivory",
+     "colourValue": "#F3EEE2",
+     "colourHex": "#F3EEE2",
+     "size": "18 × 18\"",
+     "sizeNote": "45 × 45 cm",
+     "priceDeltaPaise": 20000,
+     "stock": 2,
+     "trackStock": true,
+     "sortOrder": 1
+    }
+   ],
+   "reviews": [
+    {
+     "authorName": "Riya S.",
+     "city": "Mumbai",
+     "rating": 5,
+     "createdAt": "2026-09-12T00:00:00.000Z",
+     "body": "The colours are so rich. It made our plain brown sofa look like a magazine photo.",
+     "helpfulCount": 24,
+     "isSample": true,
+     "photoPath": "photos/tulip.jpg",
+     "preview": null
+    },
+    {
+     "authorName": "Kavya P.",
+     "city": "Hyderabad",
+     "rating": 5,
+     "createdAt": "2026-09-02T00:00:00.000Z",
+     "body": "They sent a stitch preview on WhatsApp before starting, which I loved. It came beautifully packed with a handwritten note.",
+     "helpfulCount": 17,
+     "isSample": true,
+     "photoPath": "photos/tulip-d.jpg",
+     "preview": null
+    },
+    {
+     "authorName": "Neha G.",
+     "city": "Jaipur",
+     "rating": 4,
+     "createdAt": "2026-08-28T00:00:00.000Z",
+     "body": "Lovely quality and the thread really shines in the light. It took a few days longer than I hoped, but they told me that upfront.",
+     "helpfulCount": 9,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    },
+    {
+     "authorName": "Aditya R.",
+     "city": "Kolkata",
+     "rating": 5,
+     "createdAt": "2026-08-19T00:00:00.000Z",
+     "body": "Bought it as a Rakhi gift and my sister hasn’t stopped showing it off. Not a single loose thread.",
+     "helpfulCount": 6,
+     "isSample": true,
+     "photoPath": "photos/tulip.jpg",
+     "preview": null
+    },
+    {
+     "authorName": "Sana M.",
+     "city": "Bengaluru",
+     "rating": 5,
+     "createdAt": "2026-08-04T00:00:00.000Z",
+     "body": "My second order from this studio. The colours are rich and nothing faded after washing.",
+     "helpfulCount": 4,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    }
+   ],
+   "related": [
+    "birds",
+    "wreath",
+    "phoolrani",
+    "tote"
+   ]
+  },
+  {
+   "code": "dupatta",
+   "slug": "rani-mirror-work-dupatta",
+   "name": "Rani Mirror-work Dupatta",
+   "status": "ACTIVE",
+   "type": "READY",
+   "category": "dupattas",
+   "pricePaise": 219900,
+   "mrpPaise": 279900,
+   "badgeText": "New",
+   "badgeTone": "rani",
+   "techLine": "Mirror work · Resham",
+   "story": "A rani pink dupatta edged with mirror work and sequins, with hand-embroidered phool scattered across it in parrot green, turquoise and gold.",
+   "colourFamily": "pink",
+   "occasions": [
+    "shaadi",
+    "diwali",
+    "rakhi"
+   ],
+   "ratingAvg": 4.7,
+   "ratingCount": 54,
+   "popularity": 76,
+   "publishedAt": "2026-09-16T00:00:00.000Z",
+   "shipMode": "READY",
+   "madeDays": null,
+   "shipNote": null,
+   "isUnique": false,
+   "handMade": false,
+   "needsSize": false,
+   "sizeLabel": null,
+   "sizeGuide": null,
+   "studioGarment": null,
+   "studioSample": null,
+   "petPhoto": false,
+   "personalisation": null,
+   "livePreview": null,
+   "details": {
+    "why": [
+     {
+      "title": "Mirror work",
+      "text": "Real mirrors, stitched on by hand"
+     },
+     {
+      "title": "Light & airy",
+      "text": "Soft georgette that drapes beautifully"
+     },
+     {
+      "title": "Wedding-ready",
+      "text": "Pairs with plain suits and lehengas"
+     }
+    ],
+    "spec": [
+     {
+      "label": "Technique",
+      "value": "Mirror work, resham and sequins"
+     },
+     {
+      "label": "Fabric",
+      "value": "Georgette"
+     },
+     {
+      "label": "Size",
+      "value": "2.25 × 1 m"
+     },
+     {
+      "label": "Border",
+      "value": "Sequinned on all four sides"
+     },
+     {
+      "label": "Weight",
+      "value": "Light, about 250 g"
+     },
+     {
+      "label": "Made",
+      "value": "Hand-embroidered in our studio"
+     }
+    ],
+    "care": [
+     "Dry clean recommended",
+     "Iron on low heat, on the reverse",
+     "Store rolled, not folded over the mirrors"
+    ],
+    "faq": [],
+    "upClose": {
+     "path": "photos/dupatta-d.jpg",
+     "caption": "Tiny mirrors are held in place with buttonhole stitch, so they catch the light without snagging."
+    }
+   },
+   "images": [
+    {
+     "role": "MAIN",
+     "path": "photos/dupatta.jpg",
+     "alt": "Woman wearing a rani pink dupatta with mirror work and embroidered flowers",
+     "caption": "Styled",
+     "sortOrder": 0
+    },
+    {
+     "role": "HOVER",
+     "path": "photos/dupatta-d.jpg",
+     "alt": "",
+     "caption": null,
+     "sortOrder": 1
+    },
+    {
+     "role": "GALLERY",
+     "path": "photos/dupatta-d.jpg",
+     "caption": "Mirror work, up close",
+     "alt": "Mirror work, up close",
+     "sortOrder": 10
+    },
+    {
+     "role": "GALLERY",
+     "path": "photos/gift-kraft.jpg",
+     "caption": "How it arrives",
+     "alt": "How it arrives",
+     "sortOrder": 11
+    }
+   ],
+   "variants": [
+    {
+     "sku": "DUPATTA-RANI-PINK-225-M",
+     "colourName": "Rani pink",
+     "colourValue": "#E4007C",
+     "colourHex": "#E4007C",
+     "size": "2.25 m",
+     "sizeNote": "Standard length",
+     "priceDeltaPaise": 0,
+     "stock": 7,
+     "trackStock": true,
+     "sortOrder": 0
+    }
+   ],
+   "reviews": [
+    {
+     "authorName": "Riya S.",
+     "city": "Mumbai",
+     "rating": 5,
+     "createdAt": "2026-09-12T00:00:00.000Z",
+     "body": "The colour is stunning in person and the mirror work catches every light at a wedding. So many compliments.",
+     "helpfulCount": 24,
+     "isSample": true,
+     "photoPath": "photos/dupatta.jpg",
+     "preview": null
+    },
+    {
+     "authorName": "Kavya P.",
+     "city": "Hyderabad",
+     "rating": 5,
+     "createdAt": "2026-09-02T00:00:00.000Z",
+     "body": "They sent a stitch preview on WhatsApp before starting, which I loved. It came beautifully packed with a handwritten note.",
+     "helpfulCount": 17,
+     "isSample": true,
+     "photoPath": "photos/dupatta-d.jpg",
+     "preview": null
+    },
+    {
+     "authorName": "Neha G.",
+     "city": "Jaipur",
+     "rating": 4,
+     "createdAt": "2026-08-28T00:00:00.000Z",
+     "body": "Lovely quality and the thread really shines in the light. It took a few days longer than I hoped, but they told me that upfront.",
+     "helpfulCount": 9,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    },
+    {
+     "authorName": "Aditya R.",
+     "city": "Kolkata",
+     "rating": 5,
+     "createdAt": "2026-08-19T00:00:00.000Z",
+     "body": "Bought it as a Rakhi gift and my sister hasn’t stopped showing it off. Not a single loose thread.",
+     "helpfulCount": 6,
+     "isSample": true,
+     "photoPath": "photos/dupatta.jpg",
+     "preview": null
+    },
+    {
+     "authorName": "Sana M.",
+     "city": "Bengaluru",
+     "rating": 5,
+     "createdAt": "2026-08-04T00:00:00.000Z",
+     "body": "My second order from this studio. The colours are rich and nothing faded after washing.",
+     "helpfulCount": 4,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    }
+   ],
+   "related": [
+    "lehenga",
+    "kurta",
+    "tote",
+    "knit"
+   ]
+  },
+  {
+   "code": "birds",
+   "slug": "sona-chidiya-cushion-set",
+   "name": "Sona Chidiya Cushion Set",
+   "status": "ACTIVE",
+   "type": "READY",
+   "category": "cushions",
+   "pricePaise": 279900,
+   "mrpPaise": 349900,
+   "badgeText": "Ready to ship",
+   "badgeTone": "mehendi",
+   "techLine": "Zari & satin",
+   "story": "Two sona chidiya (golden birds) perched in a tree of life, in rust, mustard and zari-gold thread on ivory cotton.",
+   "colourFamily": "neutral",
+   "occasions": [
+    "housewarming",
+    "diwali",
+    "shaadi"
+   ],
+   "ratingAvg": 4.8,
+   "ratingCount": 47,
+   "popularity": 73,
+   "publishedAt": "2026-07-29T00:00:00.000Z",
+   "shipMode": "READY",
+   "madeDays": null,
+   "shipNote": null,
+   "isUnique": false,
+   "handMade": false,
+   "needsSize": false,
+   "sizeLabel": null,
+   "sizeGuide": null,
+   "studioGarment": null,
+   "studioSample": null,
+   "petPhoto": false,
+   "personalisation": null,
+   "livePreview": null,
+   "details": {
+    "why": [
+     {
+      "title": "Zari detail",
+      "text": "Gold thread that catches the light"
+     },
+     {
+      "title": "Matching set",
+      "text": "Two covers, or four for a full sofa"
+     },
+     {
+      "title": "Hidden zip",
+      "text": "Easy to take off and wash"
+     }
+    ],
+    "spec": [
+     {
+      "label": "Technique",
+      "value": "Zari outline, satin fill"
+     },
+     {
+      "label": "Stitches",
+      "value": "About 32,000 per cover"
+     },
+     {
+      "label": "Fabric",
+      "value": "Cotton, 280 GSM"
+     },
+     {
+      "label": "Closure",
+      "value": "Hidden zip"
+     },
+     {
+      "label": "Insert",
+      "value": "Covers only, inserts not included"
+     },
+     {
+      "label": "Made",
+      "value": "Machine-embroidered, hand-finished"
+     }
+    ],
+    "care": [
+     "Dry clean recommended",
+     "Or hand wash in cold water, inside out",
+     "Iron on the reverse only"
+    ],
+    "faq": [],
+    "upClose": {
+     "path": "photos/birds-d.jpg",
+     "caption": "Zari-gold outlines and satin-filled wings, with tiny leaves all around."
+    }
+   },
+   "images": [
+    {
+     "role": "MAIN",
+     "path": "photos/birds.jpg",
+     "alt": "Stacked cushions with gold embroidered birds",
+     "caption": "Styled on a bed",
+     "sortOrder": 0
+    },
+    {
+     "role": "HOVER",
+     "path": "photos/birds-d.jpg",
+     "alt": "",
+     "caption": null,
+     "sortOrder": 1
+    },
+    {
+     "role": "GALLERY",
+     "path": "photos/birds-d.jpg",
+     "caption": "Zari and satin, up close",
+     "alt": "Zari and satin, up close",
+     "sortOrder": 10
+    }
+   ],
+   "variants": [
+    {
+     "sku": "BIRDS-IVORY-GOLD-SET-OF-2",
+     "colourName": "Ivory & gold",
+     "colourValue": "#F2E6C9",
+     "colourHex": "#F2E6C9",
+     "size": "Set of 2",
+     "sizeNote": "40 × 40 cm each",
+     "priceDeltaPaise": 0,
+     "stock": 6,
+     "trackStock": true,
+     "sortOrder": 0
+    },
+    {
+     "sku": "BIRDS-IVORY-GOLD-SET-OF-4",
+     "colourName": "Ivory & gold",
+     "colourValue": "#F2E6C9",
+     "colourHex": "#F2E6C9",
+     "size": "Set of 4",
+     "sizeNote": "40 × 40 cm each",
+     "priceDeltaPaise": 240000,
+     "stock": 2,
+     "trackStock": true,
+     "sortOrder": 1
+    }
+   ],
+   "reviews": [
+    {
+     "authorName": "Riya S.",
+     "city": "Mumbai",
+     "rating": 5,
+     "createdAt": "2026-09-12T00:00:00.000Z",
+     "body": "The zari birds glow in the evening light. Beautifully packed, and the covers fit our 16\" inserts perfectly.",
+     "helpfulCount": 24,
+     "isSample": true,
+     "photoPath": "photos/birds.jpg",
+     "preview": null
+    },
+    {
+     "authorName": "Kavya P.",
+     "city": "Hyderabad",
+     "rating": 5,
+     "createdAt": "2026-09-02T00:00:00.000Z",
+     "body": "They sent a stitch preview on WhatsApp before starting, which I loved. It came beautifully packed with a handwritten note.",
+     "helpfulCount": 17,
+     "isSample": true,
+     "photoPath": "photos/birds-d.jpg",
+     "preview": null
+    },
+    {
+     "authorName": "Neha G.",
+     "city": "Jaipur",
+     "rating": 4,
+     "createdAt": "2026-08-28T00:00:00.000Z",
+     "body": "Lovely quality and the thread really shines in the light. It took a few days longer than I hoped, but they told me that upfront.",
+     "helpfulCount": 9,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    },
+    {
+     "authorName": "Aditya R.",
+     "city": "Kolkata",
+     "rating": 5,
+     "createdAt": "2026-08-19T00:00:00.000Z",
+     "body": "Bought it as a Rakhi gift and my sister hasn’t stopped showing it off. Not a single loose thread.",
+     "helpfulCount": 6,
+     "isSample": true,
+     "photoPath": "photos/birds.jpg",
+     "preview": null
+    },
+    {
+     "authorName": "Sana M.",
+     "city": "Bengaluru",
+     "rating": 5,
+     "createdAt": "2026-08-04T00:00:00.000Z",
+     "body": "My second order from this studio. The colours are rich and nothing faded after washing.",
+     "helpfulCount": 4,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    }
+   ],
+   "related": [
+    "tulip",
+    "meadow",
+    "wreath",
+    "phoolrani"
+   ]
+  },
+  {
+   "code": "lehenga",
+   "slug": "hara-bagh-lehenga-set",
+   "name": "Hara Bagh Lehenga Set",
+   "status": "ACTIVE",
+   "type": "MADE_TO_ORDER",
+   "category": "lehengas",
+   "pricePaise": 1499900,
+   "mrpPaise": 1899900,
+   "badgeText": "Made to measure",
+   "badgeTone": "neel",
+   "techLine": "Zari & resham · Silk",
+   "story": "A bottle-green lehenga set with a blouse embroidered in gold zari and rose resham, a booti-scattered skirt and a sheer dupatta. Made to your measurements.",
+   "colourFamily": "green",
+   "occasions": [
+    "shaadi",
+    "diwali"
+   ],
+   "ratingAvg": 4.9,
+   "ratingCount": 38,
+   "popularity": 71,
+   "publishedAt": "2026-09-23T00:00:00.000Z",
+   "shipMode": "MADE",
+   "madeDays": 21,
+   "shipNote": "Made to measure · 21 days",
+   "isUnique": false,
+   "handMade": false,
+   "needsSize": true,
+   "sizeLabel": null,
+   "sizeGuide": "lehenga",
+   "studioGarment": null,
+   "studioSample": null,
+   "petPhoto": false,
+   "personalisation": null,
+   "livePreview": null,
+   "details": {
+    "why": [
+     {
+      "title": "Made to measure",
+      "text": "Stitched to your size in 21 days"
+     },
+     {
+      "title": "Zari & resham",
+      "text": "Gold zari with soft silk-thread flowers"
+     },
+     {
+      "title": "Complete set",
+      "text": "Blouse, skirt and a matching dupatta"
+     }
+    ],
+    "spec": [
+     {
+      "label": "Technique",
+      "value": "Zari and resham embroidery"
+     },
+     {
+      "label": "Fabric",
+      "value": "Silk blend with a cotton lining"
+     },
+     {
+      "label": "Set",
+      "value": "Blouse, lehenga skirt and dupatta"
+     },
+     {
+      "label": "Flare",
+      "value": "About 4 metres"
+     },
+     {
+      "label": "Made to order",
+      "value": "Stitched for you in 21 days"
+     },
+     {
+      "label": "Made",
+      "value": "Hand-finished in our studio"
+     }
+    ],
+    "care": [
+     "Dry clean only",
+     "Store folded in a cotton bag",
+     "Keep perfume away from the zari"
+    ],
+    "faq": [
+     {
+      "q": "Can I change the blouse design?",
+      "a": "Yes. WhatsApp us after you order and we’ll share neckline and sleeve options before we cut the fabric."
+     }
+    ],
+    "upClose": {
+     "path": "photos/lehenga-d.jpg",
+     "caption": "Zari outlines filled with rose and peach resham flowers, every motif finished by hand."
+    }
+   },
+   "images": [
+    {
+     "role": "MAIN",
+     "path": "photos/lehenga.jpg",
+     "alt": "Woman in a bottle-green lehenga with an embroidered blouse",
+     "caption": "On model",
+     "sortOrder": 0
+    },
+    {
+     "role": "HOVER",
+     "path": "photos/lehenga-d.jpg",
+     "alt": "",
+     "caption": null,
+     "sortOrder": 1
+    },
+    {
+     "role": "GALLERY",
+     "path": "photos/lehenga-d.jpg",
+     "caption": "The embroidered blouse",
+     "alt": "The embroidered blouse",
+     "sortOrder": 10
+    }
+   ],
+   "variants": [
+    {
+     "sku": "LEHENGA-BOTTLE-GREEN-XS",
+     "colourName": "Bottle green",
+     "colourValue": "#1F5B42",
+     "colourHex": "#1F5B42",
+     "size": "XS",
+     "sizeNote": "32\"",
+     "priceDeltaPaise": 0,
+     "stock": 9,
+     "trackStock": true,
+     "sortOrder": 0
+    },
+    {
+     "sku": "LEHENGA-BOTTLE-GREEN-S",
+     "colourName": "Bottle green",
+     "colourValue": "#1F5B42",
+     "colourHex": "#1F5B42",
+     "size": "S",
+     "sizeNote": "34\"",
+     "priceDeltaPaise": 0,
+     "stock": 9,
+     "trackStock": true,
+     "sortOrder": 1
+    },
+    {
+     "sku": "LEHENGA-BOTTLE-GREEN-M",
+     "colourName": "Bottle green",
+     "colourValue": "#1F5B42",
+     "colourHex": "#1F5B42",
+     "size": "M",
+     "sizeNote": "36\"",
+     "priceDeltaPaise": 0,
+     "stock": 9,
+     "trackStock": true,
+     "sortOrder": 2
+    },
+    {
+     "sku": "LEHENGA-BOTTLE-GREEN-L",
+     "colourName": "Bottle green",
+     "colourValue": "#1F5B42",
+     "colourHex": "#1F5B42",
+     "size": "L",
+     "sizeNote": "38\"",
+     "priceDeltaPaise": 0,
+     "stock": 9,
+     "trackStock": true,
+     "sortOrder": 3
+    },
+    {
+     "sku": "LEHENGA-BOTTLE-GREEN-XL",
+     "colourName": "Bottle green",
+     "colourValue": "#1F5B42",
+     "colourHex": "#1F5B42",
+     "size": "XL",
+     "sizeNote": "40\"",
+     "priceDeltaPaise": 0,
+     "stock": 9,
+     "trackStock": true,
+     "sortOrder": 4
+    },
+    {
+     "sku": "LEHENGA-BOTTLE-GREEN-CUSTOM",
+     "colourName": "Bottle green",
+     "colourValue": "#1F5B42",
+     "colourHex": "#1F5B42",
+     "size": "Custom",
+     "sizeNote": "your size",
+     "priceDeltaPaise": 0,
+     "stock": 99,
+     "trackStock": false,
+     "sortOrder": 5
+    }
+   ],
+   "reviews": [
+    {
+     "authorName": "Riya S.",
+     "city": "Mumbai",
+     "rating": 5,
+     "createdAt": "2026-09-12T00:00:00.000Z",
+     "body": "Wore it for my sister’s sangeet. The blouse embroidery is so rich, and it fit perfectly because they made it to my measurements.",
+     "helpfulCount": 24,
+     "isSample": true,
+     "photoPath": "photos/lehenga.jpg",
+     "preview": null
+    },
+    {
+     "authorName": "Kavya P.",
+     "city": "Hyderabad",
+     "rating": 5,
+     "createdAt": "2026-09-02T00:00:00.000Z",
+     "body": "They sent a stitch preview on WhatsApp before starting, which I loved. It came beautifully packed with a handwritten note.",
+     "helpfulCount": 17,
+     "isSample": true,
+     "photoPath": "photos/lehenga-d.jpg",
+     "preview": null
+    },
+    {
+     "authorName": "Neha G.",
+     "city": "Jaipur",
+     "rating": 4,
+     "createdAt": "2026-08-28T00:00:00.000Z",
+     "body": "Lovely quality and the thread really shines in the light. It took a few days longer than I hoped, but they told me that upfront.",
+     "helpfulCount": 9,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    },
+    {
+     "authorName": "Aditya R.",
+     "city": "Kolkata",
+     "rating": 5,
+     "createdAt": "2026-08-19T00:00:00.000Z",
+     "body": "Bought it as a Rakhi gift and my sister hasn’t stopped showing it off. Not a single loose thread.",
+     "helpfulCount": 6,
+     "isSample": true,
+     "photoPath": "photos/lehenga.jpg",
+     "preview": null
+    },
+    {
+     "authorName": "Sana M.",
+     "city": "Bengaluru",
+     "rating": 5,
+     "createdAt": "2026-08-04T00:00:00.000Z",
+     "body": "My second order from this studio. The colours are rich and nothing faded after washing.",
+     "helpfulCount": 4,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    }
+   ],
+   "related": [
+    "dupatta",
+    "kurta",
+    "tote",
+    "cherry"
+   ]
+  },
+  {
+   "code": "denim",
+   "slug": "rose-patch-denim-jacket",
+   "name": "Rose Patch Denim Jacket",
+   "status": "ACTIVE",
+   "type": "MADE_TO_ORDER",
+   "category": "jackets",
+   "pricePaise": 399900,
+   "mrpPaise": 499900,
+   "badgeText": "Made for you · 7 days",
+   "badgeTone": "neel",
+   "techLine": "Embroidered patch · Denim",
+   "story": "A classic mid-blue denim jacket with a rose patch: blush satin petals, a ribbon banner and a neat stitched edge. Made to order in your size.",
+   "colourFamily": "blue",
+   "occasions": [
+    "birthday"
+   ],
+   "ratingAvg": 4.8,
+   "ratingCount": 64,
+   "popularity": 67,
+   "publishedAt": "2026-08-19T00:00:00.000Z",
+   "shipMode": "MADE",
+   "madeDays": 7,
+   "shipNote": "Made to order · 7 days",
+   "isUnique": false,
+   "handMade": false,
+   "needsSize": true,
+   "sizeLabel": null,
+   "sizeGuide": "denim",
+   "studioGarment": null,
+   "studioSample": null,
+   "petPhoto": false,
+   "personalisation": null,
+   "livePreview": null,
+   "details": {
+    "why": [
+     {
+      "title": "Made for you",
+      "text": "Stitched to order in 7 days"
+     },
+     {
+      "title": "Sewn-on patch",
+      "text": "Hand-sewn edges that never curl"
+     },
+     {
+      "title": "Unisex fit",
+      "text": "Relaxed and easy to layer"
+     }
+    ],
+    "spec": [
+     {
+      "label": "Technique",
+      "value": "Satin fill and outline stitch on a sew-on patch"
+     },
+     {
+      "label": "Patch",
+      "value": "About 9 × 8 cm"
+     },
+     {
+      "label": "Fabric",
+      "value": "12 oz cotton denim"
+     },
+     {
+      "label": "Fit",
+      "value": "Regular, unisex"
+     },
+     {
+      "label": "Made to order",
+      "value": "Stitched for you in 7 days"
+     },
+     {
+      "label": "Made",
+      "value": "Machine-embroidered patch, sewn on by hand"
+     }
+    ],
+    "care": [
+     "Wash in cold water, inside out",
+     "Do not tumble dry",
+     "Iron on the reverse only"
+    ],
+    "faq": [],
+    "upClose": {
+     "path": "photos/denim-d.jpg",
+     "caption": "The patch is stitched on its own, then sewn on by hand so it sits flat and never curls."
+    }
+   },
+   "images": [
+    {
+     "role": "MAIN",
+     "path": "photos/denim.jpg",
+     "alt": "Denim jacket with an embroidered rose patch",
+     "caption": "Front",
+     "sortOrder": 0
+    },
+    {
+     "role": "HOVER",
+     "path": "photos/denim-d.jpg",
+     "alt": "",
+     "caption": null,
+     "sortOrder": 1
+    },
+    {
+     "role": "GALLERY",
+     "path": "photos/denim-d.jpg",
+     "caption": "The rose patch",
+     "alt": "The rose patch",
+     "sortOrder": 10
+    }
+   ],
+   "variants": [
+    {
+     "sku": "DENIM-MID-BLUE-DENIM-S",
+     "colourName": "Mid-blue denim",
+     "colourValue": "#5D7FB0",
+     "colourHex": "#5D7FB0",
+     "size": "S",
+     "sizeNote": "38\"",
+     "priceDeltaPaise": 0,
+     "stock": 3,
+     "trackStock": true,
+     "sortOrder": 0
+    },
+    {
+     "sku": "DENIM-MID-BLUE-DENIM-M",
+     "colourName": "Mid-blue denim",
+     "colourValue": "#5D7FB0",
+     "colourHex": "#5D7FB0",
+     "size": "M",
+     "sizeNote": "40\"",
+     "priceDeltaPaise": 0,
+     "stock": 4,
+     "trackStock": true,
+     "sortOrder": 1
+    },
+    {
+     "sku": "DENIM-MID-BLUE-DENIM-L",
+     "colourName": "Mid-blue denim",
+     "colourValue": "#5D7FB0",
+     "colourHex": "#5D7FB0",
+     "size": "L",
+     "sizeNote": "42\"",
+     "priceDeltaPaise": 0,
+     "stock": 2,
+     "trackStock": true,
+     "sortOrder": 2
+    },
+    {
+     "sku": "DENIM-MID-BLUE-DENIM-XL",
+     "colourName": "Mid-blue denim",
+     "colourValue": "#5D7FB0",
+     "colourHex": "#5D7FB0",
+     "size": "XL",
+     "sizeNote": "44\"",
+     "priceDeltaPaise": 0,
+     "stock": 1,
+     "trackStock": true,
+     "sortOrder": 3
+    }
+   ],
+   "reviews": [
+    {
+     "authorName": "Riya S.",
+     "city": "Mumbai",
+     "rating": 5,
+     "createdAt": "2026-09-12T00:00:00.000Z",
+     "body": "Fits perfectly and the patch is beautifully done. It took 7 days, exactly as promised.",
+     "helpfulCount": 24,
+     "isSample": true,
+     "photoPath": "photos/denim.jpg",
+     "preview": null
+    },
+    {
+     "authorName": "Kavya P.",
+     "city": "Hyderabad",
+     "rating": 5,
+     "createdAt": "2026-09-02T00:00:00.000Z",
+     "body": "They sent a stitch preview on WhatsApp before starting, which I loved. It came beautifully packed with a handwritten note.",
+     "helpfulCount": 17,
+     "isSample": true,
+     "photoPath": "photos/denim-d.jpg",
+     "preview": null
+    },
+    {
+     "authorName": "Neha G.",
+     "city": "Jaipur",
+     "rating": 4,
+     "createdAt": "2026-08-28T00:00:00.000Z",
+     "body": "Lovely quality and the thread really shines in the light. It took a few days longer than I hoped, but they told me that upfront.",
+     "helpfulCount": 9,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    },
+    {
+     "authorName": "Aditya R.",
+     "city": "Kolkata",
+     "rating": 5,
+     "createdAt": "2026-08-19T00:00:00.000Z",
+     "body": "Bought it as a Rakhi gift and my sister hasn’t stopped showing it off. Not a single loose thread.",
+     "helpfulCount": 6,
+     "isSample": true,
+     "photoPath": "photos/denim.jpg",
+     "preview": null
+    },
+    {
+     "authorName": "Sana M.",
+     "city": "Bengaluru",
+     "rating": 5,
+     "createdAt": "2026-08-04T00:00:00.000Z",
+     "body": "My second order from this studio. The colours are rich and nothing faded after washing.",
+     "helpfulCount": 4,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    }
+   ],
+   "related": [
+    "nametee",
+    "peacock",
+    "cap",
+    "knit"
+   ]
+  },
+  {
+   "code": "cherry",
+   "slug": "cherry-blossom-oval-hoop",
+   "name": "Cherry Blossom Oval Hoop",
+   "status": "ACTIVE",
+   "type": "READY",
+   "category": "hoops",
+   "pricePaise": 149900,
+   "mrpPaise": 179900,
+   "badgeText": "New",
+   "badgeTone": "rani",
+   "techLine": "Satin petals · French knots",
+   "story": "A branch of cherry blossom in satin petals and French knots, in an oval hoop topped with silk blossoms. A sweet gift for a new home or a new baby.",
+   "colourFamily": "pink",
+   "occasions": [
+    "babyshower",
+    "birthday",
+    "housewarming"
+   ],
+   "ratingAvg": 4.9,
+   "ratingCount": 31,
+   "popularity": 65,
+   "publishedAt": "2026-09-23T00:00:00.000Z",
+   "shipMode": "READY",
+   "madeDays": null,
+   "shipNote": null,
+   "isUnique": false,
+   "handMade": true,
+   "needsSize": false,
+   "sizeLabel": null,
+   "sizeGuide": null,
+   "studioGarment": null,
+   "studioSample": null,
+   "petPhoto": false,
+   "personalisation": null,
+   "livePreview": null,
+   "details": {
+    "why": [
+     {
+      "title": "Gift-ready",
+      "text": "Arrives in a keepsake box"
+     },
+     {
+      "title": "Add a message",
+      "text": "We can stitch a date on the back"
+     },
+     {
+      "title": "Ready to hang",
+      "text": "Felt back with a ribbon loop"
+     }
+    ],
+    "spec": [
+     {
+      "label": "Technique",
+      "value": "Satin stitch, French knots"
+     },
+     {
+      "label": "Hoop",
+      "value": "Oval wood, 15 × 20 cm"
+     },
+     {
+      "label": "Fabric",
+      "value": "Ivory cotton"
+     },
+     {
+      "label": "Topper",
+      "value": "Silk blossoms"
+     },
+     {
+      "label": "Back",
+      "value": "Felt-backed, ready to hang"
+     },
+     {
+      "label": "Made",
+      "value": "Hand-embroidered in our studio"
+     }
+    ],
+    "care": [
+     "Dust with a soft, dry brush",
+     "Keep out of direct sunlight",
+     "Do not wash"
+    ],
+    "faq": [],
+    "upClose": {
+     "path": "photos/cherry-d.jpg",
+     "caption": "Each blossom is five satin petals around a French knot centre."
+    }
+   },
+   "images": [
+    {
+     "role": "MAIN",
+     "path": "photos/cherry.jpg",
+     "alt": "Hands holding an oval hoop embroidered with a pink cherry blossom branch",
+     "caption": "In hand",
+     "sortOrder": 0
+    },
+    {
+     "role": "HOVER",
+     "path": "photos/cherry-d.jpg",
+     "alt": "",
+     "caption": null,
+     "sortOrder": 1
+    },
+    {
+     "role": "GALLERY",
+     "path": "photos/cherry-d.jpg",
+     "caption": "Blossoms, up close",
+     "alt": "Blossoms, up close",
+     "sortOrder": 10
+    },
+    {
+     "role": "GALLERY",
+     "path": "photos/gift-kraft.jpg",
+     "caption": "How it arrives",
+     "alt": "How it arrives",
+     "sortOrder": 11
+    }
+   ],
+   "variants": [
+    {
+     "sku": "CHERRY-IVORY-COTTON-OVAL-6-8",
+     "colourName": "Ivory cotton",
+     "colourValue": "#F6F1E8",
+     "colourHex": "#F6F1E8",
+     "size": "Oval 6 × 8\"",
+     "sizeNote": "15 × 20 cm",
+     "priceDeltaPaise": 0,
+     "stock": 6,
+     "trackStock": true,
+     "sortOrder": 0
+    }
+   ],
+   "reviews": [
+    {
+     "authorName": "Riya S.",
+     "city": "Mumbai",
+     "rating": 5,
+     "createdAt": "2026-09-12T00:00:00.000Z",
+     "body": "Gifted it at a baby shower and it was the star of the day. The blossoms are so delicate.",
+     "helpfulCount": 24,
+     "isSample": true,
+     "photoPath": "photos/cherry.jpg",
+     "preview": null
+    },
+    {
+     "authorName": "Kavya P.",
+     "city": "Hyderabad",
+     "rating": 5,
+     "createdAt": "2026-09-02T00:00:00.000Z",
+     "body": "They sent a stitch preview on WhatsApp before starting, which I loved. It came beautifully packed with a handwritten note.",
+     "helpfulCount": 17,
+     "isSample": true,
+     "photoPath": "photos/cherry-d.jpg",
+     "preview": null
+    },
+    {
+     "authorName": "Neha G.",
+     "city": "Jaipur",
+     "rating": 4,
+     "createdAt": "2026-08-28T00:00:00.000Z",
+     "body": "Lovely quality and the thread really shines in the light. It took a few days longer than I hoped, but they told me that upfront.",
+     "helpfulCount": 9,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    },
+    {
+     "authorName": "Aditya R.",
+     "city": "Kolkata",
+     "rating": 5,
+     "createdAt": "2026-08-19T00:00:00.000Z",
+     "body": "Bought it as a Rakhi gift and my sister hasn’t stopped showing it off. Not a single loose thread.",
+     "helpfulCount": 6,
+     "isSample": true,
+     "photoPath": "photos/cherry.jpg",
+     "preview": null
+    },
+    {
+     "authorName": "Sana M.",
+     "city": "Bengaluru",
+     "rating": 5,
+     "createdAt": "2026-08-04T00:00:00.000Z",
+     "body": "My second order from this studio. The colours are rich and nothing faded after washing.",
+     "helpfulCount": 4,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    }
+   ],
+   "related": [
+    "wreath",
+    "meadow",
+    "poppy",
+    "pet"
+   ]
+  },
+  {
+   "code": "poppy",
+   "slug": "poppy-field-diy-kit",
+   "name": "Poppy Field DIY Kit",
+   "status": "ACTIVE",
+   "type": "READY",
+   "category": "kits",
+   "pricePaise": 99900,
+   "mrpPaise": 129900,
+   "badgeText": "New",
+   "badgeTone": "rani",
+   "techLine": "Hoop, threads & guide",
+   "story": "Everything you need to stitch a hoop of red poppies: the pattern printed on cotton, a beech hoop, needles and pre-sorted threads, plus a step-by-step photo guide.",
+   "colourFamily": "red",
+   "occasions": [
+    "birthday",
+    "diwali"
+   ],
+   "ratingAvg": 4.6,
+   "ratingCount": 47,
+   "popularity": 63,
+   "publishedAt": "2026-09-16T00:00:00.000Z",
+   "shipMode": "READY",
+   "madeDays": null,
+   "shipNote": null,
+   "isUnique": false,
+   "handMade": false,
+   "needsSize": false,
+   "sizeLabel": "Option",
+   "sizeGuide": null,
+   "studioGarment": null,
+   "studioSample": null,
+   "petPhoto": false,
+   "personalisation": null,
+   "livePreview": null,
+   "details": {
+    "why": [
+     {
+      "title": "Beginner-friendly",
+      "text": "Step-by-step photo guide"
+     },
+     {
+      "title": "All included",
+      "text": "Hoop, fabric, needles and threads"
+     },
+     {
+      "title": "2–3 hours",
+      "text": "A relaxing weekend project"
+     }
+    ],
+    "spec": [
+     {
+      "label": "In the box",
+      "value": "Hoop, printed fabric, 2 needles, 6 threads"
+     },
+     {
+      "label": "Hoop",
+      "value": "Beech wood, 15 cm (6\")"
+     },
+     {
+      "label": "Level",
+      "value": "Beginner"
+     },
+     {
+      "label": "Time",
+      "value": "About 2–3 hours"
+     },
+     {
+      "label": "Guide",
+      "value": "Printed, plus video with the class option"
+     },
+     {
+      "label": "Made",
+      "value": "Kits packed in our studio"
+     }
+    ],
+    "care": [
+     "Keep threads dry",
+     "Iron the finished piece on the reverse",
+     "Frame it in the hoop or a frame"
+    ],
+    "faq": [],
+    "upClose": {
+     "path": "photos/poppy-d.jpg",
+     "caption": "Satin petals and straight-stitch stems. The guide shows every stitch with photos."
+    }
+   },
+   "images": [
+    {
+     "role": "MAIN",
+     "path": "photos/poppy.jpg",
+     "alt": "Hands stitching red poppies on an embroidery hoop",
+     "caption": "Stitching in progress",
+     "sortOrder": 0
+    },
+    {
+     "role": "HOVER",
+     "path": "photos/poppy-d.jpg",
+     "alt": "",
+     "caption": null,
+     "sortOrder": 1
+    },
+    {
+     "role": "GALLERY",
+     "path": "photos/poppy-d.jpg",
+     "caption": "The poppies, up close",
+     "alt": "The poppies, up close",
+     "sortOrder": 10
+    },
+    {
+     "role": "GALLERY",
+     "path": "photos/heart.jpg",
+     "caption": "Threads, pre-sorted",
+     "alt": "Threads, pre-sorted",
+     "sortOrder": 11
+    }
+   ],
+   "variants": [
+    {
+     "sku": "POPPY-NATURAL-COTTON-KIT",
+     "colourName": "Natural cotton",
+     "colourValue": "#F3EEE6",
+     "colourHex": "#F3EEE6",
+     "size": "Kit",
+     "sizeNote": "Everything included",
+     "priceDeltaPaise": 0,
+     "stock": 30,
+     "trackStock": true,
+     "sortOrder": 0
+    },
+    {
+     "sku": "POPPY-NATURAL-COTTON-KIT-VIDEO-CLASS",
+     "colourName": "Natural cotton",
+     "colourValue": "#F3EEE6",
+     "colourHex": "#F3EEE6",
+     "size": "Kit + video class",
+     "sizeNote": "45-minute recorded class",
+     "priceDeltaPaise": 30000,
+     "stock": 30,
+     "trackStock": true,
+     "sortOrder": 1
+    }
+   ],
+   "reviews": [
+    {
+     "authorName": "Riya S.",
+     "city": "Mumbai",
+     "rating": 5,
+     "createdAt": "2026-09-12T00:00:00.000Z",
+     "body": "My first ever embroidery and it actually looks good! The guide is super clear and the threads come labelled.",
+     "helpfulCount": 24,
+     "isSample": true,
+     "photoPath": "photos/poppy.jpg",
+     "preview": null
+    },
+    {
+     "authorName": "Kavya P.",
+     "city": "Hyderabad",
+     "rating": 5,
+     "createdAt": "2026-09-02T00:00:00.000Z",
+     "body": "They sent a stitch preview on WhatsApp before starting, which I loved. It came beautifully packed with a handwritten note.",
+     "helpfulCount": 17,
+     "isSample": true,
+     "photoPath": "photos/poppy-d.jpg",
+     "preview": null
+    },
+    {
+     "authorName": "Neha G.",
+     "city": "Jaipur",
+     "rating": 4,
+     "createdAt": "2026-08-28T00:00:00.000Z",
+     "body": "Lovely quality and the thread really shines in the light. It took a few days longer than I hoped, but they told me that upfront.",
+     "helpfulCount": 9,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    },
+    {
+     "authorName": "Aditya R.",
+     "city": "Kolkata",
+     "rating": 5,
+     "createdAt": "2026-08-19T00:00:00.000Z",
+     "body": "Bought it as a Rakhi gift and my sister hasn’t stopped showing it off. Not a single loose thread.",
+     "helpfulCount": 6,
+     "isSample": true,
+     "photoPath": "photos/poppy.jpg",
+     "preview": null
+    },
+    {
+     "authorName": "Sana M.",
+     "city": "Bengaluru",
+     "rating": 5,
+     "createdAt": "2026-08-04T00:00:00.000Z",
+     "body": "My second order from this studio. The colours are rich and nothing faded after washing.",
+     "helpfulCount": 4,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    }
+   ],
+   "related": [
+    "cherry",
+    "meadow",
+    "tote",
+    "wreath"
+   ]
+  },
+  {
+   "code": "knit",
+   "slug": "phool-bel-knit-cardigan",
+   "name": "Phool Bel Knit Cardigan",
+   "status": "ACTIVE",
+   "type": "READY",
+   "category": "jackets",
+   "pricePaise": 289900,
+   "mrpPaise": 349900,
+   "badgeText": "Ready to ship",
+   "badgeTone": "mehendi",
+   "techLine": "Hand-embroidered · Cotton knit",
+   "story": "A soft cable-knit cardigan with a trail of hand-embroidered blossoms in blush, butter yellow and cocoa across the front.",
+   "colourFamily": "neutral",
+   "occasions": [
+    "birthday"
+   ],
+   "ratingAvg": 4.8,
+   "ratingCount": 41,
+   "popularity": 61,
+   "publishedAt": "2026-09-09T00:00:00.000Z",
+   "shipMode": "READY",
+   "madeDays": null,
+   "shipNote": null,
+   "isUnique": false,
+   "handMade": false,
+   "needsSize": true,
+   "sizeLabel": null,
+   "sizeGuide": "tee",
+   "studioGarment": null,
+   "studioSample": null,
+   "petPhoto": false,
+   "personalisation": null,
+   "livePreview": null,
+   "details": {
+    "why": [
+     {
+      "title": "Hand-embroidered",
+      "text": "Every flower stitched by hand"
+     },
+     {
+      "title": "Soft knit",
+      "text": "Cotton-blend cable knit"
+     },
+     {
+      "title": "Easy layer",
+      "text": "Over kurtas, dresses or tees"
+     }
+    ],
+    "spec": [
+     {
+      "label": "Technique",
+      "value": "Lazy daisy and French knots"
+     },
+     {
+      "label": "Fabric",
+      "value": "Cotton-acrylic cable knit"
+     },
+     {
+      "label": "Fit",
+      "value": "Relaxed, hip length"
+     },
+     {
+      "label": "Closure",
+      "value": "Front buttons"
+     },
+     {
+      "label": "Model",
+      "value": "Wears size S"
+     },
+     {
+      "label": "Made",
+      "value": "Embroidered by hand in our studio"
+     }
+    ],
+    "care": [
+     "Hand wash cold, inside out",
+     "Dry flat in the shade",
+     "Do not wring or tumble dry"
+    ],
+    "faq": [],
+    "upClose": {
+     "path": "photos/knit-d.jpg",
+     "caption": "Lazy daisy petals and French knot centres, stitched by hand into the knit."
+    }
+   },
+   "images": [
+    {
+     "role": "MAIN",
+     "path": "photos/knit.jpg",
+     "alt": "Grey cable-knit cardigan with embroidered flowers",
+     "caption": "Front",
+     "sortOrder": 0
+    },
+    {
+     "role": "HOVER",
+     "path": "photos/knit-d.jpg",
+     "alt": "",
+     "caption": null,
+     "sortOrder": 1
+    },
+    {
+     "role": "GALLERY",
+     "path": "photos/knit-d.jpg",
+     "caption": "The flowers, up close",
+     "alt": "The flowers, up close",
+     "sortOrder": 10
+    },
+    {
+     "role": "GALLERY",
+     "path": "photos/gift-kraft.jpg",
+     "caption": "How it arrives",
+     "alt": "How it arrives",
+     "sortOrder": 11
+    }
+   ],
+   "variants": [
+    {
+     "sku": "KNIT-MIST-GREY-S",
+     "colourName": "Mist grey",
+     "colourValue": "#C9CDCF",
+     "colourHex": "#C9CDCF",
+     "size": "S",
+     "sizeNote": "36\"",
+     "priceDeltaPaise": 0,
+     "stock": 4,
+     "trackStock": true,
+     "sortOrder": 0
+    },
+    {
+     "sku": "KNIT-MIST-GREY-M",
+     "colourName": "Mist grey",
+     "colourValue": "#C9CDCF",
+     "colourHex": "#C9CDCF",
+     "size": "M",
+     "sizeNote": "38\"",
+     "priceDeltaPaise": 0,
+     "stock": 6,
+     "trackStock": true,
+     "sortOrder": 1
+    },
+    {
+     "sku": "KNIT-MIST-GREY-L",
+     "colourName": "Mist grey",
+     "colourValue": "#C9CDCF",
+     "colourHex": "#C9CDCF",
+     "size": "L",
+     "sizeNote": "40\"",
+     "priceDeltaPaise": 0,
+     "stock": 3,
+     "trackStock": true,
+     "sortOrder": 2
+    },
+    {
+     "sku": "KNIT-MIST-GREY-XL",
+     "colourName": "Mist grey",
+     "colourValue": "#C9CDCF",
+     "colourHex": "#C9CDCF",
+     "size": "XL",
+     "sizeNote": "42\"",
+     "priceDeltaPaise": 0,
+     "stock": 2,
+     "trackStock": true,
+     "sortOrder": 3
+    }
+   ],
+   "reviews": [
+    {
+     "authorName": "Riya S.",
+     "city": "Mumbai",
+     "rating": 5,
+     "createdAt": "2026-09-12T00:00:00.000Z",
+     "body": "So soft, and the embroidered flowers make a plain cardigan feel special. Perfect for Bengaluru evenings.",
+     "helpfulCount": 24,
+     "isSample": true,
+     "photoPath": "photos/knit.jpg",
+     "preview": null
+    },
+    {
+     "authorName": "Kavya P.",
+     "city": "Hyderabad",
+     "rating": 5,
+     "createdAt": "2026-09-02T00:00:00.000Z",
+     "body": "They sent a stitch preview on WhatsApp before starting, which I loved. It came beautifully packed with a handwritten note.",
+     "helpfulCount": 17,
+     "isSample": true,
+     "photoPath": "photos/knit-d.jpg",
+     "preview": null
+    },
+    {
+     "authorName": "Neha G.",
+     "city": "Jaipur",
+     "rating": 4,
+     "createdAt": "2026-08-28T00:00:00.000Z",
+     "body": "Lovely quality and the thread really shines in the light. It took a few days longer than I hoped, but they told me that upfront.",
+     "helpfulCount": 9,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    },
+    {
+     "authorName": "Aditya R.",
+     "city": "Kolkata",
+     "rating": 5,
+     "createdAt": "2026-08-19T00:00:00.000Z",
+     "body": "Bought it as a Rakhi gift and my sister hasn’t stopped showing it off. Not a single loose thread.",
+     "helpfulCount": 6,
+     "isSample": true,
+     "photoPath": "photos/knit.jpg",
+     "preview": null
+    },
+    {
+     "authorName": "Sana M.",
+     "city": "Bengaluru",
+     "rating": 5,
+     "createdAt": "2026-08-04T00:00:00.000Z",
+     "body": "My second order from this studio. The colours are rich and nothing faded after washing.",
+     "helpfulCount": 4,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    }
+   ],
+   "related": [
+    "kurta",
+    "denim",
+    "dupatta",
+    "peacock"
+   ]
+  },
+  {
+   "code": "meadow",
+   "slug": "wildflower-meadow-hoop",
+   "name": "Wildflower Meadow Hoop",
+   "status": "ACTIVE",
+   "type": "READY",
+   "category": "hoops",
+   "pricePaise": 299900,
+   "mrpPaise": 349900,
+   "badgeText": "One of a kind",
+   "badgeTone": "jamun",
+   "techLine": "Thread painting · Black linen",
+   "story": "A meadow of wildflowers (chamomile, thistle, cornflower and tiny buds) thread-painted on black linen and framed in a beech wood hoop.",
+   "colourFamily": "multi",
+   "occasions": [
+    "housewarming",
+    "birthday"
+   ],
+   "ratingAvg": 5,
+   "ratingCount": 23,
+   "popularity": 59,
+   "publishedAt": "2026-09-09T00:00:00.000Z",
+   "shipMode": "READY",
+   "madeDays": null,
+   "shipNote": null,
+   "isUnique": true,
+   "handMade": true,
+   "needsSize": false,
+   "sizeLabel": null,
+   "sizeGuide": null,
+   "studioGarment": null,
+   "studioSample": null,
+   "petPhoto": false,
+   "personalisation": null,
+   "livePreview": null,
+   "details": {
+    "why": [
+     {
+      "title": "One of a kind",
+      "text": "Stitched once, never repeated"
+     },
+     {
+      "title": "Ready to hang",
+      "text": "Felt-backed with a ribbon loop"
+     },
+     {
+      "title": "Gift-ready",
+      "text": "Arrives in a keepsake box"
+     }
+    ],
+    "spec": [
+     {
+      "label": "Technique",
+      "value": "Thread painting, French knots"
+     },
+     {
+      "label": "Hoop",
+      "value": "Beech wood, 25 cm (10\")"
+     },
+     {
+      "label": "Fabric",
+      "value": "Black linen"
+     },
+     {
+      "label": "Back",
+      "value": "Felt-backed, ready to hang"
+     },
+     {
+      "label": "Edition",
+      "value": "One of a kind"
+     },
+     {
+      "label": "Made",
+      "value": "Hand-embroidered in our studio"
+     }
+    ],
+    "care": [
+     "Dust with a soft, dry brush",
+     "Keep out of direct sunlight",
+     "Do not wash"
+    ],
+    "faq": [],
+    "upClose": {
+     "path": "photos/jungle-d.jpg",
+     "caption": "Long and short stitches blend each petal, with French knots for the pollen."
+    }
+   },
+   "images": [
+    {
+     "role": "MAIN",
+     "path": "photos/jungle.jpg",
+     "alt": "Wildflowers embroidered on black fabric in a wooden hoop",
+     "caption": "Front",
+     "sortOrder": 0
+    },
+    {
+     "role": "HOVER",
+     "path": "photos/jungle-d.jpg",
+     "alt": "",
+     "caption": null,
+     "sortOrder": 1
+    },
+    {
+     "role": "GALLERY",
+     "path": "photos/jungle-d.jpg",
+     "caption": "Thread painting, up close",
+     "alt": "Thread painting, up close",
+     "sortOrder": 10
+    },
+    {
+     "role": "GALLERY",
+     "path": "photos/gift-kraft.jpg",
+     "caption": "How it arrives",
+     "alt": "How it arrives",
+     "sortOrder": 11
+    }
+   ],
+   "variants": [
+    {
+     "sku": "MEADOW-BLACK-LINEN-10-HOOP",
+     "colourName": "Black linen",
+     "colourValue": "#1D1B21",
+     "colourHex": "#1D1B21",
+     "size": "10\" hoop",
+     "sizeNote": "25 cm across",
+     "priceDeltaPaise": 0,
+     "stock": 1,
+     "trackStock": true,
+     "sortOrder": 0
+    }
+   ],
+   "reviews": [
+    {
+     "authorName": "Riya S.",
+     "city": "Mumbai",
+     "rating": 5,
+     "createdAt": "2026-09-12T00:00:00.000Z",
+     "body": "It looks like a painting until you get close and see every stitch. The black background makes the colours glow.",
+     "helpfulCount": 24,
+     "isSample": true,
+     "photoPath": "photos/jungle.jpg",
+     "preview": null
+    },
+    {
+     "authorName": "Kavya P.",
+     "city": "Hyderabad",
+     "rating": 5,
+     "createdAt": "2026-09-02T00:00:00.000Z",
+     "body": "They sent a stitch preview on WhatsApp before starting, which I loved. It came beautifully packed with a handwritten note.",
+     "helpfulCount": 17,
+     "isSample": true,
+     "photoPath": "photos/jungle-d.jpg",
+     "preview": null
+    },
+    {
+     "authorName": "Neha G.",
+     "city": "Jaipur",
+     "rating": 4,
+     "createdAt": "2026-08-28T00:00:00.000Z",
+     "body": "Lovely quality and the thread really shines in the light. It took a few days longer than I hoped, but they told me that upfront.",
+     "helpfulCount": 9,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    },
+    {
+     "authorName": "Aditya R.",
+     "city": "Kolkata",
+     "rating": 5,
+     "createdAt": "2026-08-19T00:00:00.000Z",
+     "body": "Bought it as a Rakhi gift and my sister hasn’t stopped showing it off. Not a single loose thread.",
+     "helpfulCount": 6,
+     "isSample": true,
+     "photoPath": "photos/jungle.jpg",
+     "preview": null
+    },
+    {
+     "authorName": "Sana M.",
+     "city": "Bengaluru",
+     "rating": 5,
+     "createdAt": "2026-08-04T00:00:00.000Z",
+     "body": "My second order from this studio. The colours are rich and nothing faded after washing.",
+     "helpfulCount": 4,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    }
+   ],
+   "related": [
+    "wreath",
+    "cherry",
+    "phoolrani",
+    "tulip"
+   ]
+  },
+  {
+   "code": "logopolo",
+   "slug": "logo-polo",
+   "name": "Logo Polo",
+   "status": "ACTIVE",
+   "type": "LOGO",
+   "category": "logo",
+   "pricePaise": 57900,
+   "mrpPaise": null,
+   "badgeText": "Your logo",
+   "badgeTone": "jamun",
+   "techLine": "Embroidered logo · Cotton piqué",
+   "story": "A soft cotton piqué polo with your logo embroidered on the chest. Upload your logo in the design studio, see it stitched on the real polo, and order one piece or five hundred.",
+   "colourFamily": "neutral",
+   "occasions": [
+    "corporate"
+   ],
+   "ratingAvg": 4.8,
+   "ratingCount": 64,
+   "popularity": 56,
+   "publishedAt": "2026-08-12T00:00:00.000Z",
+   "shipMode": "CUSTOM",
+   "madeDays": null,
+   "shipNote": "Stitch proof in 24 hours",
+   "isUnique": false,
+   "handMade": false,
+   "needsSize": false,
+   "sizeLabel": null,
+   "sizeGuide": null,
+   "studioGarment": "polo",
+   "studioSample": null,
+   "petPhoto": false,
+   "personalisation": null,
+   "livePreview": null,
+   "details": {
+    "why": [],
+    "spec": [
+     {
+      "label": "Technique",
+      "value": "Satin and fill stitch, digitized from your logo"
+     },
+     {
+      "label": "Fabric",
+      "value": "Cotton piqué, 220 GSM"
+     },
+     {
+      "label": "Placement",
+      "value": "Left or right chest, 5–10 cm wide"
+     },
+     {
+      "label": "Minimum",
+      "value": "From 1 piece; bulk prices from 10"
+     },
+     {
+      "label": "Digitizing",
+      "value": "₹399 once, free on 25+ pieces"
+     },
+     {
+      "label": "Made",
+      "value": "Stitched in our studio"
+     }
+    ],
+    "care": [],
+    "faq": [],
+    "upClose": null
+   },
+   "images": [
+    {
+     "role": "MAIN",
+     "path": "photos/r-polo.jpg",
+     "alt": "White polo shirt with an embroidered café logo on the chest",
+     "caption": null,
+     "sortOrder": 0
+    },
+    {
+     "role": "HOVER",
+     "path": "photos/r-polo-d.jpg",
+     "alt": "",
+     "caption": null,
+     "sortOrder": 1
+    }
+   ],
+   "variants": [
+    {
+     "sku": "LOGOPOLO-DEFAULT-ONE-SIZE",
+     "colourName": "Default",
+     "colourValue": "#FFFFFF",
+     "colourHex": "#FFFFFF",
+     "size": null,
+     "sizeNote": null,
+     "priceDeltaPaise": 0,
+     "stock": 999,
+     "trackStock": true,
+     "sortOrder": 0
+    }
+   ],
+   "reviews": [
+    {
+     "authorName": "Riya S.",
+     "city": "Mumbai",
+     "rating": 5,
+     "createdAt": "2026-09-12T00:00:00.000Z",
+     "body": "Beautiful work, exactly as shown.",
+     "helpfulCount": 24,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    },
+    {
+     "authorName": "Kavya P.",
+     "city": "Hyderabad",
+     "rating": 5,
+     "createdAt": "2026-09-02T00:00:00.000Z",
+     "body": "They sent a stitch preview on WhatsApp before starting, which I loved. It came beautifully packed with a handwritten note.",
+     "helpfulCount": 17,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    },
+    {
+     "authorName": "Neha G.",
+     "city": "Jaipur",
+     "rating": 4,
+     "createdAt": "2026-08-28T00:00:00.000Z",
+     "body": "Lovely quality and the thread really shines in the light. It took a few days longer than I hoped, but they told me that upfront.",
+     "helpfulCount": 9,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    },
+    {
+     "authorName": "Aditya R.",
+     "city": "Kolkata",
+     "rating": 5,
+     "createdAt": "2026-08-19T00:00:00.000Z",
+     "body": "Bought it as a Rakhi gift and my sister hasn’t stopped showing it off. Not a single loose thread.",
+     "helpfulCount": 6,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    },
+    {
+     "authorName": "Sana M.",
+     "city": "Bengaluru",
+     "rating": 5,
+     "createdAt": "2026-08-04T00:00:00.000Z",
+     "body": "My second order from this studio. The colours are rich and nothing faded after washing.",
+     "helpfulCount": 4,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    }
+   ],
+   "related": []
+  },
+  {
+   "code": "phoolrani",
+   "slug": "phool-rani-wall-art",
+   "name": "Phool Rani Wall Art",
+   "status": "ACTIVE",
+   "type": "READY",
+   "category": "wallart",
+   "pricePaise": 449900,
+   "mrpPaise": 549900,
+   "badgeText": "One of a kind",
+   "badgeTone": "jamun",
+   "techLine": "Punch needle · Wool",
+   "story": "A punch-needle portrait of a woman crowned with roses and marigolds, in thick wool loops of leaf green, black and cobalt. Bold, soft and made to be touched.",
+   "colourFamily": "multi",
+   "occasions": [
+    "housewarming"
+   ],
+   "ratingAvg": 4.9,
+   "ratingCount": 12,
+   "popularity": 53,
+   "publishedAt": "2026-09-02T00:00:00.000Z",
+   "shipMode": "READY",
+   "madeDays": null,
+   "shipNote": null,
+   "isUnique": true,
+   "handMade": true,
+   "needsSize": false,
+   "sizeLabel": null,
+   "sizeGuide": null,
+   "studioGarment": null,
+   "studioSample": null,
+   "petPhoto": false,
+   "personalisation": null,
+   "livePreview": null,
+   "details": {
+    "why": [
+     {
+      "title": "One of a kind",
+      "text": "Made once, never repeated"
+     },
+     {
+      "title": "Thick wool",
+      "text": "Soft loops you can feel"
+     },
+     {
+      "title": "Ready to hang",
+      "text": "Hoop with a covered back"
+     }
+    ],
+    "spec": [
+     {
+      "label": "Technique",
+      "value": "Punch needle"
+     },
+     {
+      "label": "Yarn",
+      "value": "Wool and wool blend"
+     },
+     {
+      "label": "Hoop",
+      "value": "30 cm (12\")"
+     },
+     {
+      "label": "Back",
+      "value": "Covered, ready to hang"
+     },
+     {
+      "label": "Edition",
+      "value": "One of a kind"
+     },
+     {
+      "label": "Made",
+      "value": "Hand-punched in our studio"
+     }
+    ],
+    "care": [
+     "Dust gently with a soft brush",
+     "Keep out of direct sunlight",
+     "Do not wash"
+    ],
+    "faq": [],
+    "upClose": {
+     "path": "photos/phoolrani-d.jpg",
+     "caption": "Thousands of punched wool loops, packed tight so the colours read like paint."
+    }
+   },
+   "images": [
+    {
+     "role": "MAIN",
+     "path": "photos/phoolrani.jpg",
+     "alt": "Punch-needle portrait of a woman with a crown of roses",
+     "caption": "Front",
+     "sortOrder": 0
+    },
+    {
+     "role": "HOVER",
+     "path": "photos/phoolrani-d.jpg",
+     "alt": "",
+     "caption": null,
+     "sortOrder": 1
+    },
+    {
+     "role": "GALLERY",
+     "path": "photos/phoolrani-d.jpg",
+     "caption": "Wool loops, up close",
+     "alt": "Wool loops, up close",
+     "sortOrder": 10
+    },
+    {
+     "role": "GALLERY",
+     "path": "photos/gift-kraft.jpg",
+     "caption": "How it arrives",
+     "alt": "How it arrives",
+     "sortOrder": 11
+    }
+   ],
+   "variants": [
+    {
+     "sku": "PHOOLRANI-MULTICOLOUR-12-HOOP",
+     "colourName": "Multicolour",
+     "colourValue": "#3FA34D",
+     "colourHex": "#3FA34D",
+     "size": "12\" hoop",
+     "sizeNote": "30 cm across",
+     "priceDeltaPaise": 0,
+     "stock": 1,
+     "trackStock": true,
+     "sortOrder": 0
+    }
+   ],
+   "reviews": [
+    {
+     "authorName": "Riya S.",
+     "city": "Mumbai",
+     "rating": 5,
+     "createdAt": "2026-09-12T00:00:00.000Z",
+     "body": "The texture is incredible. It’s the first thing everyone notices in our living room.",
+     "helpfulCount": 24,
+     "isSample": true,
+     "photoPath": "photos/phoolrani.jpg",
+     "preview": null
+    },
+    {
+     "authorName": "Kavya P.",
+     "city": "Hyderabad",
+     "rating": 5,
+     "createdAt": "2026-09-02T00:00:00.000Z",
+     "body": "They sent a stitch preview on WhatsApp before starting, which I loved. It came beautifully packed with a handwritten note.",
+     "helpfulCount": 17,
+     "isSample": true,
+     "photoPath": "photos/phoolrani-d.jpg",
+     "preview": null
+    },
+    {
+     "authorName": "Neha G.",
+     "city": "Jaipur",
+     "rating": 4,
+     "createdAt": "2026-08-28T00:00:00.000Z",
+     "body": "Lovely quality and the thread really shines in the light. It took a few days longer than I hoped, but they told me that upfront.",
+     "helpfulCount": 9,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    },
+    {
+     "authorName": "Aditya R.",
+     "city": "Kolkata",
+     "rating": 5,
+     "createdAt": "2026-08-19T00:00:00.000Z",
+     "body": "Bought it as a Rakhi gift and my sister hasn’t stopped showing it off. Not a single loose thread.",
+     "helpfulCount": 6,
+     "isSample": true,
+     "photoPath": "photos/phoolrani.jpg",
+     "preview": null
+    },
+    {
+     "authorName": "Sana M.",
+     "city": "Bengaluru",
+     "rating": 5,
+     "createdAt": "2026-08-04T00:00:00.000Z",
+     "body": "My second order from this studio. The colours are rich and nothing faded after washing.",
+     "helpfulCount": 4,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    }
+   ],
+   "related": [
+    "meadow",
+    "tulip",
+    "birds",
+    "wreath"
+   ]
+  },
+  {
+   "code": "teamcap",
+   "slug": "team-logo-cap",
+   "name": "Team Logo Cap",
+   "status": "ACTIVE",
+   "type": "LOGO",
+   "category": "logo",
+   "pricePaise": 34900,
+   "mrpPaise": null,
+   "badgeText": "Your logo",
+   "badgeTone": "jamun",
+   "techLine": "Embroidered crest · Cotton twill",
+   "story": "A structured cotton twill cap with your team crest stitched on the front panel. Upload your logo in the design studio and see it on the real cap first.",
+   "colourFamily": "blue",
+   "occasions": [
+    "corporate"
+   ],
+   "ratingAvg": 4.7,
+   "ratingCount": 39,
+   "popularity": 51,
+   "publishedAt": "2026-08-05T00:00:00.000Z",
+   "shipMode": "CUSTOM",
+   "madeDays": null,
+   "shipNote": "Stitch proof in 24 hours",
+   "isUnique": false,
+   "handMade": false,
+   "needsSize": false,
+   "sizeLabel": null,
+   "sizeGuide": null,
+   "studioGarment": "cap",
+   "studioSample": "team",
+   "petPhoto": false,
+   "personalisation": null,
+   "livePreview": null,
+   "details": {
+    "why": [],
+    "spec": [
+     {
+      "label": "Technique",
+      "value": "Satin and fill stitch"
+     },
+     {
+      "label": "Fabric",
+      "value": "Cotton twill, 5 panels"
+     },
+     {
+      "label": "Placement",
+      "value": "Front, up to 11 cm wide"
+     },
+     {
+      "label": "Minimum",
+      "value": "From 1 piece; bulk prices from 10"
+     },
+     {
+      "label": "Digitizing",
+      "value": "₹399 once, free on 25+ pieces"
+     },
+     {
+      "label": "Made",
+      "value": "Stitched in our studio"
+     }
+    ],
+    "care": [],
+    "faq": [],
+    "upClose": null
+   },
+   "images": [
+    {
+     "role": "MAIN",
+     "path": "photos/r-capteam.jpg",
+     "alt": "Navy cap with an embroidered team crest",
+     "caption": null,
+     "sortOrder": 0
+    },
+    {
+     "role": "HOVER",
+     "path": "photos/r-capteam-d.jpg",
+     "alt": "",
+     "caption": null,
+     "sortOrder": 1
+    }
+   ],
+   "variants": [
+    {
+     "sku": "TEAMCAP-DEFAULT-ONE-SIZE",
+     "colourName": "Default",
+     "colourValue": "#FFFFFF",
+     "colourHex": "#FFFFFF",
+     "size": null,
+     "sizeNote": null,
+     "priceDeltaPaise": 0,
+     "stock": 999,
+     "trackStock": true,
+     "sortOrder": 0
+    }
+   ],
+   "reviews": [
+    {
+     "authorName": "Riya S.",
+     "city": "Mumbai",
+     "rating": 5,
+     "createdAt": "2026-09-12T00:00:00.000Z",
+     "body": "Beautiful work, exactly as shown.",
+     "helpfulCount": 24,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    },
+    {
+     "authorName": "Kavya P.",
+     "city": "Hyderabad",
+     "rating": 5,
+     "createdAt": "2026-09-02T00:00:00.000Z",
+     "body": "They sent a stitch preview on WhatsApp before starting, which I loved. It came beautifully packed with a handwritten note.",
+     "helpfulCount": 17,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    },
+    {
+     "authorName": "Neha G.",
+     "city": "Jaipur",
+     "rating": 4,
+     "createdAt": "2026-08-28T00:00:00.000Z",
+     "body": "Lovely quality and the thread really shines in the light. It took a few days longer than I hoped, but they told me that upfront.",
+     "helpfulCount": 9,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    },
+    {
+     "authorName": "Aditya R.",
+     "city": "Kolkata",
+     "rating": 5,
+     "createdAt": "2026-08-19T00:00:00.000Z",
+     "body": "Bought it as a Rakhi gift and my sister hasn’t stopped showing it off. Not a single loose thread.",
+     "helpfulCount": 6,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    },
+    {
+     "authorName": "Sana M.",
+     "city": "Bengaluru",
+     "rating": 5,
+     "createdAt": "2026-08-04T00:00:00.000Z",
+     "body": "My second order from this studio. The colours are rich and nothing faded after washing.",
+     "helpfulCount": 4,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    }
+   ],
+   "related": []
+  },
+  {
+   "code": "logotote",
+   "slug": "logo-tote-bag",
+   "name": "Logo Tote Bag",
+   "status": "ACTIVE",
+   "type": "LOGO",
+   "category": "logo",
+   "pricePaise": 26900,
+   "mrpPaise": null,
+   "badgeText": "Your logo",
+   "badgeTone": "jamun",
+   "techLine": "Embroidered logo · Canvas",
+   "story": "A sturdy canvas tote with your logo embroidered on the front. Great for events, cafés and welcome kits.",
+   "colourFamily": "neutral",
+   "occasions": [
+    "corporate"
+   ],
+   "ratingAvg": 4.7,
+   "ratingCount": 28,
+   "popularity": 47,
+   "publishedAt": "2026-08-05T00:00:00.000Z",
+   "shipMode": "CUSTOM",
+   "madeDays": null,
+   "shipNote": "Stitch proof in 24 hours",
+   "isUnique": false,
+   "handMade": false,
+   "needsSize": false,
+   "sizeLabel": null,
+   "sizeGuide": null,
+   "studioGarment": "tote",
+   "studioSample": null,
+   "petPhoto": false,
+   "personalisation": null,
+   "livePreview": null,
+   "details": {
+    "why": [],
+    "spec": [
+     {
+      "label": "Technique",
+      "value": "Satin and fill stitch"
+     },
+     {
+      "label": "Fabric",
+      "value": "12 oz cotton canvas"
+     },
+     {
+      "label": "Placement",
+      "value": "Centre or bottom corner"
+     },
+     {
+      "label": "Minimum",
+      "value": "From 1 piece; bulk prices from 10"
+     },
+     {
+      "label": "Digitizing",
+      "value": "₹399 once, free on 25+ pieces"
+     },
+     {
+      "label": "Made",
+      "value": "Stitched in our studio"
+     }
+    ],
+    "care": [],
+    "faq": [],
+    "upClose": null
+   },
+   "images": [
+    {
+     "role": "MAIN",
+     "path": "photos/r-totechai.jpg",
+     "alt": "Black canvas tote with an embroidered café logo",
+     "caption": null,
+     "sortOrder": 0
+    },
+    {
+     "role": "HOVER",
+     "path": "photos/r-totechai-d.jpg",
+     "alt": "",
+     "caption": null,
+     "sortOrder": 1
+    }
+   ],
+   "variants": [
+    {
+     "sku": "LOGOTOTE-DEFAULT-ONE-SIZE",
+     "colourName": "Default",
+     "colourValue": "#FFFFFF",
+     "colourHex": "#FFFFFF",
+     "size": null,
+     "sizeNote": null,
+     "priceDeltaPaise": 0,
+     "stock": 999,
+     "trackStock": true,
+     "sortOrder": 0
+    }
+   ],
+   "reviews": [
+    {
+     "authorName": "Riya S.",
+     "city": "Mumbai",
+     "rating": 5,
+     "createdAt": "2026-09-12T00:00:00.000Z",
+     "body": "Beautiful work, exactly as shown.",
+     "helpfulCount": 24,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    },
+    {
+     "authorName": "Kavya P.",
+     "city": "Hyderabad",
+     "rating": 5,
+     "createdAt": "2026-09-02T00:00:00.000Z",
+     "body": "They sent a stitch preview on WhatsApp before starting, which I loved. It came beautifully packed with a handwritten note.",
+     "helpfulCount": 17,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    },
+    {
+     "authorName": "Neha G.",
+     "city": "Jaipur",
+     "rating": 4,
+     "createdAt": "2026-08-28T00:00:00.000Z",
+     "body": "Lovely quality and the thread really shines in the light. It took a few days longer than I hoped, but they told me that upfront.",
+     "helpfulCount": 9,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    },
+    {
+     "authorName": "Aditya R.",
+     "city": "Kolkata",
+     "rating": 5,
+     "createdAt": "2026-08-19T00:00:00.000Z",
+     "body": "Bought it as a Rakhi gift and my sister hasn’t stopped showing it off. Not a single loose thread.",
+     "helpfulCount": 6,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    },
+    {
+     "authorName": "Sana M.",
+     "city": "Bengaluru",
+     "rating": 5,
+     "createdAt": "2026-08-04T00:00:00.000Z",
+     "body": "My second order from this studio. The colours are rich and nothing faded after washing.",
+     "helpfulCount": 4,
+     "isSample": true,
+     "photoPath": null,
+     "preview": null
+    }
+   ],
+   "related": []
+  }
+ ]
+}

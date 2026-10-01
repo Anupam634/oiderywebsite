@@ -1,0 +1,191 @@
+// Store database (PostgreSQL). Money is integer paise.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum ProductStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+enum ProductType {
+  READY
+  PERSONALISE
+  MADE_TO_ORDER
+  LOGO
+}
+
+/// READY ships in 1–2 days; MADE is stitched to order; CUSTOM is personalised (both prepaid only)
+enum ShipMode {
+  READY
+  MADE
+  CUSTOM
+}
+
+enum ImageRole {
+  MAIN
+  HOVER
+  GALLERY
+}
+
+enum ReviewStatus {
+  PENDING
+  PUBLISHED
+  HIDDEN
+}
+
+model Category {
+  id        String     @id @default(cuid())
+  slug      String     @unique
+  name      String
+  blurb     String?
+  image     String?
+  sortOrder Int        @default(0)
+  parentId  String?
+  parent    Category?  @relation("CategoryTree", fields: [parentId], references: [id], onDelete: Restrict)
+  children  Category[] @relation("CategoryTree")
+  products  Product[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@index([parentId])
+}
+
+model Product {
+  id              String            @id @default(cuid())
+  /// short internal code, also the SKU prefix
+  code            String            @unique
+  slug            String            @unique
+  name            String
+  status          ProductStatus     @default(DRAFT)
+  type            ProductType
+  /// leaf category (e.g. "kurtas"); its parent is the top-level category
+  categoryId      String
+  category        Category          @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  pricePaise      Int
+  /// struck-through price; null for "from" prices
+  mrpPaise        Int?
+  badgeText       String?
+  badgeTone       String?
+  techLine        String
+  story           String
+  colourFamily    String
+  occasions       String[]
+  ratingAvg       Float             @default(0)
+  ratingCount     Int               @default(0)
+  popularity      Int               @default(0)
+  publishedAt     DateTime          @default(now())
+  shipMode        ShipMode
+  madeDays        Int?
+  shipNote        String?
+  isUnique        Boolean           @default(false)
+  handMade        Boolean           @default(false)
+  needsSize       Boolean           @default(false)
+  sizeLabel       String?
+  sizeGuide       String?
+  /// logo merch: designed in the studio on this garment
+  studioGarment   String?
+  studioSample    String?
+  petPhoto        Boolean           @default(false)
+  /// { fee, maxLength, defaultText, required, defaultOn, font, thread, flowerPresets }
+  personalisation Json?
+  /// { view, place, box, motif, motifColours, maxTextWidth, closeCrop }
+  livePreview     Json?
+  /// { why[], spec[], care[], faq[], upClose }
+  details         Json
+  seoTitle        String?
+  seoDescription  String?
+  images          ProductImage[]
+  variants        ProductVariant[]
+  reviews         Review[]
+  relatedFrom     ProductRelation[] @relation("RelatedFrom")
+  relatedTo       ProductRelation[] @relation("RelatedTo")
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  @@index([status, categoryId])
+}
+
+model ProductImage {
+  id        String    @id @default(cuid())
+  productId String
+  product   Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  role      ImageRole
+  path      String
+  zoomPath  String?
+  alt       String    @default("")
+  caption   String?
+  sortOrder Int       @default(0)
+
+  @@index([productId, sortOrder])
+}
+
+model ProductVariant {
+  id              String  @id @default(cuid())
+  productId       String
+  product         Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  sku             String  @unique
+  colourName      String
+  /// hex, or a garment key (e.g. "kajal") for live-preview products
+  colourValue     String
+  colourHex       String
+  size            String?
+  sizeNote        String?
+  priceDeltaPaise Int     @default(0)
+  stock           Int     @default(0)
+  /// false for made-to-measure options that are never out of stock
+  trackStock      Boolean @default(true)
+  sortOrder       Int     @default(0)
+
+  @@index([productId])
+}
+
+model Review {
+  id           String       @id @default(cuid())
+  productId    String
+  product      Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  authorName   String
+  city         String?
+  rating       Int
+  body         String
+  photoPath    String?
+  /// live-preview products: { colour, palette, text, font, thread } rendered by the stitch engine
+  preview      Json?
+  helpfulCount Int          @default(0)
+  status       ReviewStatus @default(PENDING)
+  /// demo content from the design phase; replace with real reviews
+  isSample     Boolean      @default(false)
+  createdAt    DateTime     @default(now())
+
+  @@index([productId, status, createdAt])
+}
+
+model ProductRelation {
+  fromId    String
+  toId      String
+  sortOrder Int     @default(0)
+  from      Product @relation("RelatedFrom", fields: [fromId], references: [id], onDelete: Cascade)
+  to        Product @relation("RelatedTo", fields: [toId], references: [id], onDelete: Cascade)
+
+  @@id([fromId, toId])
+}
+
+model Coupon {
+  code             String    @id
+  label            String
+  percent          Int
+  maxDiscountPaise Int
+  minSubtotalPaise Int       @default(0)
+  firstOrderOnly   Boolean   @default(false)
+  active           Boolean   @default(true)
+  startsAt         DateTime?
+  endsAt           DateTime?
+  createdAt        DateTime  @default(now())
+}
