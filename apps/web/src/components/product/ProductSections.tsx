@@ -1,11 +1,12 @@
 'use client';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState, type KeyboardEvent as RKeyboardEvent } from 'react';
 import { SIZE_GUIDES, type ProductDetail } from '@store/shared';
 import { photo as photoProps } from '@/lib/img';
 import { media } from '@/lib/media';
 import { ProductCard } from '../ProductCard';
 import { Cash, Check, Close, Gift, Lens, Plus, Swap, Truck } from '../icons';
 import { LiveCanvas } from './live';
+import { ZoomViewer } from './ZoomViewer';
 
 const MACHINE = 'Every piece is digitized in-house, stitched on our embroidery machine, then trimmed, steamed and checked by hand.';
 const HAND = 'Stitched by hand in our studio, then backed with felt and checked once more before it’s boxed.';
@@ -150,22 +151,38 @@ export function ProductSections({ p, reviewShots, liveClose }: { p: ProductDetai
 function UpClose({ p, liveClose }: { p: ProductDetail; liveClose: HTMLCanvasElement | null }) {
   const box = useRef<HTMLDivElement>(null);
   const [lens, setLens] = useState<{ x: number; y: number; w: number; h: number } | null>(null);
-  if (p.livePreview)
+  const [full, setFull] = useState(false);
+  const [hover, setHover] = useState(false);
+  useEffect(() => setHover(matchMedia('(hover:hover)').matches), []);
+  // tap (or click) opens the close-up full screen, where it can be pinched and zoomed
+  const opener = {
+    role: 'button',
+    tabIndex: 0,
+    'aria-label': 'See the close-up full screen',
+    onClick: () => setFull(true),
+    onKeyDown: (e: RKeyboardEvent) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), setFull(true)),
+  };
+  if (p.livePreview) {
+    const fallback = media(p.hoverImage?.path ?? p.image.path);
     return (
       <figure className="upclose">
-        <div className="upimg"><LiveCanvas src={liveClose} fallback={media(p.hoverImage?.path ?? p.image.path)} /></div>
+        <div className="upimg" {...opener}><LiveCanvas src={liveClose} fallback={fallback} /></div>
         <figcaption><b>Up close</b><span>Your design, stitched. This close-up changes with every choice you make.</span></figcaption>
+        {full && <ZoomViewer slides={[{ key: 'close', label: 'Up close', media: <LiveCanvas className="zv-media" src={liveClose} fallback={fallback} />, thumb: null }]} start={0} title={p.name} onClose={() => setFull(false)} />}
       </figure>
     );
+  }
   const up = p.upClose;
   if (!up) return null;
-  const zoomSrc = media(p.gallery.find((g) => g.path === up.path)?.zoomPath ?? up.path);
+  const zoomPath = p.gallery.find((g) => g.path === up.path)?.zoomPath ?? up.path;
+  const zoomSrc = media(zoomPath);
   const Z = 2.4;
   return (
     <figure className="upclose">
       <div
         ref={box}
         className="upimg lensable"
+        {...opener}
         onPointerMove={(e) => {
           if (e.pointerType !== 'mouse') return;
           const r = box.current!.getBoundingClientRect();
@@ -175,9 +192,27 @@ function UpClose({ p, liveClose }: { p: ProductDetail; liveClose: HTMLCanvasElem
       >
         <img {...photoProps(up.path, up.caption, { sizes: '(max-width: 1000px) 92vw, 500px' })} />
         <span className="lens" aria-hidden="true" style={lens ? { left: lens.x, top: lens.y, backgroundImage: `url("${zoomSrc}")`, backgroundSize: `${lens.w * Z}px ${lens.h * Z}px`, backgroundPosition: `${-lens.x * Z + 95}px ${-lens.y * Z + 95}px` } : undefined} />
-        <span className="hint" aria-hidden="true"><Lens />Hover to look closer</span>
+        <span className="hint" aria-hidden="true"><Lens />{hover ? 'Hover to look closer' : 'Tap to look closer'}</span>
       </div>
       <figcaption><b>Up close</b><span>{up.caption}</span></figcaption>
+      {full && (
+        <ZoomViewer
+          slides={[{
+            key: 'close',
+            label: up.caption,
+            media: (
+              <div className="zv-media">
+                <img {...photoProps(up.path, '', { sizes: '(max-width: 1000px) 92vw, 500px', eager: true })} draggable={false} />
+                <img {...photoProps(zoomPath, up.caption, { sizes: '(max-width: 1000px) 200vw, 1600px', width: 1600, height: 2000, eager: true })} className="zv-sharp" draggable={false} onLoad={(e) => e.currentTarget.classList.add('on')} />
+              </div>
+            ),
+            thumb: null,
+          }]}
+          start={0}
+          title={p.name}
+          onClose={() => setFull(false)}
+        />
+      )}
     </figure>
   );
 }

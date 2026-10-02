@@ -10,6 +10,7 @@ const make = (d: string, extra: SVGProps<SVGSVGElement> = {}) =>
 
 export const Heart = make('<path d="M12 20s-7-4.4-9.2-8.6C1.2 8.3 3 4.8 6.4 4.5c2-.2 3.9.9 5.6 3 1.7-2.1 3.6-3.2 5.6-3 3.4.3 5.2 3.8 3.6 6.9C19 15.6 12 20 12 20z"/>');
 export const Lens = make('<circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5M11 8v6M8 11h6"/>');
+export const Expand = make('<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>');
 export const Plus = make('<path d="M12 5v14M5 12h14"/>');
 export const Spark = make('<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/>');
 export const Bag = make('<path d="M5 8h14l-1.2 12H6.2z"/><path d="M9 8V6.5a3 3 0 016 0V8"/>');

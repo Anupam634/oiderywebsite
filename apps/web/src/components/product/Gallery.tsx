@@ -1,17 +1,18 @@
 'use client';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { ImageRef } from '@store/shared';
 import { photo } from '@/lib/img';
-import { ChevronLeft, ChevronRight } from '../icons';
+import { ChevronLeft, ChevronRight, Expand } from '../icons';
 import { LiveCanvas } from './live';
+import { ZoomViewer, type ZoomSlide } from './ZoomViewer';
 
 export type GalleryItem = { kind: 'photo'; image: ImageRef; caption: string } | { kind: 'live'; which: 'front' | 'close'; caption: string };
 
-/* the main photo fills the left column on desktop and the screen width on phones; zoomed, it shows at 2.2x */
+/* the main photo fills the left column on desktop and the screen width on phones; zoomed, it shows at 2.2x;
+   the full-screen viewer zooms up to 4x, so it gets the sharpest copy */
 const MAIN_SIZES = '(max-width: 1000px) 100vw, 560px';
 const ZOOM_SIZES = '(max-width: 1000px) 220vw, 1240px';
-
-const ZOOM_HINT = typeof window !== 'undefined' && matchMedia('(hover:hover)').matches ? 'click to zoom' : 'double-tap to zoom';
+const VIEWER_SIZES = '(max-width: 1000px) 200vw, 1600px';
 
 export function Gallery({ name, items, live, busy, fallback, fallbackClose }: {
   name: string;
@@ -23,10 +24,16 @@ export function Gallery({ name, items, live, busy, fallback, fallbackClose }: {
 }) {
   const [i, setI] = useState(0);
   const [zoom, setZoom] = useState(false);
+  const [viewer, setViewer] = useState<number | null>(null);
+  const [hint, setHint] = useState('tap to zoom');
+  const touches = useRef(new Set<number>());
+  useEffect(() => {
+    if (matchMedia('(hover:hover)').matches) setHint('click to zoom');
+  }, []);
   const [sharp, setSharp] = useState<Record<number, boolean>>({});
   const [origin, setOrigin] = useState('50% 50%');
   const stage = useRef<HTMLDivElement>(null);
-  const tap = useRef({ x: 0, y: 0, moved: false, last: 0 });
+  const tap = useRef({ x: 0, y: 0, moved: false });
   const it = items[Math.min(i, items.length - 1)]!;
   const step = (d: number) => {
     setZoom(false);
@@ -52,6 +59,21 @@ export function Gallery({ name, items, live, busy, fallback, fallbackClose }: {
         draggable={false}
       />
     );
+  const slides: ZoomSlide[] = items.map((x, n) => ({
+    key: String(n),
+    label: x.caption || (x.kind === 'live' ? 'Live preview' : `Photo ${n + 1}`),
+    media:
+      x.kind === 'live' ? (
+        <LiveCanvas className="zv-media" src={x.which === 'close' ? live.close : live.front} fallback={x.which === 'close' ? fallbackClose : fallback} />
+      ) : (
+        <div className="zv-media">
+          {/* the photo already on the page shows at once; the sharp copy fades in over it when it arrives */}
+          <img {...photo(x.image.path, '', { sizes: MAIN_SIZES, eager: n === viewer })} draggable={false} />
+          <img {...photo(x.image.zoomPath ?? x.image.path, x.image.alt, { sizes: VIEWER_SIZES, width: 1600, height: 2000, eager: n === viewer })} className="zv-sharp" draggable={false} onLoad={(e) => e.currentTarget.classList.add('on')} />
+        </div>
+      ),
+    thumb: visual(x, false),
+  }));
   return (
     <div className="gallery">
       <div className="thumbs" role="tablist" aria-label="Product images">
@@ -70,7 +92,13 @@ export function Gallery({ name, items, live, busy, fallback, fallbackClose }: {
           tabIndex={0}
           aria-label={`${name}: ${it.caption}. Press Enter to zoom.`}
           style={{ ['--ox' as string]: origin.split(' ')[0], ['--oy' as string]: origin.split(' ')[1] }}
-          onPointerDown={(e) => (tap.current = { ...tap.current, x: e.clientX, y: e.clientY, moved: false })}
+          onPointerDown={(e) => {
+            tap.current = { ...tap.current, x: e.clientX, y: e.clientY, moved: false };
+            if (e.pointerType === 'mouse') return;
+            touches.current.add(e.pointerId);
+            if (touches.current.size === 2) setViewer(i); // a pinch on the photo opens the full-screen viewer
+          }}
+          onPointerCancel={(e) => touches.current.delete(e.pointerId)}
           onPointerMove={(e) => {
             if (Math.abs(e.clientX - tap.current.x) + Math.abs(e.clientY - tap.current.y) > 10) tap.current.moved = true;
             if (zoom && (e.pointerType === 'mouse' || e.buttons)) at(e);
@@ -81,12 +109,12 @@ export function Gallery({ name, items, live, busy, fallback, fallbackClose }: {
               if (!tap.current.moved || zoom) toggleZoom(e);
               return;
             }
-            if (!zoom && Math.abs(dx) > 50 && Math.abs(dy) < 70) return step(dx < 0 ? 1 : -1);
-            const now = Date.now();
-            if (now - tap.current.last < 320) {
-              toggleZoom(e);
-              tap.current.last = 0;
-            } else tap.current.last = now;
+            const pinch = touches.current.size > 1;
+            touches.current.delete(e.pointerId);
+            if (pinch) return;
+            if (Math.abs(dx) > 50 && Math.abs(dy) < 70) return step(dx < 0 ? 1 : -1);
+            // touch: a tap opens the full-screen viewer (pinch and double-tap zoom live there, like shopping apps)
+            if (!tap.current.moved) setViewer(i);
           }}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
@@ -100,12 +128,14 @@ export function Gallery({ name, items, live, busy, fallback, fallbackClose }: {
         </div>
         {it.kind === 'live' && <span className="livechip"><i />Live preview</span>}
         {busy && it.kind === 'live' && <div className="gbusy"><span className="spin" />Stitching your preview…</div>}
-        <span className="gcap">{it.kind === 'live' ? it.caption : `${it.caption ? it.caption + ' · ' : ''}${ZOOM_HINT}`}</span>
+        <span className="gcap">{it.kind === 'live' ? it.caption : `${it.caption ? it.caption + ' · ' : ''}${hint}`}</span>
+        <button className="gexp" type="button" aria-label="See photos full screen" onClick={() => setViewer(i)}><Expand /></button>
         <div className="gnav">
           <button type="button" aria-label="Previous image" onClick={() => step(-1)}><ChevronLeft /></button>
           <button type="button" aria-label="Next image" onClick={() => step(1)}><ChevronRight /></button>
         </div>
       </div>
+      {viewer !== null && <ZoomViewer slides={slides} start={viewer} title={name} onClose={() => setViewer(null)} />}
     </div>
   );
 }
