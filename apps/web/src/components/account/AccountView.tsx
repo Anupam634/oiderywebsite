@@ -34,7 +34,7 @@ export function AccountView() {
       </div>
       <div className="acc-tabs" role="tablist">
         {(['orders', 'addresses', 'profile'] as const).map((t) => (
-          <button key={t} className="pill" type="button" role="tab" aria-selected={tab === t} aria-pressed={tab === t} onClick={() => setTab(t)}>
+          <button key={t} className="pill" type="button" role="tab" aria-selected={tab === t} onClick={() => setTab(t)}>
             {t === 'orders' ? 'My orders' : t === 'addresses' ? 'Addresses' : 'Profile'}
           </button>
         ))}

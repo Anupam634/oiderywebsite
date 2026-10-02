@@ -20,8 +20,9 @@ import {
   type Totals,
 } from '@store/shared';
 import { api, ApiError, type CartItemRequest, type CartPriceRequest, type CartPriceResponse, type Offer } from '@/lib/api';
-import { MAKE_DAYS, PINS, dateIn } from '@/lib/delivery';
+import { MAKE_DAYS, dateIn } from '@/lib/delivery';
 import { photo } from '@/lib/img';
+import { pincodeNote, usePincode } from '@/lib/pincode';
 import { logout, setMe, useMe } from '@/lib/session';
 import { cart, ui, useCart, type CartLine } from '@/lib/store';
 import { OtpLogin } from '../auth/OtpLogin';
@@ -145,7 +146,8 @@ export function CheckoutView({ offers }: { offers: Offer[] }) {
       /* bad JSON */
     }
     const pin = read('store-pin') ?? '';
-    setForm((f) => ({ ...f, ...draft, ...(!draft.pincode && PINCODE_RE.test(pin) ? { pincode: pin, ...(PINS[pin] ? { city: PINS[pin][0], state: PINS[pin][1] } : {}) } : {}) }));
+    // a pincode checked on a product page carries over (its city and state are then looked up)
+    setForm((f) => ({ ...f, ...draft, ...(!draft.pincode && PINCODE_RE.test(pin) ? { pincode: pin } : {}) }));
     setCoupon(read('store-coupon') ?? '');
   }, []);
   useEffect(() => {
@@ -195,11 +197,19 @@ export function CheckoutView({ offers }: { offers: Offer[] }) {
   };
   const onPin = (raw: string) => {
     const v = raw.replace(/\D/g, '').slice(0, 6);
-    const P = PINS[v];
-    setForm((f) => ({ ...f, pincode: v, ...(P ? { city: P[0], state: P[1] } : {}) }));
-    setErrors((e) => ({ ...e, pincode: undefined, ...(P ? { city: undefined, state: undefined } : {}) }));
+    setForm((f) => ({ ...f, pincode: v }));
+    setErrors((e) => ({ ...e, pincode: undefined }));
     if (PINCODE_RE.test(v)) write('store-pin', v);
   };
+  // a pincode fills in its state, and its city unless the shopper typed their own
+  const autoCity = useRef('');
+  const pinLookup = usePincode(form.pincode, (info) => {
+    const prev = autoCity.current;
+    autoCity.current = info.city;
+    setForm((f) => ({ ...f, state: info.state, city: info.city && (!f.city.trim() || f.city === prev) ? info.city : f.city }));
+    setErrors((e) => ({ ...e, state: undefined, ...(info.city ? { city: undefined } : {}) }));
+  });
+  const pinNote = pincodeNote(pinLookup);
   const applyCoupon = (code: string) => {
     const c = code.trim().toUpperCase();
     setCoupon(c);
@@ -382,7 +392,7 @@ export function CheckoutView({ offers }: { offers: Offer[] }) {
                   <label className={fld('pincode')}><span>Pincode</span>
                     <div className="inp"><input id="f-pincode" inputMode="numeric" maxLength={6} autoComplete="postal-code" placeholder="400001" value={form.pincode} onChange={(e) => onPin(e.target.value)} /></div>
                     <small className="err">{err('pincode')}</small>
-                    <small className="okm">{okPin ? (PINS[form.pincode] ? `✓ ${PINS[form.pincode]![0]}, ${PINS[form.pincode]![1]} · we deliver here` : '✓ We deliver to this pincode') : ''}</small></label>
+                    <small className={`pinm ${pinNote.tone}`} aria-live="polite">{pinNote.text}</small></label>
                   <label className={fld('name')}><span>Full name</span>
                     <div className="inp"><input id="f-name" autoComplete="name" placeholder="Priya Sharma" value={form.name} onChange={(e) => set('name', e.target.value)} /></div>
                     <small className="err">{err('name')}</small></label>

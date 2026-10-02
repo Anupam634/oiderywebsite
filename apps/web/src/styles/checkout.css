@@ -43,6 +43,12 @@
 .co-page .fld.bad small.err{display:block}
 .co-page .okm{color:#217E36;font-weight:700;font-size:12.5px}
 .co-page .okm:empty{display:none}
+/* under the pincode: the city and state it filled in, or a warning */
+.co-page .pinm{font-weight:700;font-size:12.5px}
+.co-page .pinm:empty{display:none}
+.co-page .pinm.pin-ok{color:#217E36}
+.co-page .pinm.pin-warn{color:#B25300}
+.co-page .pinm.pin-wait{color:var(--mute)}
 .co-page .seg2{display:flex;gap:6px;flex-wrap:wrap}
 .co-page .seg2 button{height:46px;padding:0 16px;border-radius:12px;border:1.5px solid var(--line);font-weight:750;background:#fff;transition:all var(--d2)}
 .co-page .seg2 button[aria-pressed=true]{border-color:var(--ink);background:var(--ink);color:#fff}

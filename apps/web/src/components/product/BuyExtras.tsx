@@ -1,7 +1,8 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { FREE_SHIPPING_MIN_PAISE } from '@store/shared';
-import { dateIn, isPincode, PINS, transitDays } from '@/lib/delivery';
+import { dateIn, isPincode, transitDays } from '@/lib/delivery';
+import { usePincode } from '@/lib/pincode';
 import { ui } from '@/lib/store';
 import { Cash, Chat, Check, Info, Shield, Spark, Swap, Tag, Truck, Upi } from '../icons';
 
@@ -17,6 +18,7 @@ export function DeliveryCheck({ custom, madeDays, petPhoto, totalPaise }: { cust
       /* ignore */
     }
   }, []);
+  const place = usePincode(checked ?? '');
   const days = checked ? transitDays(checked) + (custom ? (madeDays ?? 6) + (petPhoto ? 2 : 0) : 1) : 0;
   return (
     <div className="deliv">
@@ -35,7 +37,7 @@ export function DeliveryCheck({ custom, madeDays, petPhoto, totalPaise }: { cust
         {bad && <div className="bad"><Info /><span>Enter a valid 6-digit pincode.</span></div>}
         {checked && (
           <>
-            <div><Check /><span>Delivery to <b>{PINS[checked]?.[0] ?? `pincode ${checked}`}</b> by <b>{dateIn(days)}</b>{petPhoto ? ' (after you approve the sketch)' : ''}</span></div>
+            <div><Check /><span>Delivery to <b>{place.status === 'found' ? place.info.city || place.info.state : `pincode ${checked}`}</b> by <b>{dateIn(days)}</b>{petPhoto ? ' (after you approve the sketch)' : ''}</span></div>
             <div><Check /><span>{custom ? 'Prepaid only (UPI or card) for made-for-you pieces' : 'Cash on delivery available'}</span></div>
             <div><Check /><span>{totalPaise >= FREE_SHIPPING_MIN_PAISE ? 'Free shipping on this order' : 'Free shipping on orders above ₹999'}</span></div>
           </>

@@ -241,7 +241,7 @@ a.ann-x:hover{color:#fff}
 .pill{display:inline-flex;align-items:center;gap:8px;height:42px;padding:0 16px;border-radius:999px;background:#fff;border:1.5px solid var(--line);font-weight:750;font-size:13.5px;transition:background var(--d2),color var(--d2),border-color var(--d2),transform var(--d2)}
 .pill svg{width:17px;height:17px}
 .pill:hover{transform:translateY(-1px)}
-.pill[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.pill[aria-pressed=true],.pill[role=tab][aria-selected=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
 .stat .ok{color:#217E36}
 .stat .bad{color:#C2410C}
 .step h2{display:flex;align-items:center;gap:10px;margin:0 0 12px;font-family:var(--sans);font-size:15.5px;font-weight:800;letter-spacing:0}

@@ -1,5 +1,6 @@
+import fs from 'node:fs';
 import { afterAll, beforeAll, describe, expect, inject, it } from 'vitest';
-import type { CategoryNode, ProductDetail } from '@store/shared';
+import { INDIAN_STATES, type CategoryNode, type ProductDetail } from '@store/shared';
 import { buildApp } from '../src/app.ts';
 import { loadConfig } from '../src/config.ts';
 import { createPrisma, type Db } from '../src/lib/prisma.ts';
@@ -80,6 +81,30 @@ describe('catalogue', () => {
   it('search suggests matching products', async () => {
     const { body } = await get('/v1/search?q=hoops');
     expect(body.total).toBe(5);
+  });
+});
+
+describe('pincodes', () => {
+  it('finds the city and state of a pincode', async () => {
+    expect((await get('/v1/pincodes/400050')).body).toEqual({ pincode: '400050', city: 'Mumbai', state: 'Maharashtra' });
+    expect((await get('/v1/pincodes/110001')).body).toEqual({ pincode: '110001', city: 'New Delhi', state: 'Delhi' });
+    expect((await get('/v1/pincodes/560001')).body).toMatchObject({ city: 'Bengaluru', state: 'Karnataka' });
+    expect((await get('/v1/pincodes/396230')).body).toMatchObject({ state: 'Dadra and Nagar Haveli and Daman and Diu' });
+    const r = await get('/v1/pincodes/201301');
+    expect(r.body).toMatchObject({ city: 'Noida', state: 'Uttar Pradesh' });
+    expect(r.headers['cache-control']).toContain('max-age');
+  });
+
+  it('every state it returns is one the checkout accepts', async () => {
+    const states = new Set(fs.readFileSync('assets/pincodes.tsv', 'utf8').split('\n').filter((l) => l && !l.startsWith('#')).map((l) => l.split('\t')[2]));
+    expect([...states].filter((s) => !(INDIAN_STATES as readonly string[]).includes(s!))).toEqual([]);
+    expect(states.size).toBe(36);
+  });
+
+  it('says 404 for an unknown pincode and 400 for a malformed one', async () => {
+    expect((await get('/v1/pincodes/999999')).status).toBe(404);
+    expect((await get('/v1/pincodes/012345')).status).toBe(400);
+    expect((await get('/v1/pincodes/40005')).status).toBe(400);
   });
 });
 

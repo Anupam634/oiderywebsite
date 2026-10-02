@@ -1,5 +1,5 @@
 /* Delivery estimate by pincode (shared with the API so checkout and the order agree). */
-export { PINS, isPincode, transitDays, deliveryDays, MAKE_DAYS } from '@store/shared';
+export { isPincode, transitDays, deliveryDays, MAKE_DAYS } from '@store/shared';
 
 export const dateIn = (days: number) => {
   const d = new Date();

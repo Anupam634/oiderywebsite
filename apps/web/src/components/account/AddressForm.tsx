@@ -1,8 +1,8 @@
 'use client';
-import { useState, type FormEvent } from 'react';
+import { useRef, useState, type FormEvent } from 'react';
 import { INDIAN_STATES, PHONE_RE, PINCODE_RE, type AddressDto } from '@store/shared';
 import { ApiError } from '@/lib/api';
-import { PINS } from '@/lib/delivery';
+import { pincodeNote, usePincode } from '@/lib/pincode';
 
 export type AddressInput = Omit<AddressDto, 'id' | 'isDefault'> & { isDefault?: boolean };
 
@@ -31,11 +31,18 @@ export function AddressForm({ initial, onSave, onCancel, submitLabel = 'Save add
     setErrs((e) => ({ ...e, [k]: undefined }));
   };
   const onPin = (raw: string) => {
-    const pin = raw.replace(/\D/g, '').slice(0, 6);
-    const known = PINS[pin];
-    setA((x) => ({ ...x, pincode: pin, ...(known ? { city: known[0], state: known[1] } : {}) }));
+    setA((x) => ({ ...x, pincode: raw.replace(/\D/g, '').slice(0, 6) }));
     setErrs((e) => ({ ...e, pincode: undefined }));
   };
+  // a pincode fills in its state, and its city unless one was typed in
+  const autoCity = useRef('');
+  const pinLookup = usePincode(a.pincode, (info) => {
+    const prev = autoCity.current;
+    autoCity.current = info.city;
+    setA((x) => ({ ...x, state: info.state, city: info.city && (!x.city.trim() || x.city === prev) ? info.city : x.city }));
+    setErrs((e) => ({ ...e, state: undefined, ...(info.city ? { city: undefined } : {}) }));
+  });
+  const pinNote = pincodeNote(pinLookup);
   async function submit(ev: FormEvent) {
     ev.preventDefault();
     const e = errorsOf(a);
@@ -56,7 +63,7 @@ export function AddressForm({ initial, onSave, onCancel, submitLabel = 'Save add
     <form className="fgrid2" onSubmit={submit} noValidate>
       <label className={fld('name')}><span>Full name</span><div className="inp"><input autoComplete="name" value={a.name} onChange={(e) => set('name', e.target.value)} /></div><small className="err">{errs.name}</small></label>
       <label className={fld('phone')}><span>Mobile for delivery</span><div className="inp pre"><em>+91</em><input inputMode="numeric" maxLength={10} autoComplete="tel-national" value={a.phone} onChange={(e) => set('phone', e.target.value.replace(/\D/g, '').slice(0, 10))} /></div><small className="err">{errs.phone}</small></label>
-      <label className={fld('pincode')}><span>Pincode</span><div className="inp"><input inputMode="numeric" maxLength={6} autoComplete="postal-code" value={a.pincode} onChange={(e) => onPin(e.target.value)} /></div><small className="err">{errs.pincode}</small></label>
+      <label className={fld('pincode')}><span>Pincode</span><div className="inp"><input inputMode="numeric" maxLength={6} autoComplete="postal-code" value={a.pincode} onChange={(e) => onPin(e.target.value)} /></div><small className="err">{errs.pincode}</small><small className={`pinm ${pinNote.tone}`} aria-live="polite">{pinNote.text}</small></label>
       <label className={fld('city')}><span>City</span><div className="inp"><input autoComplete="address-level2" value={a.city} onChange={(e) => set('city', e.target.value)} /></div><small className="err">{errs.city}</small></label>
       <label className={`${fld('line1')} full`}><span>Flat, house number, building</span><div className="inp"><input autoComplete="address-line1" value={a.line1} onChange={(e) => set('line1', e.target.value)} /></div><small className="err">{errs.line1}</small></label>
       <label className={`${fld('line2')} full`}><span>Area, street, sector</span><div className="inp"><input autoComplete="address-line2" value={a.line2} onChange={(e) => set('line2', e.target.value)} /></div><small className="err">{errs.line2}</small></label>

@@ -1,12 +1,12 @@
 /* Delivery estimates by pincode. Demo zones until a courier API (e.g. Shiprocket serviceability) is connected:
-   the first digit of an Indian pincode is the postal region. */
+   the first digit of an Indian pincode is the postal region. City and state come from the API (PincodeInfo). */
 
-export const PINS: Record<string, [city: string, state: string]> = {
-  '400001': ['Mumbai', 'Maharashtra'], '400050': ['Mumbai', 'Maharashtra'], '110001': ['New Delhi', 'Delhi'], '560001': ['Bengaluru', 'Karnataka'],
-  '411001': ['Pune', 'Maharashtra'], '226001': ['Lucknow', 'Uttar Pradesh'], '700001': ['Kolkata', 'West Bengal'], '600001': ['Chennai', 'Tamil Nadu'],
-  '500001': ['Hyderabad', 'Telangana'], '380001': ['Ahmedabad', 'Gujarat'], '302001': ['Jaipur', 'Rajasthan'], '160017': ['Chandigarh', 'Chandigarh'],
-  '452001': ['Indore', 'Madhya Pradesh'], '682001': ['Kochi', 'Kerala'], '751001': ['Bhubaneswar', 'Odisha'], '781001': ['Guwahati', 'Assam'],
-};
+/** GET /v1/pincodes/:pin: where a pincode is, from India Post's pincode directory (city can be empty). */
+export interface PincodeInfo {
+  pincode: string;
+  city: string;
+  state: string;
+}
 
 export const isPincode = (v: string) => /^[1-9]\d{5}$/.test(v);
 

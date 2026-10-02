@@ -7,6 +7,7 @@ import type {
   OrderDto,
   OrderSummaryDto,
   PaymentStart,
+  PincodeInfo,
   PlaceOrderResult,
   ProductCard,
   ProductDetail,
@@ -118,6 +119,15 @@ export const api = {
     }
   },
   search: (q: string, limit = 6) => request<{ items: ProductCard[]; total: number }>(`/v1/search?q=${encodeURIComponent(q)}&limit=${limit}`),
+  /** city and state of a pincode; null when India Post's directory doesn't have it */
+  pincode: async (pin: string) => {
+    try {
+      return await request<PincodeInfo>(`/v1/pincodes/${pin}`);
+    } catch (e) {
+      if (e instanceof ApiError && e.status === 404) return null;
+      throw e;
+    }
+  },
   coupons: () => request<{ items: Offer[] }>('/v1/coupons', { next: { revalidate: 60 } }).then((r) => r.items),
   priceCart: (body: CartPriceRequest) => post<CartPriceResponse>('/v1/cart/price', body),
 
