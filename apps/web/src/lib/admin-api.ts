@@ -10,6 +10,8 @@ import type {
   AdminOrderRow,
   AdminProduct,
   AdminProductRow,
+  AdminReturnDetail,
+  AdminReturnRow,
   AdminReview,
   AdminVariant,
   AddressDto,
@@ -46,6 +48,8 @@ const get = <T>(p: string) => call<T>('GET', p);
 export interface Settings {
   legalName: string; tradeName: string; gstin: string; addressLine1: string; addressLine2: string; city: string; state: string;
   pincode: string; phone: string; email: string; invoicePrefix: string; invoiceNote: string; grievanceOfficer: string; jurisdictionCity: string;
+  /** days after delivery for return / exchange requests (0 = off) */
+  returnWindowDays: number; returnRefunds: boolean; returnExchanges: boolean; returnFeePaise: number; returnInstructions: string;
 }
 
 export const adminApi = {
@@ -108,6 +112,10 @@ export const adminApi = {
   removeCoupon: (code: string) => call<{ items: AdminCoupon[] }>('DELETE', `/coupons/${code}`).then((r) => r.items),
 
   reviews: (status: string, page = 1) => get<{ items: AdminReview[]; total: number; samples: number }>(`/reviews?status=${status}&page=${page}`),
+  returns: (status: 'open' | 'done' | 'all') => get<{ items: AdminReturnRow[] }>(`/returns?status=${status}`).then((r) => r.items),
+  returnRequest: (n: string) => get<{ return: AdminReturnDetail }>(`/returns/${encodeURIComponent(n)}`).then((r) => r.return),
+  returnAction: (n: string, action: 'approve' | 'reject' | 'pickup' | 'receive' | 'exchange' | 'refund', body: object) =>
+    call<{ return: AdminReturnDetail }>('POST', `/returns/${encodeURIComponent(n)}/${action}`, body).then((r) => r.return),
   setReview: (id: string, status: string) => call<{ ok: true }>('PATCH', `/reviews/${id}`, { status }),
   removeSampleReviews: () => call<{ removed: number }>('POST', '/reviews/remove-samples'),
 

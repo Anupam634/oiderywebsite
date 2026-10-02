@@ -4,12 +4,13 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState, type ReactNode } from 'react';
 import type { AdminDashboard } from '@store/shared';
 import { adminApi, setAdmin, useAdmin } from '@/lib/admin-api';
-import { Bag, Box, Close, Gear, Grid, Home, Logo, Logout, Menu, Needle, Star, Tag, Users } from '../icons';
+import { Bag, Box, Close, Gear, Grid, Home, Logo, Logout, Menu, Needle, Star, Swap, Tag, Users } from '../icons';
 
 const NAV: { href: string; label: string; icon: ReactNode; count?: (d: AdminDashboard['todo']) => number }[] = [
   { href: '/admin', label: 'Dashboard', icon: <Home /> },
   { href: '/admin/orders', label: 'Orders', icon: <Bag />, count: (t) => t.toShip },
   { href: '/admin/production', label: 'Production', icon: <Needle />, count: (t) => t.proofsToMake + t.changesRequested },
+  { href: '/admin/returns', label: 'Returns', icon: <Swap />, count: (t) => t.returnsToReview + t.returnsInProgress },
   { href: '/admin/products', label: 'Products', icon: <Box /> },
   { href: '/admin/categories', label: 'Categories', icon: <Grid /> },
   { href: '/admin/coupons', label: 'Coupons', icon: <Tag /> },

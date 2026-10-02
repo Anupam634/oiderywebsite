@@ -8,6 +8,7 @@ import type { Address } from '../../generated/prisma/client.ts';
 import type { Files } from '../files/service.ts';
 import { canCustomerCancel, orderInclude, toSummaryDto } from '../orders/dto.ts';
 import type { OrderService } from '../orders/service.ts';
+import type { ReturnService } from '../returns/service.ts';
 
 const toAddress = (a: Address): AddressDto => ({
   id: a.id,
@@ -39,7 +40,7 @@ const addressBody = z.object({
 
 /** The shopper's own addresses and orders. */
 export const accountRoutes =
-  (db: Db, orders: OrderService, files: Files): FastifyPluginAsyncZod =>
+  (db: Db, orders: OrderService, files: Files, returns: ReturnService): FastifyPluginAsyncZod =>
   async (app) => {
     app.addHook('preValidation', requireCustomer);
     app.addHook('onSend', async (_req, reply) => {
@@ -114,6 +115,7 @@ export const accountRoutes =
       const o = await orders.byNumber(req.params.number);
       if (!o || o.customerId !== me(req)) throw notFound('Order');
       const dto = orders.dto(o);
+      dto.returnOptions = await returns.options(o);
       if (o.status === 'DELIVERED') {
         const done = new Set((await db.review.findMany({ where: { orderItemId: { in: o.items.map((i) => i.id) } }, select: { orderItemId: true } })).map((r) => r.orderItemId));
         for (const i of dto.items) {

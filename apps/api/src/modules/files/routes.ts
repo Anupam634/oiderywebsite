@@ -5,8 +5,8 @@ import type { Db } from '../../lib/prisma.ts';
 import type { UploadKind } from '../../generated/prisma/client.ts';
 import type { Files } from './service.ts';
 
-/** what shoppers may upload before ordering (attached to the order when it's placed) */
-const CUSTOMER_KINDS: Record<string, UploadKind> = { logo: 'LOGO', pet: 'PET_PHOTO', preview: 'PREVIEW' };
+/** what shoppers may upload: before ordering (attached to the order when it's placed), or for a return request */
+const CUSTOMER_KINDS: Record<string, UploadKind> = { logo: 'LOGO', pet: 'PET_PHOTO', preview: 'PREVIEW', return: 'RETURN_PHOTO' };
 
 export const fileRoutes =
   (db: Db, files: Files): FastifyPluginAsyncZod =>

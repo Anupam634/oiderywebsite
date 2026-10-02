@@ -16,6 +16,11 @@ export const WA_TEMPLATES = {
   refund_processed: 'Hi {{1}}, we’ve refunded {{2}} for order {{3}}. It can take 5–7 working days to reach your account.',
   new_order_alert: 'New order {{1}}: {{2}} for {{3}} item(s) from {{4}}. Payment: {{5}}.',
   proof_answered: 'Order {{1}}: the customer {{2}} the proof for {{3}}. {{4}}',
+  return_requested: 'Hi {{1}}, we’ve got your {{2}} request {{3}} for order {{4}}. We’ll reply within a day.',
+  return_approved: 'Hi {{1}}, your {{2}} request {{3}} is approved. {{4}}',
+  return_rejected: 'Hi {{1}}, we couldn’t accept your request {{2}} for order {{3}}. {{4}}',
+  exchange_shipped: 'Hi {{1}}, the replacement for your request {{2}} is on its way with {{3}} (tracking number {{4}}).',
+  return_request_alert: 'Return request {{1}} for order {{2}}: {{3}}, {{4}} piece(s). Reason: {{5}}.',
 } as const;
 type WaTemplate = keyof typeof WA_TEMPLATES;
 
@@ -25,6 +30,16 @@ const firstName = (o: Pick<Order, 'shipName'>) => o.shipName.trim().split(/\s+/)
 const day = (d: Date | null) => (d ? d.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Asia/Kolkata' }) : 'soon');
 
 export type MailOrder = Order & { items: (OrderItem & { image?: string | null })[] };
+/** a return request as the messages need it */
+export interface MailReturn {
+  number: string;
+  kind: 'EXCHANGE' | 'REFUND';
+  reasonLabel: string;
+  studioNote: string | null;
+  exchangeCourier?: string | null;
+  exchangeAwb?: string | null;
+  items: { name: string; qty: number; exchangeLabel: string | null }[];
+}
 
 export class Notifications {
   constructor(
@@ -222,6 +237,88 @@ ${line('Total', formatINR(o.totalPaise), true)}</table>
           subject: `Refund of ${formatINR(amountPaise)} for ${o.number}`,
           html: this.layout('Your refund is on its way', `${esc(firstName(o))}, we’ve refunded <b>${formatINR(amountPaise)}</b> for order <b>${o.number}</b>. It can take 5–7 working days to show in your account.`, ''),
           text: `We've refunded ${formatINR(amountPaise)} for order ${o.number}.`,
+        }),
+      );
+    await Promise.all(jobs);
+  }
+
+  /* ---------------- returns and exchanges ---------------- */
+
+  private returnList(r: MailReturn) {
+    const rows = r.items.map((i) => `<li style="margin:4px 0">${esc(i.name)} × ${i.qty}${i.exchangeLabel ? ` → <b>${esc(i.exchangeLabel)}</b>` : ''}</li>`).join('');
+    return `<ul style="font-size:14px;color:#3A2E4F;padding-left:18px;margin:0">${rows}</ul>`;
+  }
+  private what = (r: MailReturn) => (r.kind === 'EXCHANGE' ? 'exchange' : 'return');
+
+  async returnRequested(o: Order, r: MailReturn) {
+    const link = this.url(`/account/orders/${o.number}`);
+    const pieces = r.items.reduce((n, i) => n + i.qty, 0);
+    const jobs: Promise<unknown>[] = [];
+    if (o.whatsappUpdates) jobs.push(this.wa(o.phone, 'return_requested', [firstName(o), this.what(r), r.number, o.number]));
+    if (o.email)
+      jobs.push(
+        this.t.email({
+          to: o.email,
+          subject: `We’ve got your ${this.what(r)} request ${r.number}`,
+          html: this.layout(`Your ${this.what(r)} request`, `${esc(firstName(o))}, we’ve received request <b>${r.number}</b> for order <b>${o.number}</b>. We’ll check it and reply within a day.`, this.returnList(r), { label: 'See your request', href: link }),
+          text: `We've got your ${this.what(r)} request ${r.number} for order ${o.number}. We'll reply within a day. ${link}`,
+        }),
+      );
+    if (this.config.OWNER_WHATSAPP) jobs.push(this.wa(this.config.OWNER_WHATSAPP, 'return_request_alert', [r.number, o.number, r.kind === 'EXCHANGE' ? 'exchange' : 'refund', String(pieces), r.reasonLabel]));
+    if (this.config.OWNER_EMAIL)
+      jobs.push(
+        this.t.email({
+          to: this.config.OWNER_EMAIL,
+          subject: `Return request ${r.number} · order ${o.number}`,
+          html: this.layout(`Return request ${r.number}`, `${esc(o.shipName)} asks for ${r.kind === 'EXCHANGE' ? 'an exchange' : 'a refund'}. Reason: <b>${esc(r.reasonLabel)}</b>.`, this.returnList(r), { label: 'Open in admin', href: this.url(`/admin/returns/${r.number}`) }),
+          text: `Return request ${r.number} for order ${o.number}: ${r.kind.toLowerCase()}, reason ${r.reasonLabel}.`,
+        }),
+      );
+    await Promise.all(jobs);
+  }
+
+  async returnApproved(o: Order, r: MailReturn) {
+    const next = r.studioNote ?? 'We’ll be in touch about the pickup.';
+    const jobs: Promise<unknown>[] = [];
+    if (o.whatsappUpdates) jobs.push(this.wa(o.phone, 'return_approved', [firstName(o), this.what(r), r.number, next]));
+    if (o.email)
+      jobs.push(
+        this.t.email({
+          to: o.email,
+          subject: `Approved: your ${this.what(r)} request ${r.number}`,
+          html: this.layout('Your request is approved', `${esc(firstName(o))}, we’ve approved request <b>${r.number}</b> for order <b>${o.number}</b>. ${esc(next)}`, this.returnList(r), { label: 'See your request', href: this.url(`/account/orders/${o.number}`) }),
+          text: `Your ${this.what(r)} request ${r.number} is approved. ${next}`,
+        }),
+      );
+    await Promise.all(jobs);
+  }
+
+  async returnRejected(o: Order, r: MailReturn) {
+    const why = r.studioNote ?? 'Please WhatsApp us if you have any questions.';
+    const jobs: Promise<unknown>[] = [];
+    if (o.whatsappUpdates) jobs.push(this.wa(o.phone, 'return_rejected', [firstName(o), r.number, o.number, why]));
+    if (o.email)
+      jobs.push(
+        this.t.email({
+          to: o.email,
+          subject: `About your request ${r.number}`,
+          html: this.layout('We couldn’t accept your request', `${esc(firstName(o))}, we’re sorry: we couldn’t accept request <b>${r.number}</b> for order <b>${o.number}</b>. ${esc(why)}`, ''),
+          text: `We couldn't accept your request ${r.number} for order ${o.number}. ${why}`,
+        }),
+      );
+    await Promise.all(jobs);
+  }
+
+  async exchangeShipped(o: Order, r: MailReturn) {
+    const jobs: Promise<unknown>[] = [];
+    if (o.whatsappUpdates) jobs.push(this.wa(o.phone, 'exchange_shipped', [firstName(o), r.number, r.exchangeCourier ?? 'our courier', r.exchangeAwb ?? '—']));
+    if (o.email)
+      jobs.push(
+        this.t.email({
+          to: o.email,
+          subject: `Your replacement is on its way · ${r.number}`,
+          html: this.layout('Your replacement is on its way', `${esc(firstName(o))}, the replacement for request <b>${r.number}</b> has left the studio${r.exchangeCourier ? ` with ${esc(r.exchangeCourier)}` : ''}${r.exchangeAwb ? ` (tracking number ${esc(r.exchangeAwb)})` : ''}.`, this.returnList(r), { label: 'See your order', href: this.url(`/account/orders/${o.number}`) }),
+          text: `The replacement for your request ${r.number} is on its way${r.exchangeAwb ? ` (tracking ${r.exchangeAwb})` : ''}.`,
         }),
       );
     await Promise.all(jobs);

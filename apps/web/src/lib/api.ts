@@ -8,6 +8,8 @@ import type {
   OrderSummaryDto,
   PaymentStart,
   PincodeInfo,
+  ReturnKind,
+  ReturnReason,
   PlaceOrderResult,
   ProductCard,
   ProductDetail,
@@ -18,6 +20,16 @@ import type {
 /* Talks to the store API. Server components call API_URL directly; the browser goes through this site's
    /api proxy (same origin, so the login cookie travels with it). */
 const base = () => (typeof window === 'undefined' ? (process.env.API_URL ?? 'http://localhost:4000') : '/api');
+
+/** a return or exchange request (see the API's returnRequestSchema) */
+export interface ReturnRequestBody {
+  kind: ReturnKind;
+  reason: ReturnReason;
+  details?: string;
+  items: { orderItemId: string; qty: number; exchangeVariantId?: string }[];
+  photos?: string[];
+  refundUpi?: string;
+}
 
 export class ApiError extends Error {
   constructor(
@@ -147,6 +159,8 @@ export const api = {
   myOrder: (number: string) => priv<{ order: OrderDto }>(`/v1/me/orders/${encodeURIComponent(number)}`).then((r) => r.order),
   addReview: (itemId: string, rating: number, body: string) => post<{ ok: true }>('/v1/me/reviews', { itemId, rating, body }),
   cancelOrder: (number: string, reason?: string) => post<{ order: OrderDto }>(`/v1/me/orders/${encodeURIComponent(number)}/cancel`, reason ? { reason } : {}).then((r) => r.order),
+  requestReturn: (number: string, body: ReturnRequestBody) => post<{ request: string; order: OrderDto }>(`/v1/me/orders/${encodeURIComponent(number)}/returns`, body),
+  cancelReturn: (number: string) => post<{ order: OrderDto }>(`/v1/me/returns/${encodeURIComponent(number)}/cancel`).then((r) => r.order),
 
   /* checkout */
   placeOrder: (body: PlaceOrderRequest) => post<PlaceOrderResult>('/v1/orders', body),
@@ -156,8 +170,8 @@ export const api = {
   fakePayment: (number: string, ok: boolean) => post<{ order: OrderDto }>(`/v1/orders/${encodeURIComponent(number)}/fake-payment`, { ok }).then((r) => r.order),
   paymentFailed: (number: string, reason?: string) => post<{ ok: true }>(`/v1/orders/${encodeURIComponent(number)}/payment-failed`, reason ? { reason } : {}),
 
-  /** upload a logo, pet photo or preview render (multipart) */
-  upload: async (kind: 'logo' | 'pet' | 'preview', file: Blob, name = 'upload') => {
+  /** upload a logo, pet photo, preview render or a photo for a return request (multipart) */
+  upload: async (kind: 'logo' | 'pet' | 'preview' | 'return', file: Blob, name = 'upload') => {
     const fd = new FormData();
     fd.append('kind', kind);
     fd.append('file', file, name);

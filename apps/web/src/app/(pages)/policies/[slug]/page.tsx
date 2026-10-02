@@ -42,7 +42,7 @@ const PAGES: Record<string, { title: string; summary: string; body: (s: StoreInf
   refunds: {
     title: 'Returns, refunds & cancellations',
     summary: 'What you can cancel, return or exchange, and how refunds work.',
-    body: () => (
+    body: (s) => (
       <>
         <h2>Cancelling an order</h2>
         <ul>
@@ -52,16 +52,21 @@ const PAGES: Record<string, { title: string; summary: string; body: (s: StoreInf
         </ul>
         <h2>Returns and exchanges</h2>
         <ul>
-          <li><b>Ready-made pieces</b> can be returned or exchanged within 7 days of delivery if unused, unwashed and with tags intact. Message us on WhatsApp with your order number to arrange it.</li>
+          {s.returns.windowDays > 0 ? (
+            <li><b>Ready-made pieces</b> can be {[s.returns.exchanges && 'exchanged', s.returns.refunds && 'returned for a refund'].filter(Boolean).join(' or ')} within {s.returns.windowDays} days of delivery if unused, unwashed and with tags intact. Open the order in <Link href="/account">My orders</Link>, tap <b>Return or exchange</b>, choose the piece and tell us why. We reply within a day and arrange a pickup.</li>
+          ) : (
+            <li><b>Ready-made pieces</b>: message us on WhatsApp with your order number within 7 days of delivery and we’ll help.</li>
+          )}
+          {s.returns.feePaise > 0 && <li>When a piece comes back because it didn’t fit or you changed your mind, a {formatINR(s.returns.feePaise)} pickup fee is taken off the refund. There’s no fee for exchanges because of damage or our mistakes.</li>}
           <li><b>Made-for-you pieces</b> are made only for you, so they can’t be returned or exchanged, unless they arrive damaged, defective or different from the approved proof.</li>
           <li>Thread colours on screens and in proofs can look slightly different from real thread; small variations in hand-finished pieces are part of their charm and aren’t defects.</li>
         </ul>
         <h2>Damaged, defective or wrong items</h2>
-        <p>Tell us within 48 hours of delivery with photos. We’ll replace the piece or refund it in full, including shipping.</p>
+        <p>Tell us within 48 hours of delivery from your order page (Return or exchange), with photos. We’ll replace the piece or refund it in full, including shipping.</p>
         <h2>Refunds</h2>
         <ul>
           <li>Refunds go back to the original payment method within 5–7 working days after we approve them (banks may take a little longer to show them).</li>
-          <li>For cash-on-delivery orders we refund by bank transfer or UPI.</li>
+          <li>For cash-on-delivery orders we refund to the UPI ID you give us with your request.</li>
           <li>Shipping charges and the cash-on-delivery fee are refunded only when the problem was ours.</li>
         </ul>
       </>

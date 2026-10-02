@@ -34,6 +34,8 @@ import { pincodeRoutes } from './modules/pincodes/routes.ts';
 import { OrderService } from './modules/orders/service.ts';
 import { createGateway, type PaymentGateway } from './modules/payments/gateway.ts';
 import { proofRoutes } from './modules/proofs/routes.ts';
+import { adminReturnRoutes, returnRoutes } from './modules/returns/routes.ts';
+import { ReturnService } from './modules/returns/service.ts';
 import { StitchFiles } from './modules/stitchfiles/service.ts';
 
 export async function buildApp({ config, db, gateway }: { config: Config; db: Db; gateway?: PaymentGateway }) {
@@ -71,6 +73,7 @@ export async function buildApp({ config, db, gateway }: { config: Config; db: Db
   const invoices = new InvoiceService(db, files);
   const fulfil = new Fulfilment(db, orders, invoices, notify, files);
   const stitch = new StitchFiles(db, files, config);
+  const returns = new ReturnService(db, orders, files, notify);
   // ask the storefront to drop its cached catalogue after admin edits (best effort)
   const refreshWeb = () => {
     if (!config.WEB_REVALIDATE_URL) return;
@@ -90,13 +93,15 @@ export async function buildApp({ config, db, gateway }: { config: Config; db: Db
   await app.register(cartRoutes(db), { prefix: '/v1' });
   await app.register(pincodeRoutes, { prefix: '/v1' });
   await app.register(authRoutes(db, otp), { prefix: '/v1' });
-  await app.register(accountRoutes(db, orders, files), { prefix: '/v1' });
+  await app.register(accountRoutes(db, orders, files, returns), { prefix: '/v1' });
+  await app.register(returnRoutes(orders, returns), { prefix: '/v1' });
   await app.register(orderRoutes(db, orders), { prefix: '/v1' });
   await app.register(fileRoutes(db, files), { prefix: '/v1' });
   await app.register(webhookRoutes(db, orders), { prefix: '/v1' });
   await app.register(proofRoutes(db, files, fulfil), { prefix: '/v1' });
   await app.register(adminAuthRoutes(db), { prefix: '/v1' });
   await app.register(adminOrderRoutes(db, orders, fulfil, invoices, files, stitch), { prefix: '/v1' });
+  await app.register(adminReturnRoutes(db, returns), { prefix: '/v1' });
   await app.register(adminCatalogRoutes(db, catalog, files, refreshWeb), { prefix: '/v1' });
   await app.register(adminStoreRoutes(db, files), { prefix: '/v1' });
   return app;

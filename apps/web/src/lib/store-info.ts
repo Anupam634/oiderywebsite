@@ -12,6 +12,8 @@ export interface StoreInfo {
   email: string;
   grievanceOfficer: string | null;
   jurisdictionCity: string | null;
+  /** the shop's return rules (Settings) */
+  returns: { windowDays: number; refunds: boolean; exchanges: boolean; feePaise: number };
 }
 
 export const getStoreInfo = cache(async (): Promise<StoreInfo> => {
@@ -21,5 +23,5 @@ export const getStoreInfo = cache(async (): Promise<StoreInfo> => {
   } catch {
     /* fall back below */
   }
-  return { legalName: BRAND.legalName, tradeName: BRAND.name, gstin: null, address: [], state: '', phone: BRAND.whatsapp, email: BRAND.supportEmail, grievanceOfficer: null, jurisdictionCity: null };
+  return { legalName: BRAND.legalName, tradeName: BRAND.name, gstin: null, address: [], state: '', phone: BRAND.whatsapp, email: BRAND.supportEmail, grievanceOfficer: null, jurisdictionCity: null, returns: { windowDays: 7, refunds: true, exchanges: true, feePaise: 0 } };
 });

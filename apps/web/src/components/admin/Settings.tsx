@@ -58,6 +58,15 @@ function Store({ owner }: { owner: boolean }) {
           <label className="f"><span>Grievance officer <i>(name on the contact page; required by e-commerce rules)</i></span><input value={s.grievanceOfficer ?? ''} maxLength={80} onChange={(e) => set('grievanceOfficer', e.target.value)} /></label>
           <label className="f"><span>Courts for disputes <i>(city)</i></span><input value={s.jurisdictionCity ?? ''} maxLength={60} onChange={(e) => set('jurisdictionCity', e.target.value)} placeholder={s.city || 'e.g. Pune'} /></label>
         </div>
+        <h2 style={{ marginTop: 22 }}>Returns &amp; exchanges <span className="muted">(customers ask from their order page after delivery)</span></h2>
+        <div className="formgrid">
+          <label className="f"><span>Days after delivery to ask <i>(0 turns returns off)</i></span><input inputMode="numeric" value={String(s.returnWindowDays)} onChange={(e) => set('returnWindowDays', Math.min(60, Number(e.target.value.replace(/\D/g, '')) || 0))} /></label>
+          <label className="f"><span>Return pickup fee (₹) <i>(taken off refunds when the size didn’t fit or the customer changed their mind)</i></span><input inputMode="numeric" value={String(Math.round(s.returnFeePaise / 100))} onChange={(e) => set('returnFeePaise', Math.min(2000, Number(e.target.value.replace(/\D/g, '')) || 0) * 100)} /></label>
+          <label className="chk"><input type="checkbox" checked={s.returnExchanges} onChange={(e) => set('returnExchanges', e.target.checked)} />Offer exchanges (another size, or a fresh piece)</label>
+          <label className="chk"><input type="checkbox" checked={s.returnRefunds} onChange={(e) => set('returnRefunds', e.target.checked)} />Offer refunds</label>
+          <label className="f full"><span>Message when a request is approved</span><textarea value={s.returnInstructions} maxLength={400} onChange={(e) => set('returnInstructions', e.target.value)} /></label>
+        </div>
+        <p className="muted">Made-for-you pieces can always come back if they arrived damaged or wrong; otherwise only ready-made pieces can be returned.</p>
       </fieldset>
       {owner ? (
         <button className="btn btn-grad" style={{ marginTop: 12 }} type="button" disabled={gstBad} onClick={async () => { try { setS(await adminApi.saveSettings(s)); ui.toast('Saved'); } catch (e) { err(e); } }}>Save details</button>

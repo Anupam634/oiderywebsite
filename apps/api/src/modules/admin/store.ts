@@ -41,7 +41,7 @@ export const adminStoreRoutes =
       });
       const count = (productionStatus: 'AWAITING_PROOF' | 'CHANGES_REQUESTED' | 'PROOF_SENT') =>
         db.orderItem.count({ where: { productionStatus, order: { status: { in: ['PLACED', 'IN_PRODUCTION'] } } } });
-      const [today, week, month, toShip, proofsToMake, changesRequested, awaitingCustomer, unpaid, reviewsToCheck, low, recent] = await Promise.all([
+      const [today, week, month, toShip, proofsToMake, changesRequested, awaitingCustomer, unpaid, reviewsToCheck, returnsToReview, returnsInProgress, low, recent] = await Promise.all([
         sum(startOfDay),
         sum(since(7)),
         sum(since(30)),
@@ -51,6 +51,8 @@ export const adminStoreRoutes =
         count('PROOF_SENT'),
         db.order.count({ where: { status: 'PENDING_PAYMENT' } }),
         db.review.count({ where: { status: 'PENDING' } }),
+        db.returnRequest.count({ where: { status: 'REQUESTED' } }),
+        db.returnRequest.count({ where: { status: { in: ['APPROVED', 'RECEIVED'] } } }),
         db.productVariant.findMany({ where: { trackStock: true, stock: { lte: 2 }, product: { status: 'ACTIVE' } }, include: { product: { select: { id: true, name: true } } }, orderBy: { stock: 'asc' }, take: 12 }),
         db.order.findMany({ where: { status: { not: 'PENDING_PAYMENT' } }, orderBy: { createdAt: 'desc' }, take: 8, include: { items: { select: { productionStatus: true, uploads: { where: { kind: 'PREVIEW' }, select: { id: true, kind: true } }, imagePath: true } } } }),
       ]);
@@ -59,7 +61,7 @@ export const adminStoreRoutes =
         week,
         month,
         days,
-        todo: { toShip, proofsToMake, changesRequested, awaitingCustomer, unpaid, reviewsToCheck },
+        todo: { toShip, proofsToMake, changesRequested, awaitingCustomer, unpaid, reviewsToCheck, returnsToReview, returnsInProgress },
         lowStock: low.map((v) => ({ productId: v.product.id, name: `${v.product.name}${v.size ? ` · ${v.size}` : ''}`, sku: v.sku, stock: v.stock })),
         recent: recent.map((o) => toAdminRow(o, files)),
       };

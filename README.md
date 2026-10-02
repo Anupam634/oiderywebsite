@@ -21,10 +21,14 @@ Money is always integer **paise**. The browser shows instant estimates; the API'
   through Razorpay, cash on delivery for ready-made pieces, GST invoice details.
 - **Orders:** stock reserved at checkout, unpaid orders released after 30 minutes, late payments reinstated
   or refunded, refunds through Razorpay, emails and WhatsApp messages at each step, GST invoice PDFs.
+- **Returns & exchanges:** after delivery the customer asks from the order page (pieces, reason, photos,
+  another size or a refund; a UPI ID for cash orders). The studio approves (the new size is set aside),
+  marks it received (back into stock), then sends the replacement or refunds through Razorpay or by UPI.
+  The window, fee and what's offered are in Settings.
 - **Made-for-you pieces:** stitch proofs sent from the admin; the customer approves or asks for changes from
   a link; machine files (PES/DST/JEF/EXP) uploaded by the digitizer become a PES for the Brother machine
   with the customer's thread colours, plus a preview and stitch count.
-- **Admin (`/admin`):** dashboard, orders, production board, packing slips, products (details, stock,
+- **Admin (`/admin`):** dashboard, orders, production board, returns, packing slips, products (details, stock,
   photos, personalisation, GST), categories, coupons, reviews, customers, store settings, staff, audit trail.
 
 ## Run it locally

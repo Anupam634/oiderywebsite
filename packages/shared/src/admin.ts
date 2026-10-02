@@ -105,7 +105,7 @@ export interface AdminDashboard {
   week: { orders: number; revenuePaise: number };
   month: { orders: number; revenuePaise: number };
   days: { day: string; orders: number; revenuePaise: number }[];
-  todo: { toShip: number; proofsToMake: number; changesRequested: number; awaitingCustomer: number; unpaid: number; reviewsToCheck: number };
+  todo: { toShip: number; proofsToMake: number; changesRequested: number; awaitingCustomer: number; unpaid: number; reviewsToCheck: number; returnsToReview: number; returnsInProgress: number };
   lowStock: { productId: string; name: string; sku: string; stock: number }[];
   recent: AdminOrderRow[];
 }

@@ -36,7 +36,8 @@ Two ways to host:
 4. **Meta Business** + **WhatsApp Business Platform**: verify the business, add a phone number, and get these
    templates approved with exactly these names and texts (from `apps/api/src/modules/notify/messages.ts`):
    `order_confirmed`, `stitch_proof_ready` (with a URL button `https://<domain>/proof/{{1}}`),
-   `order_shipped`, `order_delivered`, `order_cancelled`, `refund_processed`, `new_order_alert`, `proof_answered`.
+   `order_shipped`, `order_delivered`, `order_cancelled`, `refund_processed`, `new_order_alert`, `proof_answered`,
+   `return_requested`, `return_approved`, `return_rejected`, `exchange_shipped`, `return_request_alert`.
    Until they're approved, keep `WHATSAPP_PROVIDER=outbox` (emails still go out).
 5. **Resend**: add and verify the sending domain (SPF and DKIM records in DNS).
 6. **Cloudflare R2**: a private bucket (e.g. `shop-private`) and, optionally, a public bucket for product

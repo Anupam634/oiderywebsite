@@ -24,6 +24,14 @@ export const storeSettingsSchema = z.object({
   grievanceOfficer: z.string().trim().max(80).default(''),
   /** courts for disputes, e.g. "Pune" */
   jurisdictionCity: z.string().trim().max(60).default(''),
+  /** days after delivery a customer can ask to return or exchange (0 turns returns off) */
+  returnWindowDays: z.number().int().min(0).max(60).default(7),
+  returnRefunds: z.boolean().default(true),
+  returnExchanges: z.boolean().default(true),
+  /** taken off refunds when the size didn't fit or the customer changed their mind (pays for the pickup) */
+  returnFeePaise: z.number().int().min(0).max(200_000).default(0),
+  /** shown to the customer when a request is approved */
+  returnInstructions: z.string().trim().max(400).default('We’ll arrange a pickup in 2–3 days. Keep the piece unused, with its tags, in its pack.'),
 });
 export type StoreSettings = z.infer<typeof storeSettingsSchema>;
 
@@ -42,6 +50,11 @@ export const DEFAULT_SETTINGS: StoreSettings = {
   invoiceNote: 'Thank you for shopping with us. Made-for-you pieces can’t be returned; ready-made pieces can be exchanged within 7 days.',
   grievanceOfficer: '',
   jurisdictionCity: '',
+  returnWindowDays: 7,
+  returnRefunds: true,
+  returnExchanges: true,
+  returnFeePaise: 0,
+  returnInstructions: 'We’ll arrange a pickup in 2–3 days. Keep the piece unused, with its tags, in its pack.',
 };
 
 /** what the storefront may show publicly (policies, contact page) */
@@ -55,6 +68,7 @@ export const publicStore = (s: StoreSettings) => ({
   email: s.email,
   grievanceOfficer: s.grievanceOfficer || null,
   jurisdictionCity: s.jurisdictionCity || s.city || null,
+  returns: { windowDays: s.returnWindowDays, refunds: s.returnRefunds, exchanges: s.returnExchanges, feePaise: s.returnFeePaise },
 });
 
 export async function getStoreSettings(db: Db): Promise<StoreSettings> {

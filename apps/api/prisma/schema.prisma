@@ -344,11 +344,11 @@ enum ProductionStatus {
 }
 
 model Order {
-  id               String        @id @default(cuid())
+  id               String          @id @default(cuid())
   /// customer-facing number, e.g. TK-7Q4M2X
-  number           String        @unique
+  number           String          @unique
   customerId       String
-  customer         Customer      @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  customer         Customer        @relation(fields: [customerId], references: [id], onDelete: Restrict)
   /// the checkout attempt that created it (makes "place order" safe to retry)
   clientKey        String?
   status           OrderStatus
@@ -365,19 +365,19 @@ model Order {
   upiDiscountPaise Int
   codFeePaise      Int
   totalPaise       Int
-  refundedPaise    Int           @default(0)
+  refundedPaise    Int             @default(0)
   phone            String
   email            String?
-  whatsappUpdates  Boolean       @default(true)
+  whatsappUpdates  Boolean         @default(true)
   shipName         String
   shipPhone        String
   shipLine1        String
   shipLine2        String
-  shipLandmark     String        @default("")
+  shipLandmark     String          @default("")
   shipCity         String
   shipState        String
   shipPincode      String
-  addressType      AddressType   @default(HOME)
+  addressType      AddressType     @default(HOME)
   gstin            String?
   gstBusiness      String?
   giftNote         String?
@@ -390,8 +390,8 @@ model Order {
   adminNotes       String?
   cancelReason     String?
   ip               String?
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
   placedAt         DateTime?
   paidAt           DateTime?
   shippedAt        DateTime?
@@ -402,6 +402,7 @@ model Order {
   refunds          Refund[]
   events           OrderEvent[]
   invoice          Invoice?
+  returns          ReturnRequest[]
 
   @@unique([customerId, clientKey])
   @@index([status, createdAt])
@@ -444,6 +445,7 @@ model OrderItem {
   uploads          Upload[]
   proofs           Proof[]
   stitchFiles      StitchFile[]
+  returnItems      ReturnItem[]
 
   @@index([orderId])
   @@index([productionStatus])
@@ -492,6 +494,10 @@ model Refund {
   reason           String
   providerRefundId String?      @unique
   status           RefundStatus @default(PENDING)
+  /// paid outside the gateway (UPI or bank transfer, e.g. cash-on-delivery orders): the transfer reference
+  reference        String?
+  /// the return request it settles, if any
+  returnId         String?
   createdById      String?
   createdAt        DateTime     @default(now())
   updatedAt        DateTime     @updatedAt
@@ -544,6 +550,84 @@ model InvoiceCounter {
 }
 
 /**
+ * ================= returns and exchanges =================
+ */
+
+enum ReturnKind {
+  EXCHANGE
+  REFUND
+}
+
+enum ReturnStatus {
+  /// the customer asked; the studio decides
+  REQUESTED
+  /// accepted: the piece is picked up or sent back; an exchange size is set aside
+  APPROVED
+  /// back at the studio and checked
+  RECEIVED
+  /// replacement sent
+  EXCHANGED
+  /// money returned
+  REFUNDED
+  REJECTED
+  /// withdrawn by the customer
+  CANCELLED
+}
+
+/// A request to return or exchange delivered pieces
+model ReturnRequest {
+  id              String       @id @default(cuid())
+  /// customer-facing number, e.g. RT-7Q4M2X
+  number          String       @unique
+  orderId         String
+  order           Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  kind            ReturnKind
+  status          ReturnStatus @default(REQUESTED)
+  /// a RETURN_REASONS key (packages/shared)
+  reason          String
+  details         String       @default("")
+  /// where a refund for a cash-on-delivery order goes
+  refundUpi       String?
+  /// shown to the customer: what happens next, or why it was declined
+  studioNote      String?
+  pickupCourier   String?
+  pickupAwb       String?
+  exchangeCourier String?
+  exchangeAwb     String?
+  refundPaise     Int          @default(0)
+  refundReference String?
+  /// the returned pieces went back into stock
+  restocked       Boolean      @default(false)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  approvedAt      DateTime?
+  receivedAt      DateTime?
+  closedAt        DateTime?
+  items           ReturnItem[]
+  photos          Upload[]
+
+  @@index([orderId])
+  @@index([status, createdAt])
+}
+
+model ReturnItem {
+  id                String        @id @default(cuid())
+  returnId          String
+  request           ReturnRequest @relation(fields: [returnId], references: [id], onDelete: Cascade)
+  orderItemId       String
+  orderItem         OrderItem     @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
+  qty               Int
+  /// exchanges: the variant sent instead (another size, or the same one as a replacement)
+  exchangeVariantId String?
+  exchangeLabel     String?
+  /// stock set aside for the replacement; given back if the request ends without a swap
+  stockReserved     Int           @default(0)
+
+  @@index([returnId])
+  @@index([orderItemId])
+}
+
+/**
  * ================= files, proofs and stitch files =================
  */
 
@@ -556,30 +640,35 @@ enum UploadKind {
   STITCH_FILE
   STITCH_PREVIEW
   INVOICE
+  RETURN_PHOTO
 }
 
 model Upload {
-  id           String     @id @default(cuid())
-  kind         UploadKind
+  id            String         @id @default(cuid())
+  kind          UploadKind
   /// storage key, e.g. "private/logo/ck…/file.png" or "public/products/ck….webp"
-  key          String     @unique
-  mime         String
-  bytes        Int
-  width        Int?
-  height       Int?
-  originalName String?
-  sha256       String
-  isPublic     Boolean    @default(false)
-  customerId   String?
-  customer     Customer?  @relation(fields: [customerId], references: [id], onDelete: SetNull)
-  orderItemId  String?
-  orderItem    OrderItem? @relation(fields: [orderItemId], references: [id], onDelete: SetNull)
-  createdAt    DateTime   @default(now())
-  attachedAt   DateTime?
-  invoice      Invoice?
-  proofs       Proof[]
+  key           String         @unique
+  mime          String
+  bytes         Int
+  width         Int?
+  height        Int?
+  originalName  String?
+  sha256        String
+  isPublic      Boolean        @default(false)
+  customerId    String?
+  customer      Customer?      @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  orderItemId   String?
+  orderItem     OrderItem?     @relation(fields: [orderItemId], references: [id], onDelete: SetNull)
+  /// photos a customer adds to a return request
+  returnId      String?
+  returnRequest ReturnRequest? @relation(fields: [returnId], references: [id], onDelete: SetNull)
+  createdAt     DateTime       @default(now())
+  attachedAt    DateTime?
+  invoice       Invoice?
+  proofs        Proof[]
 
   @@index([orderItemId])
+  @@index([returnId])
   @@index([attachedAt, createdAt])
 }
 

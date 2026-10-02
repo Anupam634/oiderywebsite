@@ -1,12 +1,14 @@
 'use client';
 import Link from 'next/link';
-import { useState, type ReactNode } from 'react';
+import { useState } from 'react';
 import {
   COURIERS,
   FLOWER_PRESETS,
   FONT_LABEL,
   PAY_METHOD_LABEL,
   PRODUCTION_LABEL,
+  RETURN_KIND_LABEL,
+  RETURN_STATUS_LABEL,
   STUDIO_PLACEMENTS,
   THREAD_LABEL,
   formatPhone,
@@ -23,7 +25,7 @@ import { adminApi, useAdmin } from '@/lib/admin-api';
 import { media } from '@/lib/media';
 import { ui } from '@/lib/store';
 import { Chat } from '../icons';
-import { Loading, PageHead, Pill, dayTime, label, rupees, useLoad } from './ui';
+import { Loading, ModalCard, PageHead, Pill, dayTime, label, rupees, useLoad } from './ui';
 
 type Modal = 'ship' | 'cancel' | 'refund' | null;
 
@@ -86,6 +88,17 @@ export function OrderDetail({ number }: { number: string }) {
               ))}
             </div>
           </div>
+          {o.returns.length > 0 && (
+            <div className="panel">
+              <h2>Returns &amp; exchanges</h2>
+              {o.returns.map((r) => (
+                <div key={r.number} className="row" style={{ justifyContent: 'space-between', marginBottom: 6 }}>
+                  <span><Link href={`/admin/returns/${r.number}`}><b>{r.number}</b></Link> · {RETURN_KIND_LABEL[r.kind]} · {r.items.reduce((n, i) => n + i.qty, 0)} piece(s)</span>
+                  <span>{RETURN_STATUS_LABEL[r.status]}</span>
+                </div>
+              ))}
+            </div>
+          )}
           <Timeline o={o} act={act} busy={busy} />
         </div>
         <div>
@@ -289,17 +302,6 @@ function Notes({ o, act }: { o: AdminOrderDetail; act: Act }) {
       <h2>Studio notes</h2>
       <label className="f"><span>Only the team sees these</span><textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Thread brand codes, packing notes, call summary…" /></label>
       <button className="btn line sm" style={{ marginTop: 8 }} type="button" disabled={notes === (o.adminNotes ?? '')} onClick={() => void act(() => adminApi.notes(o.number, notes), 'Notes saved')}>Save notes</button>
-    </div>
-  );
-}
-
-function ModalCard({ title, children, onClose }: { title: string; children: ReactNode; onClose: () => void }) {
-  return (
-    <div className="dialog" role="dialog" aria-modal="true" aria-label={title} onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="panel">
-        <h2>{title}</h2>
-        {children}
-      </div>
     </div>
   );
 }

@@ -390,7 +390,7 @@ export class OrderService {
     return o;
   }
 
-  async refund(o: FullOrder, amountPaise: number, reason: string, opts: { actor: Actor; adminId?: string | null; notify?: boolean }) {
+  async refund(o: FullOrder, amountPaise: number, reason: string, opts: { actor: Actor; adminId?: string | null; notify?: boolean; returnId?: string }) {
     if (amountPaise <= 0) throw new AppError(400, 'bad_amount', 'Nothing to refund');
     if (amountPaise > o.totalPaise - o.refundedPaise) throw new AppError(400, 'bad_amount', `You can refund up to ${formatINR(o.totalPaise - o.refundedPaise)}`);
     const pay = o.payments.find((p) => p.status === 'CAPTURED' && p.providerPaymentId);
@@ -398,12 +398,13 @@ export class OrderService {
     const r = await this.gateway.refund(pay.providerPaymentId!, amountPaise, { order: o.number, reason: reason.slice(0, 200) });
     const total = o.refundedPaise + amountPaise;
     await this.db.$transaction([
-      this.db.refund.create({ data: { orderId: o.id, paymentId: pay.id, amountPaise, reason, providerRefundId: r.providerRefundId, status: r.status, createdById: opts.adminId ?? null } }),
+      this.db.refund.create({ data: { orderId: o.id, paymentId: pay.id, amountPaise, reason, providerRefundId: r.providerRefundId, status: r.status, returnId: opts.returnId ?? null, createdById: opts.adminId ?? null } }),
       this.db.order.update({ where: { id: o.id }, data: { refundedPaise: total, paymentState: total >= o.totalPaise ? 'REFUNDED' : 'PARTIALLY_REFUNDED' } }),
       this.db.orderEvent.create({ data: { orderId: o.id, type: 'refund', message: `Refund of ${formatINR(amountPaise)} started`, actor: opts.actor, adminId: opts.adminId ?? null } }),
       ...(total >= o.totalPaise ? [this.db.payment.update({ where: { id: pay.id }, data: { status: 'REFUNDED' } })] : []),
     ]);
     if (opts.notify !== false) void this.notify.refunded(o, amountPaise);
+    return { providerRefundId: r.providerRefundId, status: r.status };
   }
 
   /* ---------------- housekeeping ---------------- */

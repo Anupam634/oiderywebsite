@@ -17,6 +17,8 @@ export function Dashboard() {
     { n: d.todo.proofsToMake, t: 'Proofs to make', href: '/admin/production?status=AWAITING_PROOF' },
     { n: d.todo.changesRequested, t: 'Proofs with changes', href: '/admin/production?status=CHANGES_REQUESTED' },
     { n: d.todo.toShip, t: 'Orders ready to ship', href: '/admin/orders?status=OPEN' },
+    { n: d.todo.returnsToReview, t: 'Return requests to review', href: '/admin/returns' },
+    { n: d.todo.returnsInProgress, t: 'Returns in progress', href: '/admin/returns' },
     { n: d.todo.awaitingCustomer, t: 'Proofs waiting on customers', href: '/admin/production?status=PROOF_SENT' },
     { n: d.todo.reviewsToCheck, t: 'Reviews to check', href: '/admin/reviews' },
     { n: d.todo.unpaid, t: 'Checkouts waiting for payment', href: '/admin/orders?status=PENDING_PAYMENT' },

@@ -18,6 +18,7 @@ import { useMe } from '@/lib/session';
 import { ui } from '@/lib/store';
 import { usePayment } from '../checkout/Payment';
 import { Arrow, Chat, Check, Info, Truck } from '../icons';
+import { ReturnsSection } from './Returns';
 
 const day = (iso: string | null) => (iso ? new Date(iso).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' }) : '');
 const when = (iso: string) => new Date(iso).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' });
@@ -131,6 +132,7 @@ export function OrderView({ number }: { number: string }) {
           <div className="acts">
             {o.invoice && <a className="btn btn-ink" href={media(o.invoice.url)} target="_blank" rel="noopener">GST invoice</a>}
             {o.canCancel && o.status !== 'PENDING_PAYMENT' && <button className="btn" type="button" style={{ border: '1.5px solid var(--line)' }} disabled={busy} onClick={() => void cancel()}>Cancel order</button>}
+            {o.returnOptions?.open && <a className="btn" href="#returns" style={{ border: '1.5px solid var(--line)' }}>Return or exchange</a>}
           </div>
         </div>
       )}
@@ -192,6 +194,7 @@ export function OrderView({ number }: { number: string }) {
               ))}
             </div>
           </section>
+          <ReturnsSection order={o} onChange={setO} />
           {o.tracking && (
             <section className="co-card">
               <div className="co-h"><span className="n"><Truck /></span><h2>Tracking</h2></div>

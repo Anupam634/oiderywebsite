@@ -55,3 +55,14 @@ export function useLoad<T>(fn: () => Promise<T>, deps: unknown[]) {
 export function Loading() {
   return <div className="panel blank" aria-busy="true">Loading…</div>;
 }
+
+export function ModalCard({ title, children, onClose }: { title: string; children: ReactNode; onClose: () => void }) {
+  return (
+    <div className="dialog" role="dialog" aria-modal="true" aria-label={title} onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="panel">
+        <h2>{title}</h2>
+        {children}
+      </div>
+    </div>
+  );
+}

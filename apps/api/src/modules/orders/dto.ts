@@ -1,4 +1,4 @@
-import type { OrderDto, OrderItemDto, OrderSummaryDto, ProductionStatus } from '@store/shared';
+import type { OrderDto, OrderItemDto, OrderSummaryDto, ProductionStatus, ReturnDto, ReturnReason } from '@store/shared';
 import type { Prisma } from '../../generated/prisma/client.ts';
 import type { Files } from '../files/service.ts';
 
@@ -15,6 +15,7 @@ export const orderInclude = {
   invoice: true,
   payments: { orderBy: { createdAt: 'desc' } },
   refunds: { orderBy: { createdAt: 'desc' } },
+  returns: { orderBy: { createdAt: 'desc' }, include: { items: true, photos: { select: { id: true } } } },
 } satisfies Prisma.OrderInclude;
 export type FullOrder = Prisma.OrderGetPayload<{ include: typeof orderInclude }>;
 export type FullItem = FullOrder['items'][number];
@@ -46,6 +47,35 @@ export function toItemDto(i: FullItem, files: Files): OrderItemDto {
     proof: p ? { status: p.status, token: p.token, version: p.version, sentAt: p.sentAt.toISOString() } : null,
     canReview: false,
     reviewed: false,
+  };
+}
+
+export type FullReturn = FullOrder['returns'][number];
+
+export function toReturnDto(r: FullReturn, items: FullItem[], files: Files): ReturnDto {
+  const iso = (d: Date | null) => d?.toISOString() ?? null;
+  return {
+    number: r.number,
+    kind: r.kind,
+    status: r.status,
+    reason: r.reason as ReturnReason,
+    details: r.details,
+    items: r.items.map((ri) => {
+      const i = items.find((x) => x.id === ri.orderItemId);
+      return { orderItemId: ri.orderItemId, name: i?.name ?? 'Piece', description: i?.description ?? '', image: i ? itemImage(i, files) : null, qty: ri.qty, exchangeLabel: ri.exchangeLabel };
+    }),
+    photos: r.photos.map((p) => files.signedPath(p.id, 7)),
+    studioNote: r.studioNote,
+    pickup: r.pickupCourier || r.pickupAwb ? { courier: r.pickupCourier, awb: r.pickupAwb } : null,
+    replacement: r.exchangeCourier || r.exchangeAwb ? { courier: r.exchangeCourier, awb: r.exchangeAwb } : null,
+    refundPaise: r.refundPaise,
+    refundReference: r.refundReference,
+    refundUpi: r.refundUpi,
+    createdAt: r.createdAt.toISOString(),
+    approvedAt: iso(r.approvedAt),
+    receivedAt: iso(r.receivedAt),
+    closedAt: iso(r.closedAt),
+    canCancel: r.status === 'REQUESTED',
   };
 }
 
@@ -91,6 +121,9 @@ export function toOrderDto(o: FullOrder, files: Files, pendingMinutes: number): 
     invoice: o.invoice?.pdfUploadId ? { number: o.invoice.number, url: files.signedPath(o.invoice.pdfUploadId, 7) } : null,
     canCancel: canCustomerCancel(o),
     canPay: o.status === 'PENDING_PAYMENT' && Date.now() - o.createdAt.getTime() < pendingMinutes * 60_000,
+    returns: o.returns.map((r) => toReturnDto(r, o.items, files)),
+    // filled in by the account route, which knows the shop's return settings
+    returnOptions: null,
     placedAt: iso(o.placedAt),
     paidAt: iso(o.paidAt),
     shippedAt: iso(o.shippedAt),

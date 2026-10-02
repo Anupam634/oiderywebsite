@@ -23,6 +23,7 @@ export const IMAGE_RULES: Partial<Record<UploadKind, ImageRule>> = {
   PROOF: { maxBytes: 20 << 20, maxPx: 2400, format: 'jpeg', quality: 90 },
   PRODUCT_IMAGE: { maxBytes: 25 << 20, maxPx: 2400, format: 'webp', quality: 86 },
   STITCH_PREVIEW: { maxBytes: 10 << 20, maxPx: 2000, format: 'png' },
+  RETURN_PHOTO: { maxBytes: 15 << 20, maxPx: 2000, format: 'jpeg', quality: 85 },
 };
 const MIME = { png: 'image/png', jpeg: 'image/jpeg', webp: 'image/webp' } as const;
 const EXT = { png: 'png', jpeg: 'jpg', webp: 'webp' } as const;

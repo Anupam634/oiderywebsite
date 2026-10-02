@@ -11,9 +11,12 @@ export async function cleanUp(db: Db, files: Files) {
   const now = Date.now();
   const sessions = await db.session.deleteMany({ where: { expiresAt: { lt: new Date(now) } } });
   const otps = await db.otpChallenge.deleteMany({ where: { createdAt: { lt: new Date(now - 2 * 86_400_000) } } });
-  // files shoppers uploaded for a bag they never ordered
+  // files shoppers uploaded for a bag they never ordered, or for a return they never sent
   const orphans = await db.upload.findMany({
-    where: { orderItemId: null, kind: { in: ['LOGO', 'PET_PHOTO', 'PREVIEW'] }, createdAt: { lt: new Date(now - ORPHAN_UPLOAD_DAYS * 86_400_000) } },
+    where: {
+      createdAt: { lt: new Date(now - ORPHAN_UPLOAD_DAYS * 86_400_000) },
+      OR: [{ orderItemId: null, kind: { in: ['LOGO', 'PET_PHOTO', 'PREVIEW'] } }, { returnId: null, kind: 'RETURN_PHOTO' }],
+    },
     select: { id: true, key: true },
     take: 500,
   });

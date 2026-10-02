@@ -1,4 +1,5 @@
 /* Orders as the API returns them to the storefront and the admin. Money in paise, dates as ISO strings. */
+import type { ReturnDto, ReturnOptions } from './returns';
 
 export type OrderStatus = 'PENDING_PAYMENT' | 'PLACED' | 'IN_PRODUCTION' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
 export type PaymentState = 'PENDING' | 'PAID' | 'COD_PENDING' | 'REFUNDED' | 'PARTIALLY_REFUNDED';
@@ -128,6 +129,10 @@ export interface OrderDto extends OrderSummaryDto {
   canCancel: boolean;
   /** waiting for payment and still within the payment window */
   canPay: boolean;
+  /** return and exchange requests, newest first */
+  returns: ReturnDto[];
+  /** delivered orders: what can still be returned or exchanged */
+  returnOptions: ReturnOptions | null;
   placedAt: string | null;
   paidAt: string | null;
   shippedAt: string | null;
