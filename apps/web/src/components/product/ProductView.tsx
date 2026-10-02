@@ -21,6 +21,7 @@ import { photo } from '@/lib/img';
 import { media } from '@/lib/media';
 import { NAME_FONT_CSS } from '@/lib/stitch';
 import { cart, ui, useWishlist, wishlist } from '@/lib/store';
+import { rememberViewed } from '@/lib/recent';
 import { track } from '@/lib/track';
 import { Bag, Check, Eye, Heart, Info, Spark } from '../icons';
 import { Gallery, type GalleryItem } from './Gallery';
@@ -71,7 +72,10 @@ export function ProductView({ p }: { p: ProductDetail }) {
   const maxQty = p.isUnique ? 1 : variant.trackStock ? Math.min(10, variant.stock) : 10;
 
   useEffect(() => setSi(Math.min(si, sizes.length - 1)), [ci]); // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(() => track.viewItem({ id: p.slug, name: p.name, pricePaise: p.pricePaise, qty: 1 }), [p.slug]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    track.viewItem({ id: p.slug, name: p.name, pricePaise: p.pricePaise, qty: 1 });
+    rememberViewed(p);
+  }, [p.slug]); // eslint-disable-line react-hooks/exhaustive-deps
 
   /* gallery: live renders first for personalised pieces */
   const items: GalleryItem[] = live

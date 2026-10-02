@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import { BRAND, FREE_SHIPPING_MIN_PAISE, formatINR, type CategoryNode, type ProductCard } from '@store/shared';
+import { BRAND, FREE_SHIPPING_MIN_PAISE, RULES, formatINR, type CategoryNode, type ProductCard } from '@store/shared';
 import { api } from '@/lib/api';
 import { categoryHref, productHref, SHOP_LINKS } from '@/lib/links';
 import { photo, SIZES } from '@/lib/img';
@@ -10,7 +10,7 @@ import { useMe } from '@/lib/session';
 import { cart, lineTotal, ui, useCart, useWishlist, wishlist } from '@/lib/store';
 import { addCardToBag } from './ProductCard';
 import { SearchRow, useSuggestions } from './HeaderClient';
-import { Bag, Chat, Check, Close, Search } from './icons';
+import { Bag, Chat, Check, Close, Plus, Search } from './icons';
 
 type Panel = 'cart' | 'wish' | 'search' | 'menu' | null;
 
@@ -46,11 +46,42 @@ export function Overlays({ categories }: { categories: CategoryNode[] }) {
       <WishDrawer open={panel === 'wish'} onClose={close} />
       {panel === 'search' && <SearchOverlay onClose={close} />}
       {panel === 'menu' && <MobileMenu categories={categories} onClose={close} />}
-      <div className={`toast${toast ? ' on' : ''}`} role="status" aria-live="polite">
+      <div className={`toast${toast ? ' on' : ''}${panel === 'cart' || panel === 'wish' ? ' over-drawer' : ''}`} role="status" aria-live="polite">
         <i><Check stroke="#fff" strokeWidth={3} /></i>
         <span>{toast?.msg}</span>
       </div>
     </>
+  );
+}
+
+/** a few pieces to suggest in the bag: popular ones that aren't in it yet, one-tap ones first */
+function useBagPicks(open: boolean, bagSlugs: string) {
+  const [cards, setCards] = useState<ProductCard[] | null>(null);
+  useEffect(() => {
+    if (!open || cards) return;
+    api.products('pageSize=24').then((r) => setCards(r.items)).catch(() => setCards([]));
+  }, [open, cards]);
+  return useMemo(() => {
+    const inBag = new Set(bagSlugs.split(','));
+    return (cards ?? []).filter((c) => !inBag.has(c.slug)).sort((a, b) => Number(oneTap(b)) - Number(oneTap(a))).slice(0, 6);
+  }, [cards, bagSlugs]);
+}
+const oneTap = (c: ProductCard) => !!c.defaultVariantId && !c.needsSize && !c.personalisable && !c.studio;
+
+function PickCard({ p, onClose }: { p: ProductCard; onClose: () => void }) {
+  const href = productHref(p);
+  const act = p.studio ? 'Add your logo' : p.personalisable ? 'Personalise' : p.needsSize ? 'Choose size' : '';
+  return (
+    <div className="bag-pick">
+      <Link className="bag-pick-img" href={href} onClick={onClose} tabIndex={-1} aria-hidden="true"><img {...photo(p.image.path, '', { sizes: 124 })} /></Link>
+      <Link className="bag-pick-name" href={href} onClick={onClose}>{p.name}</Link>
+      <span className="bag-pick-price">{p.mrpPaise ? formatINR(p.pricePaise) : `From ${formatINR(p.pricePaise)}`}</span>
+      {oneTap(p) ? (
+        <button className="bag-pick-btn" type="button" aria-label={`Add ${p.name} to the bag`} onClick={() => addCardToBag(p)}><Plus />Add</button>
+      ) : (
+        <Link className="bag-pick-btn bag-pick-link" href={href} onClick={onClose}>{act || 'View'}</Link>
+      )}
+    </div>
   );
 }
 
@@ -60,6 +91,8 @@ function CartDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
   const sub = lines.reduce((a, l) => a + lineTotal(l), 0);
   const left = Math.max(0, FREE_SHIPPING_MIN_PAISE - sub);
   const hasCustom = lines.some((l) => l.custom);
+  const picks = useBagPicks(open, lines.map((l) => l.slug).join(','));
+  const pct = RULES.buyTwoPercent;
   return (
     <aside className={`drawer${open ? ' on' : ''}`} aria-label="Shopping bag" aria-hidden={!open}>
       <div className="dh"><h3>Your bag</h3><button className="ib" type="button" aria-label="Close bag" onClick={onClose}><Close /></button></div>
@@ -67,6 +100,16 @@ function CartDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
         {count ? left ? <>You&apos;re <b>{formatINR(left)}</b> away from free shipping</> : <b>Free shipping unlocked!</b> : 'Free shipping on orders above ₹999'}
         <div className="bar"><i style={{ width: `${Math.min(100, (sub / FREE_SHIPPING_MIN_PAISE) * 100)}%` }} /></div>
       </div>
+      {count > 0 && (
+        // the store's "buy 2, get 10% off" (checkout applies it, or a better coupon)
+        <div className={`bag-offer${count >= 2 ? ' on' : ''}`} role="status">
+          {count >= 2 ? (
+            <><Check /><span><b>Buy 2, get {pct}% off</b> is on: about {formatINR(Math.round((sub * pct) / 100))} off at checkout</span></>
+          ) : (
+            <><i aria-hidden="true">%</i><span>Add <b>1 more piece</b> and get <b>{pct}% off</b> your whole bag</span></>
+          )}
+        </div>
+      )}
       <div className="items">
         {count ? (
           lines.map((l) => (
@@ -91,6 +134,12 @@ function CartDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
           ))
         ) : (
           <div className="empty">Your bag is empty. Let’s find something colourful.</div>
+        )}
+        {picks.length > 0 && (
+          <section className="bag-picks" aria-label="Suggestions">
+            <h4>{count === 0 ? 'Popular right now' : count === 1 ? `Add one more, save ${pct}%` : 'You might also like'}</h4>
+            <div className="bag-pick-row">{picks.map((p) => <PickCard key={p.id} p={p} onClose={onClose} />)}</div>
+          </section>
         )}
       </div>
       <div className="df">

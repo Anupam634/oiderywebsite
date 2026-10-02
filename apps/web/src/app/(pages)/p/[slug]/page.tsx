@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 import { BRAND } from '@store/shared';
 import { ProductView } from '@/components/product/ProductView';
+import { RecentlyViewed } from '@/components/RecentlyViewed';
 import { api } from '@/lib/api';
 import { productHref } from '@/lib/links';
 import { media } from '@/lib/media';
@@ -45,6 +46,7 @@ export default async function ProductPage({ params }: Props) {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }} />
       <ProductView p={p} />
+      <RecentlyViewed exclude={p.slug} />
     </>
   );
 }

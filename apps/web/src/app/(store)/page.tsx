@@ -4,6 +4,7 @@ import { HeroCarousel } from '@/components/home/HeroCarousel';
 import { Newsletter, Offers } from '@/components/home/Offers';
 import { Rail } from '@/components/home/Rail';
 import { Arrow, Cash, Chat, Eye, Swap, Truck } from '@/components/icons';
+import { RecentlyViewed } from '@/components/RecentlyViewed';
 import { api } from '@/lib/api';
 import { getCategories } from '@/lib/catalog';
 import { categoryHref, productHref, SHOP_LINKS } from '@/lib/links';
@@ -61,6 +62,7 @@ export default async function HomePage() {
 
       <Rail title="Bestsellers" sub="Most loved this festive season" href={SHOP_LINKS.all} items={best} />
       <Offers />
+      <RecentlyViewed />
 
       <section className="wrap duo sx" aria-label="Featured">
         <Link className="duo-b d1" href="/p/phoolwari-name-tote">
