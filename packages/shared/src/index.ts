@@ -2,6 +2,7 @@ export * from './brand';
 export * from './money';
 export * from './catalog/constants';
 export * from './catalog/types';
+export * from './catalog/params';
 export * from './catalog/query';
 export * from './catalog/filter';
 export * from './cart/pricing';

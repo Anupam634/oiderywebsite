@@ -53,14 +53,14 @@
 .st.PLACED{background:#FDE7F3;color:#BE0068}
 .st.IN_PRODUCTION{background:#EDE9FF;color:#3D2BD6}
 .st.SHIPPED{background:#E0F5F3;color:#00756F}
-.st.DELIVERED{background:#E9F7EC;color:#23863A}
+.st.DELIVERED{background:#E9F7EC;color:#217E36}
 .st.CANCELLED{background:#F1F1F3;color:#6B6478}
 
 .addrs{display:grid;gap:10px}
 .addr{position:relative;padding:16px 16px 14px;border-radius:20px;border:1.5px solid var(--line);background:#fff;font-size:14px;line-height:1.5;color:var(--ink-2)}
 .addr b{color:var(--ink);font-size:15px}
 .addr .tag{display:inline-block;margin-left:8px;padding:2px 9px;border-radius:999px;background:#F1ECF6;font-size:11px;font-weight:800;color:var(--ink-2);vertical-align:middle}
-.addr .tag.def{background:#E9F7EC;color:#23863A}
+.addr .tag.def{background:#E9F7EC;color:#217E36}
 .addr .acts{display:flex;gap:14px;margin-top:10px;font-size:13px}
 .addr.pick{cursor:pointer;padding-left:48px;transition:border-color var(--d2),box-shadow var(--d2)}
 .addr.pick::before{content:'';position:absolute;left:16px;top:18px;width:20px;height:20px;border-radius:50%;border:2px solid #CFC4DB;background:#fff}
@@ -94,7 +94,7 @@
 .oitem .pp{font-weight:800;white-space:nowrap}
 .prod{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:5px 11px;border-radius:999px;background:#EDE9FF;color:#3D2BD6;font-size:12px;font-weight:800}
 .prod.attn{background:#FFF1E0;color:#B45309}
-.prod.ok{background:#E9F7EC;color:#23863A}
+.prod.ok{background:#E9F7EC;color:#217E36}
 .prod a{text-decoration:underline}
 .opay svg{width:20px;height:20px;flex:none}
 .opay{display:flex;gap:12px;align-items:center;padding:14px 16px;border-radius:18px;background:#FFF1E0;border:1px solid #FED7AA;margin-bottom:16px;font-weight:650;color:#9A3412}

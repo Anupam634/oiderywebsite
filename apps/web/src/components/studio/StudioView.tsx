@@ -46,8 +46,10 @@ import {
   type StudioSize,
 } from '@store/shared';
 import { api, ApiError } from '@/lib/api';
+import { photo } from '@/lib/img';
 import { cart, ui } from '@/lib/store';
 import { engine, NAME_FONT_CSS } from '@/lib/stitch';
+import { analyseOffThread } from '@/lib/stitch-worker';
 import { Bag, Chat, Check, ChevronDown, Eye, Info } from '../icons';
 
 type How = 'upload' | 'make';
@@ -148,14 +150,16 @@ export function StudioView({ start }: { start: StudioStart }) {
     setBusy('Matching your colours to real threads…');
     const t = setTimeout(() => {
       if (my !== job.current) return;
-      const r = engine.analyse(src.img, { bgOn, k: k.n, auto: k.auto });
-      setBusy(null);
-      if (isAnalyseError(r)) return setFileWarn(r.err);
-      setFileWarn('');
-      D.current = r;
-      setLabel(src.file);
-      if (k.auto) setK({ n: r.k, auto: true });
-      bump();
+      analyseOffThread(src.img, { bgOn, k: k.n, auto: k.auto }).then((r) => {
+        if (my !== job.current) return;
+        setBusy(null);
+        if (isAnalyseError(r)) return setFileWarn(r.err);
+        setFileWarn('');
+        D.current = r;
+        setLabel(src.file);
+        if (k.auto) setK({ n: r.k, auto: true });
+        bump();
+      });
     }, 40);
     return () => clearTimeout(t);
   }, [how, src, bgOn, k.n, k.auto, motif, mhex, debouncedName, font, thex, fontsReady]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -487,7 +491,7 @@ export function StudioView({ start }: { start: StudioStart }) {
           <div className="up-garments" role="group" aria-label="Choose a garment">
             {STUDIO_GARMENTS.map((x) => (
               <button key={x.id} type="button" className="up-g" aria-pressed={x.id === g.id} onClick={() => pickGarment(x.id)}>
-                <img alt="" src={engine.garmentUrls(x.views[0]![0] as GarmentView).photo} /><span>{x.name}</span><small>from {formatINR(x.pricePaise)}</small>
+                <img {...photo(engine.garmentUrls(x.views[0]![0] as GarmentView).photo, '', { sizes: '(max-width: 760px) 30vw, 140px', width: 900, height: 1125, eager: true })} /><span>{x.name}</span><small>from {formatINR(x.pricePaise)}</small>
               </button>
             ))}
           </div>
@@ -508,10 +512,10 @@ export function StudioView({ start }: { start: StudioStart }) {
         <div className="up-right">
           <div className="up-panel">
             <div className="step">
-              <h4><span>1</span>Your design<small>{fileTag}</small></h4>
+              <h2><span>1</span>Your design<small>{fileTag}</small></h2>
               <div className="seg up-modes" role="tablist" aria-label="How do you want to start?">
-                <button type="button" role="tab" aria-pressed={how === 'upload'} aria-selected={how === 'upload'} onClick={() => switchHow('upload')}>Upload a logo</button>
-                <button type="button" role="tab" aria-pressed={how === 'make'} aria-selected={how === 'make'} onClick={() => switchHow('make')}>Motif &amp; name</button>
+                <button type="button" role="tab" aria-selected={how === 'upload'} onClick={() => switchHow('upload')}>Upload a logo</button>
+                <button type="button" role="tab" aria-selected={how === 'make'} onClick={() => switchHow('make')}>Motif &amp; name</button>
               </div>
               {how === 'upload' ? (
                 <div>
@@ -561,16 +565,16 @@ export function StudioView({ start }: { start: StudioStart }) {
             </div>
 
             <div className="step">
-              <h4><span>2</span>Thread colours<small>{design ? `${threadsUsed} thread colour${threadsUsed > 1 ? 's' : ''}` : ''}</small></h4>
+              <h2><span>2</span>Thread colours<small>{design ? `${threadsUsed} thread colour${threadsUsed > 1 ? 's' : ''}` : ''}</small></h2>
               <div className="up-threads">
                 {design ? (
                   design.threads.map((t, i) => {
                     const dropped = design.drop.has(i);
                     return (
                       <button key={i} type="button" className="up-th" data-dropped={dropped} style={{ ['--c' as string]: TPAL[t]![1] }}
-                        aria-label={`Thread ${i + 1}: ${TPAL[t]![0]}${dropped ? ', not stitched' : ''}. Change`}
+                        aria-label={`Thread ${i + 1}: ${TPAL[t]![0]} ${dropped ? 'not stitched' : `${Math.round((design.count0[i]! / c0) * 100)}%`}. Change`}
                         onClick={(e) => { e.stopPropagation(); const r = e.currentTarget.getBoundingClientRect(); setPop({ i, x: clamp(r.left + scrollX, 8, scrollX + innerWidth - 300), y: r.bottom + scrollY + 8 }); }}>
-                        <i />{TPAL[t]![0]}<small>{dropped ? 'not stitched' : `${Math.round((design.count0[i]! / c0) * 100)}%`}</small><ChevronDown strokeWidth={2.4} />
+                        <i />{TPAL[t]![0]}{' '}<small>{dropped ? 'not stitched' : `${Math.round((design.count0[i]! / c0) * 100)}%`}</small><ChevronDown strokeWidth={2.4} />
                       </button>
                     );
                   })
@@ -588,7 +592,7 @@ export function StudioView({ start }: { start: StudioStart }) {
             </div>
 
             <div className="step">
-              <h4><span>3</span>Placement &amp; size</h4>
+              <h2><span>3</span>Placement &amp; size</h2>
               <div className="seg up-places" role="group" aria-label="Placement">
                 {placesOf(view).map(([pk, pl]) => (
                   <button key={pk} type="button" aria-pressed={pk === place} onClick={() => { setPlace(pk); setSize(pl.d); setOff([0, 0]); }}>{pl.n}</button>
@@ -611,7 +615,7 @@ export function StudioView({ start }: { start: StudioStart }) {
             </div>
 
             <div className="step">
-              <h4><span>4</span>How many?<small>{qty} piece{qty === 1 ? '' : 's'}</small></h4>
+              <h2><span>4</span>How many?<small>{qty} piece{qty === 1 ? '' : 's'}</small></h2>
               <div className="up-mix">
                 {g.sizes ? (
                   STUDIO_SIZES.map((s) => (
@@ -656,7 +660,7 @@ export function StudioView({ start }: { start: StudioStart }) {
 
       {pop && design && (
         <div className="up-pop" role="dialog" aria-label="Choose a thread colour" style={{ left: pop.x, top: pop.y }}>
-          <h5>Thread {pop.i + 1} · pick a colour</h5>
+          <h3>Thread {pop.i + 1} · pick a colour</h3>
           {how === 'upload' && (
             <button type="button" className="up-drop-t" onClick={() => toggleDrop(pop.i)}>{design.drop.has(pop.i) ? 'Stitch this colour again' : 'Don’t stitch this colour (show the fabric)'}</button>
           )}

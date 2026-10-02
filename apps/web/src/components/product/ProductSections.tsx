@@ -1,6 +1,7 @@
 'use client';
 import { useRef, useState } from 'react';
 import { SIZE_GUIDES, type ProductDetail } from '@store/shared';
+import { photo as photoProps } from '@/lib/img';
 import { media } from '@/lib/media';
 import { ProductCard } from '../ProductCard';
 import { Cash, Check, Close, Gift, Lens, Plus, Swap, Truck } from '../icons';
@@ -21,8 +22,8 @@ export function ProductSections({ p, reviewShots, liveClose }: { p: ProductDetai
   const photoOf = (i: number) => {
     const r = reviews[i];
     if (!r) return null;
-    if (r.preview) return reviewShots[i] ?? media(p.image.path);
-    return r.photoPath ? media(r.photoPath) : null;
+    if (r.preview) return reviewShots[i] ?? p.image.path;
+    return r.photoPath ?? null;
   };
   const withPhoto = reviews.map((_, i) => i).filter((i) => photoOf(i));
   const shown = reviews.map((r, i) => ({ r, i })).filter(({ r, i }) => rf === 'all' || (rf === 'photo' && photoOf(i)) || (rf === '5' && r.rating === 5));
@@ -93,7 +94,7 @@ export function ProductSections({ p, reviewShots, liveClose }: { p: ProductDetai
               {withPhoto.length > 0 && (
                 <>
                   <div className="olabel">Photos from customers</div>
-                  <div className="photos">{withPhoto.map((i) => <button key={i} className="photo" type="button" aria-label={`Photo from ${reviews[i]!.authorName}`} onClick={() => setPhoto(i)}><img src={photoOf(i)!} alt="" loading="lazy" /><span>{reviews[i]!.authorName.split(' ')[0]}</span></button>)}</div>
+                  <div className="photos">{withPhoto.map((i) => <button key={i} className="photo" type="button" aria-label={`Photo from ${reviews[i]!.authorName}`} onClick={() => setPhoto(i)}><img {...photoProps(photoOf(i)!, '', { sizes: 118 })} /><span>{reviews[i]!.authorName.split(' ')[0]}</span></button>)}</div>
                 </>
               )}
               <div className="rfil">
@@ -105,7 +106,7 @@ export function ProductSections({ p, reviewShots, liveClose }: { p: ProductDetai
                     <div className="top"><span className="stars" aria-label={`${r.rating} out of 5 stars`}>{'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}</span><span className="who2">{r.authorName}<small>{r.city} · {new Date(r.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</small></span></div>
                     <div><span className="var">{variantOf(i)}</span></div>
                     <p>{r.body}</p>
-                    {photoOf(i) && <button className="rph" type="button" aria-label={`See the photo from ${r.authorName}`} onClick={() => setPhoto(i)}><img src={photoOf(i)!} alt="" loading="lazy" /></button>}
+                    {photoOf(i) && <button className="rph" type="button" aria-label={`See the photo from ${r.authorName}`} onClick={() => setPhoto(i)}><img {...photoProps(photoOf(i)!, '', { sizes: 84 })} /></button>}
                     <button className="help" type="button" aria-pressed={!!helpful[r.id]} onClick={() => setHelpful((h) => ({ ...h, [r.id]: !h[r.id] }))}><Check /><span>Helpful ({r.helpfulCount + (helpful[r.id] ? 1 : 0)})</span></button>
                   </article>
                 ))}
@@ -136,7 +137,7 @@ export function ProductSections({ p, reviewShots, liveClose }: { p: ProductDetai
           <div className="scrim on" onClick={() => setPhoto(null)} />
           <div className="box phbox">
             <div className="mh"><h3>Photo from {reviews[photo]!.authorName}</h3><button className="ib" type="button" aria-label="Close photo" onClick={() => setPhoto(null)}><Close /></button></div>
-            <div className="phimg"><img src={photoOf(photo)!} alt="" /></div>
+            <div className="phimg"><img {...photoProps(photoOf(photo)!, '', { sizes: '(max-width: 600px) 92vw, 520px', eager: true })} /></div>
             <p><b style={{ color: '#FFB300' }}>{'★'.repeat(reviews[photo]!.rating)}</b> {reviews[photo]!.body}</p>
             <p className="mut">{variantOf(photo)} · {reviews[photo]!.city}</p>
           </div>
@@ -172,7 +173,7 @@ function UpClose({ p, liveClose }: { p: ProductDetail; liveClose: HTMLCanvasElem
         }}
         onPointerLeave={() => setLens(null)}
       >
-        <img src={media(up.path)} alt={up.caption} loading="lazy" />
+        <img {...photoProps(up.path, up.caption, { sizes: '(max-width: 1000px) 92vw, 500px' })} />
         <span className="lens" aria-hidden="true" style={lens ? { left: lens.x, top: lens.y, backgroundImage: `url("${zoomSrc}")`, backgroundSize: `${lens.w * Z}px ${lens.h * Z}px`, backgroundPosition: `${-lens.x * Z + 95}px ${-lens.y * Z + 95}px` } : undefined} />
         <span className="hint" aria-hidden="true"><Lens />Hover to look closer</span>
       </div>

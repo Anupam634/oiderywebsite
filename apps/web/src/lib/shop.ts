@@ -1,12 +1,6 @@
-import { listingQuerySchema, listingToParams, OCCASIONS, PRICE_BUCKETS, type CategoryNode, type ListingQuery } from '@store/shared';
+import { listingToParams, OCCASIONS, PRICE_BUCKETS, type CategoryNode, type ListingQuery } from '@store/shared';
 
 /* Shop URLs: /shop/<cat>/<sub>?<filters>. A single sub-category lives in the path (good for SEO), the rest in the query. */
-
-export function parseShop(slug: string[] | undefined, search: Record<string, string | string[] | undefined>): ListingQuery {
-  const [cat, sub] = slug ?? [];
-  const flat = Object.fromEntries(Object.entries(search).map(([k, v]) => [k, Array.isArray(v) ? v.join(',') : v]));
-  return listingQuerySchema.parse({ ...flat, ...(cat ? { cat } : {}), ...(sub ? { sub: [sub, flat.sub].filter(Boolean).join(',') } : {}), pageSize: '60' });
-}
 
 export function shopHref(q: Partial<ListingQuery>): string {
   const { cat, sub = [], ...rest } = q;

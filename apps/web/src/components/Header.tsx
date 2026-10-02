@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type { CategoryNode } from '@store/shared';
 import { categoryHref, SHOP_LINKS } from '@/lib/links';
-import { media } from '@/lib/media';
+import { photo } from '@/lib/img';
 import { HeaderIcons, HeaderSearch, MenuButton, MobileSearchButton } from './HeaderClient';
 import { Logo } from './icons';
 
@@ -31,7 +31,7 @@ export function Header({ categories, showMobileSearch }: { categories: CategoryN
       <header className={`hdr${showMobileSearch ? ' has-msrow' : ''}`} id="nav">
         <div className="wrap hdr-in">
           <MenuButton />
-          <Link className="logo" href="/" aria-label="Home">
+          <Link className="logo" href="/" aria-label="taanka home">
             <Logo />
             taanka
           </Link>
@@ -41,24 +41,25 @@ export function Header({ categories, showMobileSearch }: { categories: CategoryN
               return (
                 <div className="mi" key={c.slug}>
                   <Link className="ml" href={categoryHref(c.slug)}>{c.name}</Link>
+                  {/* hidden until hover: no prefetching (it would fetch every listing on each page view) */}
                   <div className="mega">
                     <div className="mega-in">
                       <div>
                         <h6>Shop by type</h6>
-                        {c.children.map((s) => <Link key={s.slug} href={categoryHref(c.slug, s.slug)}>{s.name}</Link>)}
+                        {c.children.map((s) => <Link key={s.slug} prefetch={false} href={categoryHref(c.slug, s.slug)}>{s.name}</Link>)}
                         {c.slug === 'gifts' && (
                           <>
-                            <Link href={SHOP_LINKS.under999}>Gifts under ₹999</Link>
-                            <Link href={SHOP_LINKS.under1999}>Gifts under ₹1,999</Link>
+                            <Link prefetch={false} href={SHOP_LINKS.under999}>Gifts under ₹999</Link>
+                            <Link prefetch={false} href={SHOP_LINKS.under1999}>Gifts under ₹1,999</Link>
                           </>
                         )}
                       </div>
                       <div>
                         <h6>{c.slug === 'gifts' ? 'By occasion' : c.slug === 'home' ? 'Ideas' : 'Shop by need'}</h6>
-                        {IDEAS[c.slug]!.map(([label, h]) => <Link key={label} href={h}>{label}</Link>)}
+                        {IDEAS[c.slug]!.map(([label, h]) => <Link key={label} prefetch={false} href={h}>{label}</Link>)}
                       </div>
-                      <Link className="mfeat" href={href}>
-                        <img src={media(img)} alt="" loading="lazy" />
+                      <Link className="mfeat" prefetch={false} href={href}>
+                        <img {...photo(img, '', { sizes: 240 })} />
                         <span><b>{title}</b>{text}</span>
                       </Link>
                     </div>

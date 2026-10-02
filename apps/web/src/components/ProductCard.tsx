@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { formatINR, percentOff, type ProductCard as Card } from '@store/shared';
 import { productHref } from '@/lib/links';
-import { media } from '@/lib/media';
+import { photo, SIZES } from '@/lib/img';
 import { cart, ui, useWishlist, wishlist } from '@/lib/store';
 import { Bag, Heart, Lens, Plus, Spark } from './icons';
 
@@ -25,14 +25,15 @@ export function addCardToBag(p: Card) {
   ui.open('cart');
 }
 
+// the label is hidden on small cards, so the name says what the icon does and to which product
 function Quick({ p, href }: { p: Card; href: string }) {
-  if (p.studio) return <Link className="quick cz" href={href}><Spark /><span>Add your logo</span></Link>;
-  if (p.personalisable) return <Link className="quick cz" href={href}><Spark /><span>Personalise it</span></Link>;
-  if (p.needsSize) return <Link className="quick" href={href}><Plus /><span>Choose size</span></Link>;
-  return <button className="quick" type="button" onClick={() => addCardToBag(p)}><Bag /><span>Add to bag</span></button>;
+  if (p.studio) return <Link className="quick cz" href={href} aria-label={`Add your logo: ${p.name}`}><Spark /><span>Add your logo</span></Link>;
+  if (p.personalisable) return <Link className="quick cz" href={href} aria-label={`Personalise it: ${p.name}`}><Spark /><span>Personalise it</span></Link>;
+  if (p.needsSize) return <Link className="quick" href={href} aria-label={`Choose size: ${p.name}`}><Plus /><span>Choose size</span></Link>;
+  return <button className="quick" type="button" aria-label={`Add to bag: ${p.name}`} onClick={() => addCardToBag(p)}><Bag /><span>Add to bag</span></button>;
 }
 
-export function ProductCard({ p, index = 0, priority = false }: { p: Card; index?: number; priority?: boolean }) {
+export function ProductCard({ p, index = 0, priority = false, sizes = SIZES.card }: { p: Card; index?: number; priority?: boolean; sizes?: string }) {
   const href = productHref(p);
   const saved = useWishlist().includes(p.slug);
   const [zoomed, setZoomed] = useState(false);
@@ -42,8 +43,8 @@ export function ProductCard({ p, index = 0, priority = false }: { p: Card; index
     <article className={`card in${zoomed ? ' zoomed' : ''}`} data-id={p.slug} style={{ ['--rd' as string]: `${(index % 5) * 0.05}s` }}>
       <div className="art">
         <Link className="artlink" href={href} aria-label={p.name}>
-          <img className="ph1" src={media(p.image.path)} alt={p.image.alt} width={800} height={1000} loading={priority ? 'eager' : 'lazy'} decoding="async" />
-          {p.hoverImage && <img className="ph2" src={media(p.hoverImage.path)} alt="" width={800} height={1000} loading="lazy" decoding="async" />}
+          <img className="ph1" {...photo(p.image.path, p.image.alt, { sizes, priority })} />
+          {p.hoverImage && <img className="ph2" {...photo(p.hoverImage.path, '', { sizes })} />}
         </Link>
         {p.badge && <span className={`badge bg-${p.badge.tone}`}>{p.badge.text}</span>}
         <button
@@ -75,7 +76,7 @@ export function ProductCard({ p, index = 0, priority = false }: { p: Card; index
         )}
         <div className="meta">
           {p.swatches.length ? (
-            <span className="dots" aria-label={`${p.swatches.length} colours`}>{p.swatches.map((c) => <i key={c} style={{ background: c }} />)}</span>
+            <span className="dots" role="img" aria-label={`${p.swatches.length} colours`}>{p.swatches.map((c) => <i key={c} style={{ background: c }} />)}</span>
           ) : (
             <span className={`ship1${p.shipNote ? ' slow' : ''}`}>{p.shipNote ?? 'Ships in 1–2 days'}</span>
           )}

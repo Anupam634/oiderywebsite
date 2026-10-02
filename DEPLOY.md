@@ -60,7 +60,8 @@ Two ways to host:
 4. **Storefront on Vercel**: import the repository, root directory `apps/web`, framework Next.js.
    Install command `pnpm install`, build command `cd ../.. && pnpm turbo run build --filter=@store/web`.
    Environment: `API_URL=https://api.<domain>`, `PROXY_KEY` (same as the API), `NEXT_PUBLIC_SITE_URL=https://<domain>`,
-   `NEXT_PUBLIC_INDEXABLE=0` until launch. Add the domain.
+   `NEXT_PUBLIC_INDEXABLE=0` until launch. If product photos live on a public R2 bucket (`S3_PUBLIC_URL`), also set
+   `NEXT_PUBLIC_IMAGE_HOSTS=media.<domain>` so the storefront can resize them. Add the domain.
 5. **Razorpay**: start with **test keys** (`PAYMENTS_PROVIDER=razorpay`, test key id/secret). Add the webhook
    `https://api.<domain>/v1/webhooks/razorpay` with events `payment.authorized`, `payment.captured`,
    `payment.failed`, `order.paid`, `refund.processed`, `refund.failed`, and put its secret in
@@ -81,6 +82,8 @@ docker compose -f deploy/docker-compose.yml --env-file deploy/.env up -d --build
 
 Point `<domain>`, `www.<domain>` and `api.<domain>` (A records) at the server first: Caddy fetches HTTPS
 certificates automatically. Files stay on the server (`STORAGE=local`, in a Docker volume) unless you set R2.
+Photos are resized and converted to AVIF/WebP by the storefront on first view and kept in the `webcache` volume
+(a photo replaced at the same address shows its old version for up to a week, so upload replacements as new files).
 Back up nightly with `scripts/backup-db.sh` from cron, and copy backups off the server (R2 or similar).
 
 ## Before launch: checklist

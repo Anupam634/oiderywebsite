@@ -7,7 +7,7 @@ import { Arrow, Cash, Chat, Eye, Swap, Truck } from '@/components/icons';
 import { api } from '@/lib/api';
 import { getCategories } from '@/lib/catalog';
 import { categoryHref, productHref, SHOP_LINKS } from '@/lib/links';
-import { media } from '@/lib/media';
+import { photo } from '@/lib/img';
 import '@/styles/home.css';
 
 // rendered per request (like shop and product pages): builds never depend on the API being up,
@@ -20,6 +20,9 @@ const REVIEWS: [string, string, string, string][] = [
   ['wreath', 'The Gulaab wreath is even prettier in person. The thread actually shines when the light hits it.', 'Fatima K.', 'Lucknow'],
   ['cap', 'Ordered 40 logo caps for our café team. Colours matched our brand and they arrived a day early.', 'Arjun M.', 'Bengaluru'],
 ];
+// how wide the photos show: the two featured cards, and three-across strips
+const DUO = '(max-width: 860px) 42vw, 270px';
+const THIRD = '(max-width: 860px) 31vw, 200px';
 const IG: [string, string][] = [['blossom', 'A gift for Amma'], ['punch', 'Studio wall, Mumbai'], ['pink', 'Festive season'], ['cardigan', 'Little flowers'], ['hands-black', 'Stitching night'], ['poppies', 'Poppies in progress']];
 
 export default async function HomePage() {
@@ -48,7 +51,7 @@ export default async function HomePage() {
         <div className="cats-row">
           {subs.map((s) => (
             <Link key={s.slug} className="cat" href={categoryHref(s.parent, s.slug)}>
-              <span className="cimg">{s.image && <img src={media(s.image)} alt="" width={200} height={250} loading="lazy" />}</span>
+              <span className="cimg">{s.image && <img {...photo(s.image, '', { sizes: 84, width: 200, height: 250, eager: true })} />}</span>
               <b>{s.name}</b>
             </Link>
           ))}
@@ -62,11 +65,11 @@ export default async function HomePage() {
       <section className="wrap duo sx" aria-label="Featured">
         <Link className="duo-b d1" href="/p/phoolwari-name-tote">
           <div className="duo-t"><span className="duo-k"><i />Live preview</span><h3>Your name, stitched</h3><p>Type it, pick a thread, and see it on the tote before you pay.</p><span className="duo-cta">Personalise now <Arrow /></span></div>
-          <img src={media('photos/r-tote-d.jpg')} alt="Close-up of the Phoolwari tote with the name Priya" loading="lazy" width={800} height={1000} />
+          <img {...photo('photos/r-tote-d.jpg', 'Close-up of the Phoolwari tote with the name Priya', { sizes: DUO })} />
         </Link>
         <Link className="duo-b d2" href="/p/custom-pet-portrait-hoop">
           <div className="duo-t"><span className="duo-k">From your photo</span><h3>Pet portraits in thread</h3><p>Pencil sketch on WhatsApp first, then 10 days of stitching.</p><span className="duo-cta">Order a portrait <Arrow /></span></div>
-          <img src={media('photos/cat-d.jpg')} alt="Close-up of an embroidered cat portrait" loading="lazy" width={800} height={1000} />
+          <img {...photo('photos/cat-d.jpg', 'Close-up of an embroidered cat portrait', { sizes: DUO })} />
         </Link>
       </section>
 
@@ -80,9 +83,9 @@ export default async function HomePage() {
           <Link className="btn btn-grad" href="/studio">Open the design studio <Arrow className="arr" /></Link>
         </div>
         <div className="sb-art">
-          <Link href="/studio?how=name"><img src={media('photos/r-model.jpg')} alt="T-shirt with an embroidered name" loading="lazy" width={800} height={1000} /><b>Write a name</b></Link>
-          <Link href="/studio?how=motif"><img src={media('photos/r-hoodie.jpg')} alt="Hoodie with a peacock feather motif" loading="lazy" width={800} height={1000} /><b>Pick a motif</b></Link>
-          <Link href="/studio?how=upload"><img src={media('photos/r-polo.jpg')} alt="Polo with an embroidered logo" loading="lazy" width={800} height={1000} /><b>Upload a logo</b></Link>
+          <Link href="/studio?how=name"><img {...photo('photos/r-model.jpg', 'T-shirt with an embroidered name', { sizes: THIRD })} /><b>Write a name</b></Link>
+          <Link href="/studio?how=motif"><img {...photo('photos/r-hoodie.jpg', 'Hoodie with a peacock feather motif', { sizes: THIRD })} /><b>Pick a motif</b></Link>
+          <Link href="/studio?how=upload"><img {...photo('photos/r-polo.jpg', 'Polo with an embroidered logo', { sizes: THIRD })} /><b>Upload a logo</b></Link>
         </div>
       </section>
 
@@ -111,7 +114,7 @@ export default async function HomePage() {
               <figure className="rv2" key={c}>
                 <div className="stars" aria-label="5 out of 5">★★★★★</div>
                 <blockquote>{q}</blockquote>
-                <figcaption><Link className="th" href={productHref(p)}><img src={media(p.image.path)} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /></Link><span><b>{n}</b><small>{city} · <Link href={productHref(p)}>{p.name}</Link></small></span></figcaption>
+                <figcaption><Link className="th" href={productHref(p)} tabIndex={-1} aria-hidden="true"><img {...photo(p.image.path, '', { sizes: 44 })} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /></Link><span><b>{n}</b><small>{city} · <Link href={productHref(p)}>{p.name}</Link></small></span></figcaption>
               </figure>
             );
           })}
@@ -120,7 +123,7 @@ export default async function HomePage() {
 
       <section className="wrap sx">
         <div className="prom">
-          <div className="pr" style={{ ['--c' as string]: '#2E8B3A' }}><i><Cash /></i><div><b>Cash on delivery</b><span>On ready-to-ship pieces</span></div></div>
+          <div className="pr" style={{ ['--c' as string]: '#2C8538' }}><i><Cash /></i><div><b>Cash on delivery</b><span>On ready-to-ship pieces</span></div></div>
           <div className="pr" style={{ ['--c' as string]: '#FF8A00' }}><i><Truck /></i><div><b>Free shipping</b><span>On orders above ₹999</span></div></div>
           <div className="pr" style={{ ['--c' as string]: '#E4007C' }}><i><Eye /></i><div><b>Stitch proof first</b><span>Approve custom work on WhatsApp</span></div></div>
           <div className="pr" style={{ ['--c' as string]: '#3D2BD6' }}><i><Swap /></i><div><b>Easy exchange</b><span>7 days on ready-made pieces</span></div></div>
@@ -129,7 +132,7 @@ export default async function HomePage() {
 
       <section className="sx"><div className="wrap">
         <div className="rh"><div><h2>#StitchedWithTaanka</h2><p>Tag us on Instagram to be featured here</p></div></div>
-        <div className="ig">{IG.map(([img, cap]) => <span className="ig-t" key={img}><img src={media(`photos/${img}.jpg`)} alt={cap} width={700} height={700} loading="lazy" /><span>{cap}</span></span>)}</div>
+        <div className="ig">{IG.map(([img, cap]) => <span className="ig-t" key={img}><img {...photo(`photos/${img}.jpg`, cap, { sizes: '(max-width: 760px) 33vw, 210px', width: 700, height: 700 })} /><span>{cap}</span></span>)}</div>
       </div></section>
 
       <section className="wrap corp2" id="corporate">
@@ -140,9 +143,9 @@ export default async function HomePage() {
           <div className="c2-cta"><Link className="btn btn-grad" href={categoryHref('corporate')}>See logo merch</Link><a className="btn btn-wa" href="https://wa.me/" target="_blank" rel="noopener"><Chat />Get a quote</a></div>
         </div>
         <div className="c2-art">
-          <img src={media('photos/r-capteam.jpg')} alt="Navy cap with a team crest" loading="lazy" width={800} height={1000} />
-          <img src={media('photos/r-totechai.jpg')} alt="Black tote with a café logo" loading="lazy" width={800} height={1000} />
-          <img src={media('photos/r-polo-d.jpg')} alt="Close-up of a logo stitched on a polo" loading="lazy" width={800} height={1000} />
+          <img {...photo('photos/r-capteam.jpg', 'Navy cap with a team crest', { sizes: THIRD })} />
+          <img {...photo('photos/r-totechai.jpg', 'Black tote with a café logo', { sizes: THIRD })} />
+          <img {...photo('photos/r-polo-d.jpg', 'Close-up of a logo stitched on a polo', { sizes: THIRD })} />
         </div>
       </section>
 

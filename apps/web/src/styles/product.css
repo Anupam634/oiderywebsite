@@ -61,7 +61,7 @@
 .sz:disabled{opacity:.45;cursor:not-allowed;background:repeating-linear-gradient(135deg,#fff 0 6px,#F4EEF6 6px 12px)}
 .sz:disabled b{text-decoration:line-through}
 .stock{margin-top:11px;font-size:13.5px;font-weight:750;color:#C2410C;display:flex;align-items:center;gap:7px}
-.stock.ok{color:#23863A}
+.stock.ok{color:#217E36}
 .stock.inf{color:var(--neel)}
 .stock svg{width:16px;height:16px}
 .perso{margin-top:24px;border-radius:24px;padding:18px;background:linear-gradient(#fff,#fff) padding-box,linear-gradient(135deg,#FF2E93,#FF8A00 55%,#00A39A) border-box;border:2px solid transparent}
@@ -115,7 +115,7 @@
 .dres{margin-top:4px;font-size:14px;font-weight:650;display:grid;gap:7px;color:var(--ink-2)}
 .dres:not(:empty){margin-top:12px}
 .dres div{display:flex;gap:9px;align-items:flex-start}
-.dres svg{flex:none;width:17px;height:17px;margin-top:1px;color:#23863A}
+.dres svg{flex:none;width:17px;height:17px;margin-top:1px;color:#217E36}
 .dres .bad{color:#B91C1C}
 .dres b{color:var(--ink)}
 .offers{margin-top:14px;display:grid;gap:8px}

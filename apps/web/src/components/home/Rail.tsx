@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import type { ProductCard as Card } from '@store/shared';
+import { SIZES } from '@/lib/img';
 import { ProductCard } from '../ProductCard';
 import { Arrow, ChevronLeft, ChevronRight } from '../icons';
 
@@ -33,7 +34,7 @@ export function Rail({ title, sub, href, items }: { title: string; sub: string; 
           </div>
         </div>
         <div className="rail" ref={ref}>
-          {items.map((p, i) => <ProductCard key={p.id} p={p} index={i} />)}
+          {items.map((p, i) => <ProductCard key={p.id} p={p} index={i} sizes={SIZES.rail} />)}
         </div>
       </div>
     </section>

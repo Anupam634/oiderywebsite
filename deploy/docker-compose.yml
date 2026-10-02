@@ -39,11 +39,14 @@ services:
       args:
         NEXT_PUBLIC_SITE_URL: https://${DOMAIN}
         NEXT_PUBLIC_INDEXABLE: ${INDEXABLE:-0}
+        NEXT_PUBLIC_IMAGE_HOSTS: ${IMAGE_HOSTS:-}
     restart: unless-stopped
     depends_on: [api]
     environment:
       API_URL: http://api:4000
       PROXY_KEY: ${PROXY_KEY:?set PROXY_KEY}
+    volumes:
+      - webcache:/app/apps/web/.next/cache # resized photos survive restarts and updates
 
   caddy:
     image: caddy:2-alpine
@@ -59,4 +62,5 @@ services:
 volumes:
   pgdata:
   uploads:
+  webcache:
   caddy:

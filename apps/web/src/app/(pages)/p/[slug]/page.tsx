@@ -10,10 +10,13 @@ import '@/styles/product.css';
 type Props = { params: Promise<{ slug: string }> };
 
 export const revalidate = 60;
+// no pages at build time (builds don't need the API): each product renders on its first visit, is then served from
+// the cache and refreshed every minute or when the catalogue changes. Links to it prefetch the whole page.
+export const generateStaticParams = async () => [];
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const p = await api.product((await params).slug);
-  if (!p) return {};
+  if (!p) notFound();
   return {
     title: p.name,
     description: p.story.slice(0, 155),

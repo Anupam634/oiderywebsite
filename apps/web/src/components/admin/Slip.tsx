@@ -19,7 +19,7 @@ export function Slip({ number }: { number: string }) {
     <div className="slip">
       <div className="noprint" style={{ display: 'flex', gap: 10, marginBottom: 18 }}>
         <button className="btn btn-grad" type="button" style={{ height: 44 }} onClick={() => print()}>Print</button>
-        <span style={{ alignSelf: 'center', color: '#8A819C', fontWeight: 650 }}>{gift ? 'Gift order: prices are hidden on this slip.' : 'Tip: print on A4 or A5.'}</span>
+        <span style={{ alignSelf: 'center', color: '#6E6580', fontWeight: 650 }}>{gift ? 'Gift order: prices are hidden on this slip.' : 'Tip: print on A4 or A5.'}</span>
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16 }}>
         <div>
@@ -48,7 +48,7 @@ export function Slip({ number }: { number: string }) {
               <td>
                 <b>{i.name}</b>
                 <div style={{ color: '#51476A' }}>{i.description}</div>
-                <div style={{ fontSize: 12, color: '#8A819C' }}>{i.sku}</div>
+                <div style={{ fontSize: 12, color: '#6E6580' }}>{i.sku}</div>
               </td>
               <td>{i.qty}</td>
               {!gift && <td style={{ textAlign: 'right' }}>{rupees(i.qty * i.unitPricePaise + i.extraPaise)}</td>}

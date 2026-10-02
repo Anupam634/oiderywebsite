@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { BRAND, FREE_SHIPPING_MIN_PAISE, formatINR, type CategoryNode, type ProductCard } from '@store/shared';
 import { api } from '@/lib/api';
 import { categoryHref, productHref, SHOP_LINKS } from '@/lib/links';
-import { media } from '@/lib/media';
+import { photo, SIZES } from '@/lib/img';
 import { useMe } from '@/lib/session';
 import { cart, lineTotal, ui, useCart, useWishlist, wishlist } from '@/lib/store';
 import { addCardToBag } from './ProductCard';
@@ -71,7 +71,7 @@ function CartDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
         {count ? (
           lines.map((l) => (
             <div className="it" key={l.key}>
-              <div className="th"><img src={l.image.startsWith('data:') ? l.image : media(l.image)} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /></div>
+              <div className="th"><img {...photo(l.image, '', { sizes: SIZES.thumb })} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /></div>
               <div>
                 <b>{l.name}</b>
                 <small>{l.desc}</small>
@@ -126,7 +126,7 @@ function WishDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
             const act = p.studio ? 'Add your logo' : p.personalisable ? 'Personalise' : p.needsSize ? 'Choose size' : '';
             return (
               <div className="it" key={p.slug}>
-                <Link className="th" href={productHref(p)} onClick={onClose}><img src={media(p.image.path)} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /></Link>
+                <Link className="th" href={productHref(p)} onClick={onClose}><img {...photo(p.image.path, '', { sizes: SIZES.thumb })} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /></Link>
                 <div>
                   <b>{p.name}</b><small>{p.techLine}</small>
                   <div className="wact">
@@ -192,7 +192,7 @@ function MobileMenu({ categories, onClose }: { categories: CategoryNode[]; onClo
         <div className="mp-cats">
           {subs.map((s) => (
             <Link key={s.slug} href={categoryHref(s.parent, s.slug)}>
-              <span>{s.image && <img src={media(s.image)} alt="" loading="lazy" />}</span>
+              <span>{s.image && <img {...photo(s.image, '', { sizes: 72, width: 200, height: 250 })} />}</span>
               {s.name}
             </Link>
           ))}

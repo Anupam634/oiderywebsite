@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
-import { media } from '@/lib/media';
+import { photo } from '@/lib/img';
 import { Arrow, ChevronLeft, ChevronRight } from '../icons';
 
 interface Slide {
@@ -21,6 +21,9 @@ const SLIDES: Slide[] = [
   { cls: 'hs2', kicker: '● Live preview', title: ['Your name, stitched. ', 'See it before you buy.'], text: 'Type a name, pick the thread and font, and watch it appear on a real tote, cap or T-shirt photo.', cta: ['btn-grad', 'Try it on a T-shirt', '/p/name-t-shirt'], alt: ['All name gifts', '/shop?type=personalise'], code: 'English or हिंदी · stitch proof on WhatsApp', photos: [['r-model', 'White T-shirt with the name Rohan stitched in pink'], ['r-tote-d', 'Close-up of an embroidered name and flowers'], ['r-hoodie', 'Maroon hoodie with a peacock feather']], sticker: ['From', '₹799'] },
   { cls: 'hs3', kicker: '✦ The festive edit', title: ['Lehengas, kurtas ', '& dupattas'], text: 'Zari, resham and mirror work in colours that glow. Ready-to-ship pieces, or made to your measurements.', cta: ['btn-gold', 'Shop clothing', '/shop/clothing'], alt: ['Lehengas', '/shop/clothing/lehengas'], code: 'Up to 25% off · COD on ready-to-ship', photos: [['lehenga', 'Woman in a bottle-green embroidered lehenga'], ['dupatta', 'Rani pink mirror-work dupatta'], ['kurta', 'Red kurta with an embroidered yoke']], sticker: ['Up to', '25% off'] },
 ];
+
+/* how wide each of the three photos shows (see .ha1–.ha3 in home.css) */
+const HERO_SIZES = ['(max-width: 760px) 38vw, 280px', '(max-width: 760px) 31vw, 220px', '(max-width: 760px) 31vw, 220px'];
 
 export function HeroCarousel() {
   const track = useRef<HTMLDivElement>(null);
@@ -73,7 +76,7 @@ export function HeroCarousel() {
               <div className="hb-art">
                 {s.photos.map(([img, alt], k) => (
                   <figure key={img} className={`ha ha${k + 1}`}>
-                    <img src={media(`photos/${img}.jpg`)} alt={alt} width={800} height={1000} loading={n === 0 ? 'eager' : 'lazy'} fetchPriority={n === 0 && k === 0 ? 'high' : 'auto'} />
+                    <img {...photo(`photos/${img}.jpg`, alt, { sizes: HERO_SIZES[k]!, priority: n === 0 && k === 0, eager: n === 0 })} />
                   </figure>
                 ))}
                 <span className="hb-stk">{s.sticker[0]}<b>{s.sticker[1]}</b></span>

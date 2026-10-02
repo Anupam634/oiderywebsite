@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 import type { NextConfig } from 'next';
 
 const dev = process.env.NODE_ENV !== 'production';
+const imageHosts = (process.env.NEXT_PUBLIC_IMAGE_HOSTS ?? '').split(',').map((h) => h.trim()).filter(Boolean);
 
 /* Content Security Policy: our own scripts plus Razorpay's checkout (script, iframe, API calls). Next.js
    needs inline scripts for hydration; dev mode also needs eval and the HMR websocket. */
@@ -35,7 +36,16 @@ const config: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   agentRules: false,
-  images: { formats: ['image/avif', 'image/webp'] },
+  images: {
+    formats: ['image/avif', 'image/webp'],
+    // widths for full-width photos and for cards/thumbnails (sources are 800–2000 px wide)
+    deviceSizes: [480, 640, 828, 1080, 1280, 1600, 1920],
+    imageSizes: [64, 96, 128, 192, 256, 384],
+    // product photos never change at the same address (new uploads get new names)
+    minimumCacheTTL: 7 * 24 * 3600,
+    // a CDN or public bucket for photos, e.g. NEXT_PUBLIC_IMAGE_HOSTS=media.example.com (see lib/img.ts)
+    remotePatterns: imageHosts.map((hostname) => ({ protocol: 'https' as const, hostname })),
+  },
   // a self-contained server bundle for Docker; harmless on Vercel
   output: 'standalone',
   outputFileTracingRoot: path.join(path.dirname(fileURLToPath(import.meta.url)), '../../'),

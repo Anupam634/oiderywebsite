@@ -110,9 +110,9 @@ export function OrderView({ number }: { number: string }) {
           <div className="done-in">
             <svg className="okring" viewBox="0 0 120 120" aria-hidden="true">
               <defs><linearGradient id="okg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#FF2E93" /><stop offset="1" stopColor="#FF8A00" /></linearGradient></defs>
-              <circle cx="60" cy="60" r="43" fill="#E9F7EC" stroke="#23863A" strokeWidth="2" strokeDasharray="4 4" opacity=".7" />
+              <circle cx="60" cy="60" r="43" fill="#E9F7EC" stroke="#217E36" strokeWidth="2" strokeDasharray="4 4" opacity=".7" />
               <circle className="ring" cx="60" cy="60" r="54" fill="none" stroke="url(#okg)" strokeWidth="7" strokeLinecap="round" pathLength={1} transform="rotate(-90 60 60)" />
-              <path className="tick" d="M40 62l14 14 28-30" fill="none" stroke="#23863A" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" pathLength={1} />
+              <path className="tick" d="M40 62l14 14 28-30" fill="none" stroke="#217E36" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" pathLength={1} />
             </svg>
             <span className="kicker">Order placed</span>
             <h1>Thank you, <em>{first}!</em></h1>
@@ -225,7 +225,7 @@ export function OrderView({ number }: { number: string }) {
             <div className="kv" style={{ marginTop: 14 }}>
               <div><span>Method</span><b>{PAY_METHOD_LABEL[o.paymentMethod]}</b></div>
               <div><span>Status</span><b>{o.status === 'CANCELLED' && (o.paymentState === 'PENDING' || o.paymentState === 'COD_PENDING') ? 'Nothing charged' : PAYMENT_STATE_LABEL[o.paymentState]}</b></div>
-              {o.refundedPaise > 0 && <div><span>Refunded</span><b style={{ color: '#23863A' }}>{formatINR(o.refundedPaise)}</b></div>}
+              {o.refundedPaise > 0 && <div><span>Refunded</span><b style={{ color: '#217E36' }}>{formatINR(o.refundedPaise)}</b></div>}
             </div>
           </section>
           <section className="co-card">

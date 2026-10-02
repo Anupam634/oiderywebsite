@@ -1,5 +1,5 @@
 /* Studio admin. Everything is scoped under .adm so the shop's short class names never collide. */
-.adm{--side:#1B1030;--card:#fff;--soft:#FFF6EA;--ok:#23863A;--warn:#B45309;--bad:#B91C1C;min-height:100vh;background:radial-gradient(60% 40% at 100% 0%,rgba(255,138,0,.08),transparent 60%),#FFF8EE;color:var(--ink);display:grid;grid-template-columns:248px minmax(0,1fr)}
+.adm{--side:#1B1030;--card:#fff;--soft:#FFF6EA;--ok:#217E36;--warn:#B45309;--bad:#B91C1C;min-height:100vh;background:radial-gradient(60% 40% at 100% 0%,rgba(255,138,0,.08),transparent 60%),#FFF8EE;color:var(--ink);display:grid;grid-template-columns:248px minmax(0,1fr)}
 .adm *{box-sizing:border-box}
 .adm .side{position:sticky;top:0;height:100vh;overflow:auto;background:var(--side);color:#E9E3F2;padding:20px 14px;display:flex;flex-direction:column;gap:4px}
 .adm .brand{display:flex;align-items:center;gap:10px;padding:4px 8px 18px;color:#fff;font-family:var(--serif);font-style:italic;font-weight:700;font-size:24px}
@@ -10,7 +10,7 @@
 .adm .nav a:hover{background:rgba(255,255,255,.07);color:#fff}
 .adm .nav a.on{background:linear-gradient(90deg,rgba(255,46,147,.95),rgba(255,138,0,.95));color:#fff;box-shadow:0 10px 24px -14px rgba(255,46,147,.9)}
 .adm .nav a b{margin-left:auto;min-width:22px;height:22px;padding:0 7px;border-radius:11px;background:#FF2E93;color:#fff;font-size:11.5px;display:grid;place-items:center}
-.adm .nav a.on b{background:#fff;color:#E4007C}
+.adm .nav a.on b{background:#fff;color:#DC0078}
 .adm .who{margin-top:auto;padding:14px 10px 4px;border-top:1px solid rgba(255,255,255,.1);font-size:13px}
 .adm .who b{display:block;color:#fff}
 .adm .who button{color:#FF9BC8;font-weight:750;margin-top:6px}
@@ -70,7 +70,7 @@
 .adm .pill2.PLACED{background:#FDE7F3;color:#BE0068}
 .adm .pill2.IN_PRODUCTION,.adm .pill2.PROOF_SENT{background:#EDE9FF;color:#3D2BD6}
 .adm .pill2.SHIPPED{background:#E0F5F3;color:#00756F}
-.adm .pill2.DELIVERED,.adm .pill2.PAID,.adm .pill2.APPROVED,.adm .pill2.DONE,.adm .pill2.PUBLISHED,.adm .pill2.ACTIVE{background:#E9F7EC;color:#23863A}
+.adm .pill2.DELIVERED,.adm .pill2.PAID,.adm .pill2.APPROVED,.adm .pill2.DONE,.adm .pill2.PUBLISHED,.adm .pill2.ACTIVE{background:#E9F7EC;color:#217E36}
 .adm .pill2.CANCELLED,.adm .pill2.ARCHIVED,.adm .pill2.HIDDEN,.adm .pill2.SUPERSEDED{background:#F1F1F3;color:#6B6478}
 .adm .pill2.AWAITING_PROOF,.adm .pill2.CHANGES_REQUESTED,.adm .pill2.DRAFT,.adm .pill2.COD_PENDING{background:#FFF1E0;color:#B45309}
 .adm .pill2.REFUNDED,.adm .pill2.PARTIALLY_REFUNDED{background:#FDECEC;color:#B91C1C}

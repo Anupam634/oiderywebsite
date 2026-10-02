@@ -1,6 +1,9 @@
 import { z } from 'zod';
 import { PHONE_RE } from './phone';
 
+// The storefront's CSP forbids eval, so in the browser zod skips its eval-compiled fast path (and the probe for it).
+if ('document' in globalThis) z.config({ jitless: true });
+
 /* Contact + delivery details. The web form and (phase 2) the orders API validate with the same schema. */
 
 export const INDIAN_STATES = [

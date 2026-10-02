@@ -15,7 +15,7 @@ import {
   type ListingQuery,
 } from '@store/shared';
 import type { Listing } from '@/lib/api';
-import { media } from '@/lib/media';
+import { photo, SIZES } from '@/lib/img';
 import { shopHref } from '@/lib/shop';
 import { ProductCard } from '../ProductCard';
 import { ChevronDown, Close } from '../icons';
@@ -98,7 +98,7 @@ export function ShopView({ q, tree, listing, title }: { q: ListingQuery; tree: C
         <span className="pt-k">Design studio</span>
         <b>Can’t find it? Design your own.</b>
         <span>Your logo, a motif or a name on a tee, hoodie, cap or tote. See it live first.</span>
-        <img src={media('photos/r-hoodie-d.jpg')} alt="" loading="lazy" />
+        <img {...photo('photos/r-hoodie-d.jpg', '', { sizes: SIZES.card })} />
         <em>Open the studio →</em>
       </Link>,
     );
@@ -124,7 +124,7 @@ export function ShopView({ q, tree, listing, title }: { q: ListingQuery; tree: C
         <div className="subcats">
           {subChips.map((c) => (
             <Link key={c.href} className={`sc${c.on ? ' on' : ''}`} href={c.href} aria-current={c.on || undefined}>
-              <span>{c.img && <img src={media(c.img)} alt="" loading="lazy" />}</span>{c.label}
+              <span>{c.img && <img {...photo(c.img, '', { sizes: 48, width: 200, height: 250 })} />}</span>{c.label}
             </Link>
           ))}
         </div>
@@ -168,6 +168,7 @@ export function ShopView({ q, tree, listing, title }: { q: ListingQuery; tree: C
               Filter{n > 0 && <b>{n}</b>}
             </button>
           </div>
+          <h2 className="vh">Products</h2>
           <div className="toolbar">
             <span className="rcount" aria-live="polite">{listing.total} product{listing.total === 1 ? '' : 's'}</span>
             <div className="applied">

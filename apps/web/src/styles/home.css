@@ -37,9 +37,12 @@
 .hb-ui{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:12px}
 .hb-arrow{width:36px;height:36px;border-radius:50%;background:#fff;border:1.5px solid var(--line);display:grid;place-items:center}
 .hb-arrow svg{width:17px;height:17px}
-.hb-dots{display:flex;gap:7px}
-.hb-dots button{width:8px;height:8px;border-radius:999px;background:rgba(27,16,48,.22);transition:width var(--d3) var(--ease),background var(--d2)}
-.hb-dots button[aria-current=true]{width:26px;background:linear-gradient(90deg,#FF2E93,#FF8A00)}
+.hb-dots{display:flex}
+/* 24px tap targets around small dots */
+.hb-dots button{width:24px;height:24px;display:grid;place-items:center;transition:width var(--d3) var(--ease)}
+.hb-dots button::before{content:'';width:8px;height:8px;border-radius:999px;background:rgba(27,16,48,.22);transition:width var(--d3) var(--ease),background var(--d2)}
+.hb-dots button[aria-current=true]{width:42px}
+.hb-dots button[aria-current=true]::before{width:26px;background:linear-gradient(90deg,#FF2E93,#FF8A00)}
 @media(max-width:760px){
   .hm{padding-top:12px}
   .hb-track{border-radius:22px}
@@ -74,7 +77,7 @@
 /* coupons */
 .offers{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
 .cp{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:10px;align-items:center;padding:14px 18px;border-radius:16px;background:var(--bgc);border:1.5px dashed var(--c);-webkit-mask:radial-gradient(circle 9px at 0 50%,#0000 97%,#000) left/51% 100% no-repeat,radial-gradient(circle 9px at 100% 50%,#0000 97%,#000) right/51% 100% no-repeat;mask:radial-gradient(circle 9px at 0 50%,#0000 97%,#000) left/51% 100% no-repeat,radial-gradient(circle 9px at 100% 50%,#0000 97%,#000) right/51% 100% no-repeat}
-.cp1{--c:#E4007C;--bgc:#FFF0F7}.cp2{--c:#3D2BD6;--bgc:#F1F0FF}.cp3{--c:#00897F;--bgc:#E7FAF6}.cp4{--c:#E26A00;--bgc:#FFF3E3}
+.cp1{--c:#D50074;--bgc:#FFF0F7}.cp2{--c:#3D2BD6;--bgc:#F1F0FF}.cp3{--c:#007C73;--bgc:#E7FAF6}.cp4{--c:#B25300;--bgc:#FFF3E3}
 .cp b{grid-column:1;font-size:20px;font-weight:800;color:var(--c);letter-spacing:-.01em;line-height:1.1}
 .cp span{grid-column:1;font-size:12.5px;color:var(--ink-2);font-weight:600}
 .cp-code,.cp em{grid-column:2;grid-row:1/span 2}

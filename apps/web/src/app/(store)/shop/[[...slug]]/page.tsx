@@ -4,7 +4,8 @@ import { listingToParams } from '@store/shared';
 import { ShopView } from '@/components/shop/ShopView';
 import { api } from '@/lib/api';
 import { getCategories } from '@/lib/catalog';
-import { parseShop, shopTitle } from '@/lib/shop';
+import { shopTitle } from '@/lib/shop';
+import { parseShop } from '@/lib/shop-query';
 import '@/styles/shop.css';
 
 type Props = { params: Promise<{ slug?: string[] }>; searchParams: Promise<Record<string, string | string[] | undefined>> };

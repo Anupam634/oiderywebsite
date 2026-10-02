@@ -21,7 +21,7 @@ import {
 } from '@store/shared';
 import { api, ApiError, type CartItemRequest, type CartPriceRequest, type CartPriceResponse, type Offer } from '@/lib/api';
 import { MAKE_DAYS, PINS, dateIn } from '@/lib/delivery';
-import { media } from '@/lib/media';
+import { photo } from '@/lib/img';
 import { logout, setMe, useMe } from '@/lib/session';
 import { cart, ui, useCart, type CartLine } from '@/lib/store';
 import { OtpLogin } from '../auth/OtpLogin';
@@ -32,7 +32,7 @@ type Ship = NonNullable<CartPriceRequest['shipping']>;
 type Pay = NonNullable<CartPriceRequest['payment']>;
 
 const PAYS: { id: Pay; name: string; sub: string; icon: ReactNode; colour: string }[] = [
-  { id: 'upi', name: 'UPI', sub: 'Google Pay, PhonePe, Paytm or any UPI app', icon: <Upi />, colour: '#2E8B3A' },
+  { id: 'upi', name: 'UPI', sub: 'Google Pay, PhonePe, Paytm or any UPI app', icon: <Upi />, colour: '#2C8538' },
   { id: 'card', name: 'Credit or debit card', sub: 'Visa, Mastercard, RuPay and more', icon: <Card />, colour: '#3D2BD6' },
   { id: 'netbanking', name: 'Net banking', sub: 'All major Indian banks', icon: <Bank />, colour: '#00A39A' },
   { id: 'wallet', name: 'Wallets', sub: 'Paytm, PhonePe, Amazon Pay', icon: <Wallet />, colour: '#FF8A00' },
@@ -562,7 +562,7 @@ function Summary(props: {
           const extra = p?.available ? p.extraPaise : (l.extraPaise ?? 0);
           return (
             <div className={`si${p && !p.available ? ' bad' : ''}`} key={l.key}>
-              <div className="th"><img src={media(l.image)} alt="" /><em>{l.qty}</em></div>
+              <div className="th"><img {...photo(l.image, '', { sizes: 64 })} /><em>{l.qty}</em></div>
               <div>
                 <b>{l.name}</b><small>{l.desc}</small>
                 {extra > 0 && <small>+ {formatINR(extra)} logo digitizing (one-time)</small>}

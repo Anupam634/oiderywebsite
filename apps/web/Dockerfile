@@ -14,7 +14,8 @@ COPY apps/web apps/web
 ARG NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ARG NEXT_PUBLIC_INDEXABLE=0
 ARG NEXT_PUBLIC_MEDIA_BASE=/
-ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL NEXT_PUBLIC_INDEXABLE=$NEXT_PUBLIC_INDEXABLE NEXT_PUBLIC_MEDIA_BASE=$NEXT_PUBLIC_MEDIA_BASE NEXT_TELEMETRY_DISABLED=1
+ARG NEXT_PUBLIC_IMAGE_HOSTS=
+ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL NEXT_PUBLIC_INDEXABLE=$NEXT_PUBLIC_INDEXABLE NEXT_PUBLIC_MEDIA_BASE=$NEXT_PUBLIC_MEDIA_BASE NEXT_PUBLIC_IMAGE_HOSTS=$NEXT_PUBLIC_IMAGE_HOSTS NEXT_TELEMETRY_DISABLED=1
 RUN pnpm --filter @store/web build
 
 FROM node:22-bookworm-slim
@@ -23,6 +24,8 @@ WORKDIR /app
 COPY --from=build --chown=node:node /repo/apps/web/.next/standalone ./
 COPY --from=build --chown=node:node /repo/apps/web/.next/static ./apps/web/.next/static
 COPY --from=build --chown=node:node /repo/apps/web/public ./apps/web/public
+# resized photos are cached here (mount a volume to keep them across restarts)
+RUN mkdir -p apps/web/.next/cache && chown node:node apps/web/.next/cache
 USER node
 EXPOSE 3000
 CMD ["node", "apps/web/server.js"]

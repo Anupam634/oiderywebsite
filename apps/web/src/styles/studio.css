@@ -43,7 +43,7 @@
 .up-credit{margin:14px 0 0;font-size:12px;color:var(--mute);font-weight:600;line-height:1.5}
 .up-credit a{text-decoration:underline}
 .up-panel{background:#FFFBF4;border-radius:30px;border:1px solid var(--line);padding:22px;display:grid;gap:22px;box-shadow:0 30px 60px -48px rgba(27,16,48,.6)}
-.up-panel .step h4 small{font-weight:750}
+.up-panel .step h2 small{font-weight:750}
 .up-drop{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:22px 16px;border-radius:22px;border:2px dashed rgba(228,0,124,.4);background:linear-gradient(135deg,#FFF1F7,#FFF6E6);text-align:center;cursor:pointer;transition:border-color var(--d2),background var(--d2),transform var(--d2) var(--ease)}
 .up-drop:hover,.up-drop.over{border-color:var(--rani);transform:translateY(-1px)}
 .up-drop.over{background:linear-gradient(135deg,#FFE3F0,#FFEBD1)}
@@ -94,10 +94,10 @@
 .up-tier{border-radius:14px;padding:9px 8px;background:#fff;border:1.5px solid var(--line);text-align:center;transition:all var(--d2)}
 .up-tier small{display:block;font-size:11px;font-weight:800;color:var(--mute)}
 .up-tier b{display:block;font-size:15px}
-.up-tier em{display:block;font-style:normal;font-size:11px;font-weight:800;color:#23863A}
+.up-tier em{display:block;font-style:normal;font-size:11px;font-weight:800;color:#217E36}
 .up-tier.on{border-color:var(--rani);background:#FFF1F7;box-shadow:0 0 0 3px rgba(228,0,124,.12)}
 .up-pop{position:absolute;z-index:70;width:292px;padding:12px;border-radius:20px;background:#FFFBF4;border:1px solid var(--line);box-shadow:0 30px 60px -20px rgba(27,16,48,.5);animation:fade .2s var(--ease)}
-.up-pop h5{margin:0 0 10px;font-size:13px;font-weight:800}
+.up-pop h3{margin:0 0 10px;font-family:var(--sans);letter-spacing:0;font-size:13px;font-weight:800}
 .up-pop .grid6{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
 .up-pop button{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;font-weight:750;color:var(--ink-2);line-height:1.1}
 .up-pop button i{width:30px;height:30px;border-radius:50%;background-color:var(--c);background-image:repeating-linear-gradient(118deg,rgba(255,255,255,.3) 0 2px,rgba(0,0,0,.08) 2px 4px);box-shadow:inset 0 -3px 6px rgba(0,0,0,.22),0 0 0 1px rgba(0,0,0,.08)}

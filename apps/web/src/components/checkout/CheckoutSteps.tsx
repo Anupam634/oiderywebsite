@@ -6,7 +6,7 @@ export function CheckoutSteps({ done = false }: { done?: boolean }) {
   return (
     <ol className={`co-steps${done ? ' paid' : ''}`} aria-label="Checkout progress">
       <li className="sd">
-        <button type="button" onClick={() => ui.open('cart')} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <button type="button" aria-label="Back to your bag" onClick={() => ui.open('cart')} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <span className="dot"><Check strokeWidth={3} /></span><span className="lbl">Bag</span>
         </button>
       </li>

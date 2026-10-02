@@ -29,11 +29,17 @@ async function proxy(req: Request, ctx: { params: Promise<{ path: string[] }> })
       body: req.method === 'GET' || req.method === 'HEAD' ? undefined : req.body,
       redirect: 'manual',
       cache: 'no-store',
+      // never hang: uploads get longer (they stream from the shopper's phone), everything else 30 s
+      signal: AbortSignal.timeout((req.headers.get('content-type') ?? '').startsWith('multipart/') ? 180_000 : 30_000),
       // streaming request bodies (uploads) need half-duplex
       duplex: 'half',
     } as RequestInit);
-  } catch {
-    return Response.json({ error: { code: 'api_unreachable', message: 'The shop is having a moment. Please try again.' } }, { status: 502 });
+  } catch (e) {
+    const timedOut = e instanceof DOMException && e.name === 'TimeoutError';
+    return Response.json(
+      { error: { code: timedOut ? 'api_timeout' : 'api_unreachable', message: 'The shop is having a moment. Please try again.' } },
+      { status: timedOut ? 504 : 502 },
+    );
   }
   const out = new Headers(res.headers);
   for (const h of DROP_OUT) out.delete(h);

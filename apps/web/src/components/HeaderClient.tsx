@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { formatINR, type ProductCard } from '@store/shared';
 import { api } from '@/lib/api';
 import { productHref } from '@/lib/links';
-import { media } from '@/lib/media';
+import { photo } from '@/lib/img';
 import { useMe } from '@/lib/session';
 import { ui, useCart, useWishlist } from '@/lib/store';
 import { Bag, Heart, Menu, Search, User } from './icons';
@@ -30,7 +30,7 @@ export function MobileSearchButton() {
 export function SearchRow({ p, onPick }: { p: ProductCard; onPick?: () => void }) {
   return (
     <Link className="srow" href={productHref(p)} onClick={onPick}>
-      <span className="th"><img src={media(p.image.path)} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /></span>
+      <span className="th"><img {...photo(p.image.path, '', { sizes: 44 })} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /></span>
       <span><b>{p.name}</b><small>{p.category.name}</small></span>
       <b>{p.mrpPaise ? formatINR(p.pricePaise) : `From ${formatINR(p.pricePaise)}`}</b>
     </Link>
@@ -139,11 +139,11 @@ export function HeaderIcons() {
     <div className="icons">
       <button className="ib lab sbtn" type="button" aria-label="Search" onClick={() => ui.open('search')}><Search /></button>
       <AccountLink />
-      <button className="ib lab" type="button" aria-label="Wishlist" onClick={() => ui.open('wish')}>
-        <Heart /><span>Wishlist</span>{wish > 0 && <b className="count">{wish}</b>}
+      <button className="ib lab" type="button" aria-label={wish ? `Wishlist, ${wish} saved` : 'Wishlist'} onClick={() => ui.open('wish')}>
+        <Heart /><span>Wishlist</span>{wish > 0 && <b className="count" aria-hidden="true">{wish}</b>}
       </button>
-      <button className="ib lab" type="button" aria-label="Open bag" onClick={() => ui.open('cart')}>
-        <Bag /><span>Bag</span><b className="count">{bag}</b>
+      <button className="ib lab" type="button" aria-label={`Bag, ${bag} item${bag === 1 ? '' : 's'}`} onClick={() => ui.open('cart')}>
+        <Bag /><span>Bag</span><b className="count" aria-hidden="true">{bag}</b>
       </button>
     </div>
   );

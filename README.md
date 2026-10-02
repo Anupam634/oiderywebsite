@@ -45,6 +45,15 @@ pnpm dev                                       # API on :4000 (docs at /docs), w
 Local defaults send nothing real: login codes show on screen ("test mode"), payments use a test sheet,
 emails and WhatsApp messages are written to `apps/api/.data/outbox/`.
 
+## Fonts and photos
+
+- Fonts are self-hosted and subset (Latin + ₹, Devanagari for Hindi) in `apps/web/src/fonts`; only the body and
+  heading fonts are preloaded. To change them, edit and run `apps/web/scripts/build-fonts.py` (needs
+  `pip install fonttools brotli`).
+- Photos go through Next's image optimizer (AVIF/WebP at the width the layout needs): use `photo()` from
+  `apps/web/src/lib/img.ts` with a `sizes` value for every catalogue image.
+- The design studio's heavy image maths runs in a web worker (`apps/web/src/lib/stitch.worker.ts`).
+
 ## Checks
 
 ```sh

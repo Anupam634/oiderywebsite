@@ -1,5 +1,6 @@
 import { PRICE_BUCKETS, TOP_RATED_MIN, TYPE_LABEL } from './constants';
-import { TYPE_PARAM, type ListingQuery } from './query';
+import { TYPE_PARAM } from './params';
+import type { ListingQuery } from './query';
 import type { CatalogIndexItem } from './types';
 
 export type FacetKey = 'cat' | 'sub' | 'type' | 'price' | 'occ' | 'fam' | 'rating';

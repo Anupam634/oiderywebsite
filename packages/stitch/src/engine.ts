@@ -38,6 +38,16 @@ export interface StitchEngineOptions {
   sansFamily?: string;
   /** fontsLoaded() gives up waiting after this long (default 2500 ms) */
   fontTimeoutMs?: number;
+  /**
+   * Turns a garment photo + mask (RGBA, same size) into the maps the renderer needs. Defaults to
+   * prepareGarment() on the calling thread; an app can pass one that runs it in a worker.
+   */
+  prepareGarment?: (
+    px: Uint8ClampedArray,
+    mask: Uint8ClampedArray,
+    w: number,
+    h: number,
+  ) => GarmentPixels | Promise<GarmentPixels>;
 }
 
 /** product-page style scene description, see buildScene() */
@@ -102,6 +112,7 @@ export function createStitchEngine(options: StitchEngineOptions = {}): StitchEng
     crossOrigin = options.crossOrigin === undefined ? 'anonymous' : options.crossOrigin,
     families = { ...options.fontFamilies },
     fontTimeoutMs = options.fontTimeoutMs ?? 2500,
+    prepGarment = options.prepareGarment ?? prepareGarment,
     cache = new Map<GarmentView, GarmentEntry>();
 
   /* fontsLoaded() waits for the overridden families too */
@@ -138,7 +149,9 @@ export function createStitchEngine(options: StitchEngineOptions = {}): StitchEng
         x.clearRect(0, 0, W, H);
         x.drawImage(mk, 0, 0, W, H);
         const md = x.getImageData(0, 0, W, H).data;
-        e.data = prepareGarment(pd, md, W, H);
+        return Promise.resolve(prepGarment(pd, md, W, H)).then((d) => {
+          e.data = d;
+        });
       },
       (err: unknown) => {
         cache.delete(view); // let a later call retry

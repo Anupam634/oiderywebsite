@@ -1,11 +1,15 @@
 'use client';
 import { useRef, useState } from 'react';
 import type { ImageRef } from '@store/shared';
-import { media } from '@/lib/media';
+import { photo } from '@/lib/img';
 import { ChevronLeft, ChevronRight } from '../icons';
 import { LiveCanvas } from './live';
 
 export type GalleryItem = { kind: 'photo'; image: ImageRef; caption: string } | { kind: 'live'; which: 'front' | 'close'; caption: string };
+
+/* the main photo fills the left column on desktop and the screen width on phones; zoomed, it shows at 2.2x */
+const MAIN_SIZES = '(max-width: 1000px) 100vw, 560px';
+const ZOOM_SIZES = '(max-width: 1000px) 220vw, 1240px';
 
 const ZOOM_HINT = typeof window !== 'undefined' && matchMedia('(hover:hover)').matches ? 'click to zoom' : 'double-tap to zoom';
 
@@ -41,7 +45,12 @@ export function Gallery({ name, items, live, busy, fallback, fallbackClose }: {
     x.kind === 'live' ? (
       <LiveCanvas src={x.which === 'close' ? live.close : live.front} fallback={x.which === 'close' ? fallbackClose : fallback} width={big ? 900 : 160} height={big ? 1125 : 200} />
     ) : (
-      <img src={media(big && sharp[i] && x.image.zoomPath ? x.image.zoomPath : x.image.path)} alt={big ? x.image.alt : ''} loading={big ? 'eager' : 'lazy'} draggable={false} />
+      <img
+        {...(big && sharp[i] && x.image.zoomPath
+          ? photo(x.image.zoomPath, x.image.alt, { sizes: ZOOM_SIZES, width: 1600, height: 2000, priority: true })
+          : photo(x.image.path, big ? x.image.alt : '', { sizes: big ? MAIN_SIZES : 86, priority: big }))}
+        draggable={false}
+      />
     );
   return (
     <div className="gallery">

@@ -1,14 +1,16 @@
 'use client';
-import { Archivo_Black, Pacifico, Playfair_Display, Yatra_One } from 'next/font/google';
+import localFont from 'next/font/local';
 import { createStitchEngine } from '@store/stitch';
 import { jakarta } from './fonts';
+import { prepareGarmentOffThread } from './stitch-worker';
 
-/* The name fonts the embroidery machine files are digitized from, self-hosted by Next.js.
-   The engine draws names on a canvas, so it needs the real family names next/font generates. */
-const pacifico = Pacifico({ weight: '400', subsets: ['latin'], display: 'swap' });
-const playfair = Playfair_Display({ weight: '700', style: 'italic', subsets: ['latin'], display: 'swap' });
-const archivo = Archivo_Black({ weight: '400', subsets: ['latin'], display: 'swap' });
-const yatra = Yatra_One({ weight: '400', subsets: ['devanagari', 'latin'], display: 'swap' });
+/* The name fonts the embroidery machine files are digitized from, self-hosted (src/fonts). The engine draws names
+   on a canvas with the family names next/font generates, and loads each face itself (engine.fontsLoaded()), so
+   none of them is preloaded: pages without a live preview never download them. */
+const pacifico = localFont({ src: '../fonts/pacifico.woff2', weight: '400', display: 'swap', preload: false, adjustFontFallback: false });
+const playfair = localFont({ src: '../fonts/playfair-bold-italic.woff2', weight: '700', style: 'italic', display: 'swap', preload: false, adjustFontFallback: false });
+const archivo = localFont({ src: '../fonts/archivo-black.woff2', weight: '400', display: 'swap', preload: false, adjustFontFallback: false });
+const yatra = localFont({ src: '../fonts/yatra-one.woff2', weight: '400', display: 'swap', preload: false, adjustFontFallback: false });
 
 export const NAME_FONT_CSS: Record<string, string> = {
   script: pacifico.style.fontFamily,
@@ -17,4 +19,9 @@ export const NAME_FONT_CSS: Record<string, string> = {
   hindi: yatra.style.fontFamily,
 };
 
-export const engine = createStitchEngine({ assetBase: '/mockups/', fontFamilies: NAME_FONT_CSS, sansFamily: jakarta.style.fontFamily });
+export const engine = createStitchEngine({
+  assetBase: '/mockups/',
+  fontFamilies: NAME_FONT_CSS,
+  sansFamily: jakarta.style.fontFamily,
+  prepareGarment: prepareGarmentOffThread,
+});

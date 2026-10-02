@@ -16,6 +16,7 @@ import {
 } from '@store/shared';
 import { relLum, lab, hexRgb, TH, TNAME, type ThreadKey } from '@store/stitch';
 import { api, ApiError } from '@/lib/api';
+import { photo } from '@/lib/img';
 import { media } from '@/lib/media';
 import { NAME_FONT_CSS } from '@/lib/stitch';
 import { cart, ui, useWishlist, wishlist } from '@/lib/store';
@@ -228,8 +229,8 @@ export function ProductView({ p }: { p: ProductDetail }) {
                 {sizes.map((v, i) => {
                   const out = v.trackStock && v.stock === 0;
                   return (
-                    <button key={v.id} className="sz" type="button" aria-pressed={v === variant} disabled={out} aria-label={out ? `${v.size}, sold out` : undefined} onClick={() => setSi(i)}>
-                      <b>{v.size}</b>
+                    <button key={v.id} className="sz" type="button" aria-pressed={v === variant} disabled={out} onClick={() => setSi(i)}>
+                      <b>{v.size}</b>{' '}
                       {(v.sizeNote || v.priceDeltaPaise || out) && <small>{out ? 'Sold out' : [v.sizeNote, v.priceDeltaPaise ? `+${formatINR(v.priceDeltaPaise)}` : ''].filter(Boolean).join(' · ')}</small>}
                     </button>
                   );
@@ -338,8 +339,8 @@ export function ProductView({ p }: { p: ProductDetail }) {
       <ProductSections p={p} reviewShots={reviewShots} liveClose={live ? render.close : null} />
       {sg && p.sizeGuide && <SizeGuideModal guide={p.sizeGuide} current={variant.size} onClose={() => setSg(false)} />}
 
-      <div className={`mbar${mbar ? ' on' : ''}`} aria-hidden={!mbar}>
-        <div className="mth">{live ? <LiveCanvas src={render.front} fallback={media(p.image.path)} width={88} height={110} /> : <img src={media(p.image.path)} alt="" />}</div>
+      <div className={`mbar${mbar ? ' on' : ''}`} inert={!mbar}>
+        <div className="mth">{live ? <LiveCanvas src={render.front} fallback={media(p.image.path)} width={88} height={110} /> : <img {...photo(p.image.path, '', { sizes: 88 })} />}</div>
         <div className="mtx"><b>{p.name}</b><span>{formatINR(price.pricePaise * qty)}</span></div>
         <button className="btn btn-grad" type="button" disabled={adding} onClick={() => void add()}>Add to bag</button>
       </div>
