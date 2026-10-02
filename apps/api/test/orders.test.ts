@@ -15,7 +15,7 @@ import { RazorpayGateway, type GatewayPayment } from '../src/modules/payments/ga
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'store-orders-'));
 const env = (extra: Record<string, string> = {}) =>
   loadConfig({
-    NODE_ENV: 'test',
+    NODE_ENV: 'test', OTP_IP_LIMIT_PER_HOUR: '1000',
     DATABASE_URL: inject('databaseUrl'),
     LOG_LEVEL: 'silent',
     OTP_DEV_CODE: '246810',
@@ -359,7 +359,8 @@ describe('uploads and studio orders', () => {
     const file = await app.inject({ method: 'GET', url: img });
     expect(file.statusCode).toBe(200);
     expect(file.headers['content-type']).toBe('image/jpeg');
-    expect((await app.inject({ method: 'GET', url: img.replace(/sig=./, 'sig=0') })).statusCode).toBe(403);
+    // a forged signature (always a different first digit) is refused
+    expect((await app.inject({ method: 'GET', url: img.replace(/sig=(.)/, (_: string, c: string) => `sig=${c === '0' ? '1' : '0'}`) })).statusCode).toBe(403);
     // the upload now belongs to the order and can't be reused
     const item = await db.orderItem.findFirst({ where: { order: { number: r.body.order.number } }, include: { uploads: true } });
     expect(item!.uploads.map((u) => u.kind).sort()).toEqual(['LOGO', 'PREVIEW']);

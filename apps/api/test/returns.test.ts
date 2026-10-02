@@ -22,7 +22,7 @@ const STAFF = { email: 'staff@returns.test', password: 'staff-pass-123' };
 
 beforeAll(async () => {
   const config = loadConfig({
-    NODE_ENV: 'test', DATABASE_URL: inject('databaseUrl'), LOG_LEVEL: 'silent', OTP_DEV_CODE: '864201',
+    NODE_ENV: 'test', OTP_IP_LIMIT_PER_HOUR: '1000', DATABASE_URL: inject('databaseUrl'), LOG_LEVEL: 'silent', OTP_DEV_CODE: '864201',
     OUTBOX_DIR: path.join(tmp, 'outbox'), UPLOAD_DIR: path.join(tmp, 'uploads'), OWNER_EMAIL: 'owner@returns.test',
   });
   db = createPrisma(config.DATABASE_URL);

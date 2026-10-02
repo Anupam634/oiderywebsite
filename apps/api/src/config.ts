@@ -36,6 +36,8 @@ const schema = z.object({
 
   /* ---- one-time passwords ---- */
   OTP_PROVIDER: z.enum(['dev', 'twilio', 'msg91']).default('dev'),
+  /** login codes one network (IP address) may ask for per hour, against abuse */
+  OTP_IP_LIMIT_PER_HOUR: z.coerce.number().int().min(1).default(20),
   /** dev provider only: always use this code (handy for tests and demos) */
   OTP_DEV_CODE: optional,
   TWILIO_ACCOUNT_SID: optional,

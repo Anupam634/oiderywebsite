@@ -95,7 +95,7 @@ export async function buildApp({ config, db, gateway }: { config: Config; db: Db
   await app.register(cartRoutes(db), { prefix: '/v1' });
   await app.register(pincodeRoutes, { prefix: '/v1' });
   await app.register(monitorRoutes, { prefix: '/v1' });
-  await app.register(authRoutes(db, otp), { prefix: '/v1' });
+  await app.register(authRoutes(db, otp, config.OTP_IP_LIMIT_PER_HOUR), { prefix: '/v1' });
   await app.register(accountRoutes(db, orders, files, returns), { prefix: '/v1' });
   await app.register(returnRoutes(orders, returns), { prefix: '/v1' });
   await app.register(orderRoutes(db, orders), { prefix: '/v1' });

@@ -11,7 +11,6 @@ const RESEND_SECONDS = 30;
 const CODE_MINUTES = 10;
 const MAX_ATTEMPTS = 5;
 const PER_PHONE_PER_HOUR = 5;
-const PER_IP_PER_HOUR = 20;
 
 export const toMe = (c: Customer): Me => ({ id: c.id, phone: c.phone, name: c.name, email: c.email, whatsappOptIn: c.whatsappOptIn });
 
@@ -23,7 +22,7 @@ const phoneOf = (raw: string) => {
 
 /** Log in with a mobile number and a one-time code. A new number creates the customer. */
 export const authRoutes =
-  (db: Db, otp: OtpProvider): FastifyPluginAsyncZod =>
+  (db: Db, otp: OtpProvider, perIpPerHour = 20): FastifyPluginAsyncZod =>
   async (app) => {
     app.post(
       '/auth/otp',
@@ -39,7 +38,7 @@ export const authRoutes =
         const wait = recent[0] ? Math.ceil(RESEND_SECONDS - (now - recent[0].createdAt.getTime()) / 1000) : 0;
         if (wait > 0) throw new AppError(429, 'otp_wait', `Please wait ${wait} seconds before asking for another code`);
         if (recent.length >= PER_PHONE_PER_HOUR) throw new AppError(429, 'otp_limit', 'Too many codes for this number. Please try again in an hour.');
-        if ((await db.otpChallenge.count({ where: { ip: req.clientIp, createdAt: { gte: hourAgo } } })) >= PER_IP_PER_HOUR)
+        if ((await db.otpChallenge.count({ where: { ip: req.clientIp, createdAt: { gte: hourAgo } } })) >= perIpPerHour)
           throw new AppError(429, 'otp_limit', 'Too many codes asked from this network. Please try again later.');
 
         let started;
