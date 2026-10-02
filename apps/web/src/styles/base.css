@@ -405,6 +405,17 @@ footer{background:#140A24;color:#E9E1F5;padding:56px 0 24px;overflow:hidden;marg
 .cod{font-size:12.5px;color:var(--ink-2);font-weight:650;margin-top:4px}
 .payrow{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:12px}
 .payrow span{font-size:11.5px;font-weight:800;padding:5px 9px;border-radius:8px;background:#F4EEF8;color:var(--ink-2)}
+/* floating "chat on WhatsApp" (product pages and the studio): a pill on desktop, a round button on phones,
+   sitting above the sticky add-to-bag bar there */
+.wa-fab{position:fixed;right:24px;bottom:24px;z-index:66;display:inline-flex;align-items:center;gap:8px;height:52px;padding:0 20px 0 16px;border-radius:999px;background:#25D366;color:#fff;font-weight:800;font-size:14.5px;box-shadow:0 16px 34px -14px rgba(18,140,70,.7);transition:transform var(--d2) var(--ease),box-shadow var(--d2)}
+.wa-fab:hover{transform:translateY(-2px);box-shadow:0 20px 40px -14px rgba(18,140,70,.8)}
+.wa-fab svg{width:26px;height:26px;flex:none}
+@media(max-width:1000px){
+  .wa-fab{right:14px;bottom:calc(84px + env(safe-area-inset-bottom));width:52px;padding:0;justify-content:center}
+  .wa-fab span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+}
+@media print{.wa-fab{display:none}}
+
 /* bag: the "buy 2" nudge and suggestions */
 .bag-offer{display:flex;align-items:center;gap:10px;margin:12px 22px 2px;padding:10px 12px;border-radius:14px;background:linear-gradient(90deg,#FFF0F7,#FFF5E6);border:1.5px dashed #FF92C3;font-size:13px;line-height:1.35;font-weight:650;color:var(--ink-2)}
 .bag-offer b{color:var(--ink)}

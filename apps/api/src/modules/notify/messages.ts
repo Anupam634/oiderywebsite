@@ -21,6 +21,7 @@ export const WA_TEMPLATES = {
   return_rejected: 'Hi {{1}}, we couldn’t accept your request {{2}} for order {{3}}. {{4}}',
   exchange_shipped: 'Hi {{1}}, the replacement for your request {{2}} is on its way with {{3}} (tracking number {{4}}).',
   return_request_alert: 'Return request {{1}} for order {{2}}: {{3}}, {{4}} piece(s). Reason: {{5}}.',
+  payment_pending: 'Hi {{1}}, your order {{2}} of {{3}} is waiting for payment. We’re holding your pieces until {{4}}. Complete it here: {{5}}',
 } as const;
 type WaTemplate = keyof typeof WA_TEMPLATES;
 
@@ -191,6 +192,29 @@ ${line('Total', formatINR(o.totalPaise), true)}</table>
             { label: 'Track your order', href: track },
           ),
           text: `Order ${o.number} is on its way. Track: ${track}`,
+        }),
+      );
+    await Promise.all(jobs);
+  }
+
+  /** one nudge while an online order waits for payment, before its pieces are released */
+  async paymentPending(o: MailOrder, holdUntil: Date) {
+    const link = this.url(`/account/orders/${encodeURIComponent(o.number)}`);
+    const until = holdUntil.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', timeZone: 'Asia/Kolkata' });
+    const jobs: Promise<unknown>[] = [];
+    if (o.whatsappUpdates) jobs.push(this.wa(o.phone, 'payment_pending', [firstName(o), o.number, formatINR(o.totalPaise), until, link]));
+    if (o.email)
+      jobs.push(
+        this.t.email({
+          to: o.email,
+          subject: `Your order ${o.number} is waiting for payment`,
+          html: this.layout(
+            'Almost yours',
+            `${esc(firstName(o))}, order <b>${o.number}</b> for <b>${formatINR(o.totalPaise)}</b> is waiting for payment. We’re holding your pieces until <b>${esc(until)}</b>.`,
+            this.itemsTable(o),
+            { label: 'Complete payment', href: link },
+          ),
+          text: `Order ${o.number} (${formatINR(o.totalPaise)}) is waiting for payment. We’re holding your pieces until ${until}. Complete it here: ${link}`,
         }),
       );
     await Promise.all(jobs);

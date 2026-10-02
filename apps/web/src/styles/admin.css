@@ -182,3 +182,15 @@
 .adm .rtx-photos{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 .adm .rtx-photos img{width:110px;height:110px;border-radius:12px;object-fit:cover;display:block}
 
+/* reports */
+.adm .rep-quick{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.adm .rep-files{display:grid;gap:10px}
+.adm .rep-file{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:16px;border:1.5px solid var(--line);background:#FFFDF9;transition:border-color .2s,transform .2s,box-shadow .2s}
+.adm .rep-file:hover{border-color:var(--rani);transform:translateY(-1px);box-shadow:0 12px 26px -20px rgba(228,0,124,.6)}
+.adm .rep-file[aria-disabled=true]{opacity:.45;pointer-events:none}
+.adm .rep-file i{flex:none;width:42px;height:42px;border-radius:12px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,#FF2E93,#FF8A00)}
+.adm .rep-file i svg{width:22px;height:22px}
+.adm .rep-file span{display:grid;gap:2px;min-width:0}
+.adm .rep-file b{font-size:15.5px}
+.adm .rep-file small{color:var(--mute);font-weight:600;font-size:13px;line-height:1.4}
+.adm .rep-file em{margin-left:auto;font-style:normal;font-weight:800;font-size:13px;color:var(--rani);white-space:nowrap}

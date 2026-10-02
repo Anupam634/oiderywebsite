@@ -37,7 +37,8 @@ Two ways to host:
    templates approved with exactly these names and texts (from `apps/api/src/modules/notify/messages.ts`):
    `order_confirmed`, `stitch_proof_ready` (with a URL button `https://<domain>/proof/{{1}}`),
    `order_shipped`, `order_delivered`, `order_cancelled`, `refund_processed`, `new_order_alert`, `proof_answered`,
-   `return_requested`, `return_approved`, `return_rejected`, `exchange_shipped`, `return_request_alert`.
+   `return_requested`, `return_approved`, `return_rejected`, `exchange_shipped`, `return_request_alert`,
+   `payment_pending` (a reminder 10 minutes after an unpaid online checkout; `PAYMENT_REMINDER_MINUTES`, 0 turns it off).
    Until they're approved, keep `WHATSAPP_PROVIDER=outbox` (emails still go out).
 5. **Resend**: add and verify the sending domain (SPF and DKIM records in DNS).
 6. **Cloudflare R2**: a private bucket (e.g. `shop-private`) and, optionally, a public bucket for product
@@ -122,6 +123,26 @@ time). The privacy policy page mentions whichever is on.
 - Account, order, proof, login and admin pages are never reported, and automatic Google events on them are
   labelled `/private`.
 
+## Selling on Google and Instagram
+
+The shop publishes a product feed at `https://<domain>/feeds/products.xml` (refreshed hourly; logo merch is left
+out because its price depends on quantity). Product ids are the product slugs, the same ids the Meta Pixel and GA4
+send, so ads, the catalogue and sales line up.
+
+- **Google Merchant Center** (free listings in Google Shopping, and Shopping ads later): add the business and
+  verify the domain, then Products → Add products → From a file → "Enter a link to your file" with the feed URL,
+  daily schedule. Set shipping and return policies in Merchant Center to match the shop's.
+- **Meta Commerce Manager** (product tags on Instagram posts and Reels, catalogue ads): create a catalogue →
+  Data sources → Data feed → scheduled feed from the URL. Connect the same Pixel. Instagram Shopping also needs
+  the Instagram account switched to a business account and checked by Meta.
+
+## Accounts and GST reports
+
+Admin → **Reports** (owner only) gives your accountant CSV files that open in Excel and match the invoices to the
+paisa: the sales register (every invoice line with HSN, rate, taxable value, CGST/SGST/IGST and place of
+supply), an HSN summary split B2B/B2C (GSTR-1 table 12) and refunds (for credit notes). Pick a month, quarter
+or the financial year.
+
 ## Before launch: checklist
 
 - [ ] Real brand name and logo (`packages/shared/src/brand.ts`, `apps/web/src/components/icons.tsx` `Logo`, favicon, OG image)
@@ -137,6 +158,8 @@ time). The privacy policy page mentions whichever is on.
 - [ ] Uptime monitor on `https://<domain>/api/health` (UptimeRobot or Better Stack, free tiers)
 - [ ] `SENTRY_DSN` set, and a test error seen in Sentry/GlitchTip
 - [ ] Meta Pixel and GA4 IDs set (if wanted); a test order shows up as a Purchase in both
+- [ ] Product feed accepted by Google Merchant Center and Meta Commerce Manager (no item errors)
+- [ ] The WhatsApp number in `packages/shared/src/brand.ts` is the studio's real one (the chat buttons use it)
 - [ ] Database backups on (provider backups or `scripts/backup-db.sh`), and one restore tested
 - [ ] Two-factor login on every account above (hosting, email, Razorpay, domain, Meta)
 

@@ -46,6 +46,7 @@ export function startJobs(deps: { db: Db; files: Files; orders: OrderService; lo
     timers.push(t);
   };
   every(60_000, 'expire unpaid orders', () => deps.orders.expireUnpaid());
+  every(60_000, 'payment reminders', () => deps.orders.remindUnpaid());
   every(6 * 3_600_000, 'clean up', async () => deps.log.info(await cleanUp(deps.db, deps.files), 'cleaned up'));
   return () => timers.forEach(clearInterval);
 }

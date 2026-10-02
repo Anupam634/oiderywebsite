@@ -45,6 +45,7 @@ export const Box = make('<path d="M21 8l-9-5-9 5v8l9 5 9-5z"/><path d="M3 8l9 5 
 export const Star = make('<path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/>');
 export const Users = make('<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c1-3.6 3.6-5.5 6.5-5.5s5.5 1.9 6.5 5.5"/><path d="M16 4.6a3.5 3.5 0 010 6.8M18 14.8c1.8.8 3 2.5 3.5 5.2"/>');
 export const Needle = make('<path d="M20 4L7 17"/><path d="M17.5 3.5a2 2 0 013 3"/><path d="M7 17l-3 3"/><path d="M4 9c2 0 3.5 1.2 3.5 3S6 15 4 15"/>');
+export const Report = make('<path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6M9 9h2"/>');
 export const Logout = make('<path d="M15 4h3a2 2 0 012 2v12a2 2 0 01-2 2h-3"/><path d="M10 16l4-4-4-4M14 12H4"/>');
 export const SparkFill = make('<path d="M12 2l2.2 6.6L21 10l-6.8 1.6L12 18l-2.2-6.4L3 10l6.8-1.4z"/>', { fill: 'currentColor', stroke: 'none' });
 

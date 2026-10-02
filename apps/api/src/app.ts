@@ -16,6 +16,7 @@ import { accountRoutes } from './modules/account/routes.ts';
 import { adminAuthRoutes } from './modules/admin/auth.ts';
 import { adminCatalogRoutes } from './modules/admin/catalog.ts';
 import { adminOrderRoutes } from './modules/admin/orders.ts';
+import { adminReportRoutes } from './modules/admin/reports.ts';
 import { adminStoreRoutes } from './modules/admin/store.ts';
 import { authRoutes } from './modules/auth/routes.ts';
 import { createOtpProvider } from './modules/auth/otp.ts';
@@ -106,6 +107,7 @@ export async function buildApp({ config, db, gateway }: { config: Config; db: Db
   await app.register(adminReturnRoutes(db, returns), { prefix: '/v1' });
   await app.register(adminCatalogRoutes(db, catalog, files, refreshWeb), { prefix: '/v1' });
   await app.register(adminStoreRoutes(db, files), { prefix: '/v1' });
+  await app.register(adminReportRoutes(db), { prefix: '/v1' });
   return app;
 }
 

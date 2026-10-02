@@ -52,6 +52,7 @@ import { cart, ui } from '@/lib/store';
 import { engine, NAME_FONT_CSS } from '@/lib/stitch';
 import { analyseOffThread } from '@/lib/stitch-worker';
 import { Bag, Chat, Check, ChevronDown, Eye, Info } from '../icons';
+import { WhatsAppButton } from '../WhatsAppButton';
 
 type How = 'upload' | 'make';
 type Mode = 'front' | 'close';
@@ -672,6 +673,7 @@ export function StudioView({ start }: { start: StudioStart }) {
           </div>
         </div>
       )}
+      <WhatsAppButton about="a design in the studio" />
       <div className="up-mbar">
         <div><small>Total</small><b>{formatINR(total)}</b></div>
         <button className="btn btn-grad" type="button" disabled={!canAdd || adding} onClick={() => void add()}>{adding ? 'Adding…' : 'Add to bag'}</button>

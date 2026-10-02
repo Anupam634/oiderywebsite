@@ -204,6 +204,32 @@ describe('cash on delivery', () => {
 });
 
 describe('online payment (test gateway)', () => {
+  it('reminds once about an unpaid order while its pieces are held, and the shopper never sees that in the timeline', async () => {
+    const { sid, phone } = await login();
+    const v = await variant('cherry');
+    const r = await place(app, sid, phone, [{ variantId: v.id, qty: 1 }], { payment: 'upi' });
+    const n = r.body.order.number;
+    const reminders = () => fs.readdirSync(path.join(tmp, 'outbox')).filter((d) => d.includes('payment-pending') || d.includes('waiting-for-payment'));
+    const before = reminders().length;
+    await app.orders.remindUnpaid(); // too soon after checkout
+    expect(await db.orderEvent.count({ where: { order: { number: n }, type: 'payment_reminder' } })).toBe(0);
+
+    await db.order.update({ where: { number: n }, data: { email: 'priya@example.com', createdAt: new Date(Date.now() - 11 * 60_000) } });
+    expect(await app.orders.remindUnpaid()).toBeGreaterThanOrEqual(1);
+    await app.orders.remindUnpaid(); // never twice
+    expect(await db.orderEvent.count({ where: { order: { number: n }, type: 'payment_reminder' } })).toBe(1);
+    const sent = reminders().slice(before);
+    expect(sent.some((d) => d.includes('whatsapp-payment-pending'))).toBe(true);
+    expect(sent.some((d) => d.includes('email-Your-order') && d.includes('waiting-for-payment'))).toBe(true);
+    const mine = await call(app, 'GET', `/v1/me/orders/${n}`, { sid });
+    expect(mine.body.order.events.map((e: any) => e.type)).not.toContain('payment_reminder');
+
+    // past the hold, it's released rather than reminded again
+    await db.order.update({ where: { number: n }, data: { createdAt: new Date(Date.now() - 31 * 60_000) } });
+    await app.orders.expireUnpaid();
+    expect((await db.order.findUnique({ where: { number: n } }))!.status).toBe('CANCELLED');
+  });
+
   it('waits for payment, survives a failed try, then confirms', async () => {
     const { sid, phone } = await login();
     const v = await variant('cherry');

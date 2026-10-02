@@ -413,6 +413,41 @@ export class OrderService {
    * Unpaid orders older than the payment window: ask the gateway once more (a webhook may have been lost),
    * then cancel and put the stock back.
    */
+  /**
+   * One reminder for each online order still waiting for payment a few minutes after checkout, while its pieces
+   * are still held. A database lock keeps two servers from both sending, and the event marks it as done.
+   */
+  async remindUnpaid() {
+    const after = this.config.PAYMENT_REMINDER_MINUTES;
+    const hold = this.config.PENDING_ORDER_MINUTES;
+    if (!after || after >= hold - 2) return 0;
+    const now = Date.now();
+    const due = await this.db.$transaction(async (tx) => {
+      const [lock] = await tx.$queryRaw<{ ok: boolean }[]>`SELECT pg_try_advisory_xact_lock(735402) AS ok`;
+      if (!lock?.ok) return [];
+      const rows = await tx.order.findMany({
+        where: {
+          status: 'PENDING_PAYMENT',
+          createdAt: { lt: new Date(now - after * 60_000), gt: new Date(now - (hold - 2) * 60_000) },
+          events: { none: { type: 'payment_reminder' } },
+        },
+        include: { items: true },
+        take: 50,
+      });
+      if (rows.length)
+        await tx.orderEvent.createMany({ data: rows.map((o) => ({ orderId: o.id, type: 'payment_reminder', message: 'Reminded the customer to complete payment', visible: false })) });
+      return rows;
+    });
+    for (const o of due) {
+      try {
+        await this.notify.paymentPending(o, new Date(o.createdAt.getTime() + hold * 60_000));
+      } catch (err) {
+        this.log.error({ err, order: o.number }, 'could not send a payment reminder');
+      }
+    }
+    return due.length;
+  }
+
   async expireUnpaid() {
     const cutoff = new Date(Date.now() - this.config.PENDING_ORDER_MINUTES * 60_000);
     const stale = await this.db.order.findMany({ where: { status: 'PENDING_PAYMENT', createdAt: { lt: cutoff } }, include: { payments: true }, take: 50 });

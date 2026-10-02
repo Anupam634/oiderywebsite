@@ -50,6 +50,8 @@ const schema = z.object({
   RAZORPAY_KEY_SECRET: optional,
   RAZORPAY_WEBHOOK_SECRET: optional,
   PENDING_ORDER_MINUTES: z.coerce.number().int().min(5).default(30),
+  /** minutes after checkout to remind a shopper who hasn't paid yet (once; 0 = never) */
+  PAYMENT_REMINDER_MINUTES: z.coerce.number().int().min(0).default(10),
 
   /* ---- messages ---- */
   EMAIL_PROVIDER: z.enum(['outbox', 'resend']).default('outbox'),

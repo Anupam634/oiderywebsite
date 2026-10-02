@@ -24,6 +24,7 @@ import { cart, ui, useWishlist, wishlist } from '@/lib/store';
 import { rememberViewed } from '@/lib/recent';
 import { track } from '@/lib/track';
 import { Bag, Check, Eye, Heart, Info, Spark } from '../icons';
+import { WhatsAppButton } from '../WhatsAppButton';
 import { Gallery, type GalleryItem } from './Gallery';
 import { LiveCanvas, thumbOf, useLivePreview, useVariantRenders, type LiveInput } from './live';
 import { ProductSections, SizeGuideModal } from './ProductSections';
@@ -193,11 +194,26 @@ export function ProductView({ p }: { p: ProductDetail }) {
     im.src = url;
   }
 
+  // the sticky bar shows once the main Add button has scrolled above the screen. Checked on scroll (not with an
+  // IntersectionObserver, which says nothing when a jump goes straight past the button, e.g. a link to the reviews)
   const [mbar, setMbar] = useState(false);
   useEffect(() => {
-    const io = new IntersectionObserver(([en]) => setMbar(!en!.isIntersecting && en!.boundingClientRect.top < 0));
-    if (addBtn.current) io.observe(addBtn.current);
-    return () => io.disconnect();
+    let frame = 0;
+    const check = () => {
+      frame = 0;
+      if (addBtn.current) setMbar(addBtn.current.getBoundingClientRect().bottom < 0);
+    };
+    const soon = () => {
+      if (!frame) frame = requestAnimationFrame(check);
+    };
+    addEventListener('scroll', soon, { passive: true });
+    addEventListener('resize', soon);
+    check();
+    return () => {
+      removeEventListener('scroll', soon);
+      removeEventListener('resize', soon);
+      cancelAnimationFrame(frame);
+    };
   }, []);
 
   return (
@@ -348,6 +364,7 @@ export function ProductView({ p }: { p: ProductDetail }) {
       <ProductSections p={p} reviewShots={reviewShots} liveClose={live ? render.close : null} />
       {sg && p.sizeGuide && <SizeGuideModal guide={p.sizeGuide} current={variant.size} onClose={() => setSg(false)} />}
 
+      <WhatsAppButton about={p.name} />
       <div className={`mbar${mbar ? ' on' : ''}`} inert={!mbar}>
         <div className="mth">{live ? <LiveCanvas src={render.front} fallback={media(p.image.path)} width={88} height={110} /> : <img {...photo(p.image.path, '', { sizes: 88 })} />}</div>
         <div className="mtx"><b>{p.name}</b><span>{formatINR(price.pricePaise * qty)}</span></div>

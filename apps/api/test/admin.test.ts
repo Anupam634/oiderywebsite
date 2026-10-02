@@ -6,6 +6,7 @@ import sharp from 'sharp';
 import { afterAll, beforeAll, describe, expect, inject, it } from 'vitest';
 import { buildApp } from '../src/app.ts';
 import { loadConfig } from '../src/config.ts';
+import { isValidGstin } from '@store/shared';
 import { hashPassword } from '../src/lib/crypto.ts';
 import { createPrisma, type Db } from '../src/lib/prisma.ts';
 
@@ -346,5 +347,78 @@ pyembroidery.write_dst(p, ${JSON.stringify(dst)})
     const unread = await app.inject({ method: 'POST', url: `/v1/admin/items/${itemId}/stitch-files`, payload: junk.payload, headers: junk.headers, cookies: owner });
     expect(unread.statusCode).toBe(400);
     expect((await call('GET', `/v1/admin/orders/${number}`, { cookies: owner })).body.order.items[0].stitchFiles).toHaveLength(1);
+  });
+});
+
+describe('GST reports', () => {
+  const today = () => new Date(Date.now() + 5.5 * 3_600_000).toISOString().slice(0, 10);
+  // a GSTIN with the right check digit for Karnataka (29)
+  const gstin = () => {
+    const base = '29ABCDE1234F1Z';
+    for (const c of '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ') if (isValidGstin(base + c)) return base + c;
+    throw new Error('no check digit');
+  };
+  const parse = (csv: string) => csv.replace(/^﻿/, '').trim().split('\r\n').map((line) => line.match(/("([^"]|"")*"|[^,]*)(,|$)/g)!.slice(0, -1).map((c) => c.replace(/,$/, '').replace(/^"|"$/g, '').replace(/""/g, '"')));
+
+  it('gives the owner a sales register, an HSN summary and refunds that match the invoices', async () => {
+    const owner = ownerCookie;
+    const kit = await variant('poppy');
+    // a cash order in the seller's state (CGST + SGST), and a business order from Karnataka (IGST)
+    const a = await customer();
+    const local = await call('POST', '/v1/orders', { cookies: { sid: a.sid }, body: { items: [{ variantId: kit.id, qty: 1 }], shipping: 'standard', payment: 'cod', details: details(a.phone), clientKey: `gst-a-${Date.now()}` } });
+    expect(local.status).toBe(201);
+    const b = await customer();
+    const away = { ...details(b.phone), pincode: '560001', city: 'Bengaluru', state: 'Karnataka', gst: { gstin: gstin(), business: '=HYPERLINK("http://x","Studio")' } };
+    const biz = await call('POST', '/v1/orders', { cookies: { sid: b.sid }, body: { items: [{ variantId: kit.id, qty: 2 }], shipping: 'standard', payment: 'cod', details: away, clientKey: `gst-b-${Date.now()}` } });
+    expect(biz.status).toBe(201);
+    const inv: any[] = []; // eslint-disable-line @typescript-eslint/no-explicit-any
+    for (const n of [local.body.order.number, biz.body.order.number]) inv.push((await call('POST', `/v1/admin/orders/${n}/invoice`, { cookies: owner })).body.order);
+    const q = `from=${today()}&to=${today()}`;
+
+    // sales register: one row per line, and the numbers of the invoice snapshot
+    const reg = await app.inject({ method: 'GET', url: `/v1/admin/reports/gst-sales.csv?${q}`, cookies: owner });
+    expect(reg.statusCode).toBe(200);
+    expect(reg.headers['content-type']).toContain('text/csv');
+    expect(reg.headers['content-disposition']).toContain(`gst-sales-register-${today()}_to_${today()}.csv`);
+    const rows = parse(reg.body);
+    const head = rows[0]!;
+    const col = (r: string[], name: string) => r[head.indexOf(name)]!;
+    const mine = rows.filter((r) => [inv[0].number, inv[1].number].includes(col(r, 'Order no')));
+    expect(mine).toHaveLength(2);
+    const l = mine.find((r) => col(r, 'Order no') === inv[0].number)!;
+    const x = mine.find((r) => col(r, 'Order no') === inv[1].number)!;
+    expect([col(l, 'Type'), col(l, 'Inter-state'), col(l, 'Place of supply')]).toEqual(['B2C', 'No', 'Maharashtra']);
+    expect(Number(col(l, 'CGST'))).toBeGreaterThan(0);
+    expect(Number(col(l, 'IGST'))).toBe(0);
+    expect([col(x, 'Type'), col(x, 'Inter-state'), col(x, 'State code'), col(x, 'Customer GSTIN')]).toEqual(['B2B', 'Yes', '29', gstin()]);
+    expect(Number(col(x, 'IGST'))).toBeGreaterThan(0);
+    expect(Number(col(x, 'CGST'))).toBe(0);
+    // a name that Excel would run as a formula comes out as plain text
+    expect(col(x, 'Customer')).toBe(`'=HYPERLINK("http://x","Studio")`);
+    for (const [r, o] of [[l, inv[0]], [x, inv[1]]] as const) {
+      const sum = Number(col(r, 'Taxable value')) + Number(col(r, 'CGST')) + Number(col(r, 'SGST')) + Number(col(r, 'IGST'));
+      expect(sum).toBeCloseTo(Number(col(r, 'Total incl. GST')), 2);
+      expect(Math.round(Number(col(r, 'Total incl. GST')) * 100)).toBe(o.totalPaise);
+      expect(col(r, 'Invoice no')).toBe(o.invoice.number);
+    }
+    expect(rows.at(-1)![0]).toBe('Total');
+
+    // HSN summary: B2B and B2C apart, quantities add up
+    const hsn = parse((await app.inject({ method: 'GET', url: `/v1/admin/reports/gst-hsn.csv?${q}`, cookies: owner })).body);
+    const types = hsn.slice(1).map((r) => r[0]);
+    expect(types).toContain('B2B');
+    expect(types).toContain('B2C');
+    expect(hsn[0]).toEqual(['Supply type', 'HSN', 'Description', 'UQC', 'Total quantity', 'Total value', 'Rate %', 'Taxable value', 'IGST', 'CGST', 'SGST', 'Cess']);
+
+    // refunds: a refund on the local order shows with its invoice
+    await call('POST', `/v1/admin/orders/${inv[0].number}/cancel`, { cookies: owner, body: { reason: 'Customer asked to cancel', notify: false } });
+    const refunds = parse((await app.inject({ method: 'GET', url: `/v1/admin/reports/refunds.csv?${q}`, cookies: owner })).body);
+    expect(refunds[0]![0]).toBe('Refund date');
+
+    // staff can't, nobody else can, and silly ranges are refused
+    expect((await app.inject({ method: 'GET', url: `/v1/admin/reports/gst-sales.csv?${q}`, cookies: staffCookie })).statusCode).toBe(403);
+    expect((await app.inject({ method: 'GET', url: `/v1/admin/reports/gst-sales.csv?${q}` })).statusCode).toBe(401);
+    expect((await app.inject({ method: 'GET', url: `/v1/admin/reports/gst-sales.csv?from=2026-12-01&to=2026-01-01`, cookies: owner })).statusCode).toBe(400);
+    expect((await app.inject({ method: 'GET', url: `/v1/admin/reports/gst-sales.csv?from=2024-01-01&to=2026-01-01`, cookies: owner })).statusCode).toBe(400);
   });
 });
