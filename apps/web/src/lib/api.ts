@@ -16,6 +16,7 @@ import type {
   StudioLineSpec,
   Totals,
 } from '@store/shared';
+import { TOO_BIG, UPLOAD_MAX_BYTES } from './upload-limit';
 
 /* Talks to the store API. Server components call API_URL directly; the browser goes through this site's
    /api proxy (same origin, so the login cookie travels with it). */
@@ -170,8 +171,9 @@ export const api = {
   fakePayment: (number: string, ok: boolean) => post<{ order: OrderDto }>(`/v1/orders/${encodeURIComponent(number)}/fake-payment`, { ok }).then((r) => r.order),
   paymentFailed: (number: string, reason?: string) => post<{ ok: true }>(`/v1/orders/${encodeURIComponent(number)}/payment-failed`, reason ? { reason } : {}),
 
-  /** upload a logo, pet photo, preview render or a photo for a return request (multipart) */
+  /** upload a logo, pet photo, preview render or a photo for a return request (multipart); fit photos first (lib/shrink) */
   upload: async (kind: 'logo' | 'pet' | 'preview' | 'return', file: Blob, name = 'upload') => {
+    if (file.size > UPLOAD_MAX_BYTES) throw new ApiError(413, TOO_BIG, 'too_large');
     const fd = new FormData();
     fd.append('kind', kind);
     fd.append('file', file, name);
@@ -182,6 +184,7 @@ export const api = {
       throw new ApiError(0, 'You seem to be offline. Please check your connection.', 'offline');
     }
     const body = (await res.json().catch(() => null)) as { id?: string; error?: { message?: string; code?: string } } | null;
+    if (res.status === 413) throw new ApiError(413, TOO_BIG, 'too_large'); // the host's own limit answers without JSON
     if (!res.ok || !body?.id) throw new ApiError(res.status, body?.error?.message ?? 'Upload failed', body?.error?.code);
     return body as { id: string; kind: string; width: number | null; height: number | null; bytes: number };
   },

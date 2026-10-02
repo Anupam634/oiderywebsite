@@ -47,22 +47,32 @@ Two ways to host:
 
 ## Step by step (option A)
 
-1. **Database**: create PostgreSQL on Railway (or Neon). Copy its connection string.
-2. **API on Railway**: new service from this repository, Dockerfile `apps/api/Dockerfile`, build context the
-   repository root. Set the environment from `apps/api/.env.example`, at least:
+Keep everything in one part of the world: the storefront's server code runs in **Singapore** (`sin1`, set in
+`apps/web/vercel.json`), so create the Railway project (database and API) in its **Southeast Asia (Singapore)**
+region too. Every page asks the API for data; across oceans that adds up.
+
+1. **Database**: create PostgreSQL on Railway (or Neon, Singapore region). Copy its connection string.
+2. **API on Railway**: new service from this repository. In the service settings set the config file path to
+   `/apps/api/railway.json` (it builds `apps/api/Dockerfile` from the repository root, checks `/health` before
+   switching traffic, restarts on crashes and only redeploys when API code changes). Set the environment from
+   `apps/api/.env.example`, at least:
    - `NODE_ENV=production`, `DATABASE_URL`, `APP_URL=https://<domain>`, `WEB_ORIGIN=https://<domain>`
    - `PROXY_KEY` and `FILE_SIGNING_SECRET`: two different long random strings (`openssl rand -hex 32`)
    - `TRUST_PROXY=1`, `WEB_REVALIDATE_URL=https://<domain>/api/revalidate`
    - `ADMIN_BOOTSTRAP_EMAIL` and `ADMIN_BOOTSTRAP_PASSWORD` for the first owner login (remove the password after the first start)
    - providers: `OTP_PROVIDER`, `PAYMENTS_PROVIDER`, `EMAIL_PROVIDER`, `WHATSAPP_PROVIDER`, `STORAGE=s3` and their keys
+   - `SENTRY_DSN` for error reports (see "Errors and uptime" below)
    Migrations run automatically on start. Add the custom domain `api.<domain>` and check `https://api.<domain>/health`.
 3. **Catalogue**: either add products in the admin, or load the demo catalogue once for a preview server:
    `node dist/seed.js` in the API service's shell (it refuses to run on a shop that already has orders).
-4. **Storefront on Vercel**: import the repository, root directory `apps/web`, framework Next.js.
-   Install command `pnpm install`, build command `cd ../.. && pnpm turbo run build --filter=@store/web`.
+4. **Storefront on Vercel**: import the repository, root directory `apps/web` (its `vercel.json` sets the
+   framework, the install and build commands and the Singapore region).
    Environment: `API_URL=https://api.<domain>`, `PROXY_KEY` (same as the API), `NEXT_PUBLIC_SITE_URL=https://<domain>`,
    `NEXT_PUBLIC_INDEXABLE=0` until launch. If product photos live on a public R2 bucket (`S3_PUBLIC_URL`), also set
-   `NEXT_PUBLIC_IMAGE_HOSTS=media.<domain>` so the storefront can resize them. Add the domain.
+   `NEXT_PUBLIC_IMAGE_HOSTS=media.<domain>` so the storefront can resize them. For analytics, set
+   `NEXT_PUBLIC_META_PIXEL_ID` and/or `NEXT_PUBLIC_GA_ID` (see "Analytics" below). Add the domain.
+   Uploads pass through the storefront, and Vercel caps a request at 4.5 MB: the shop resizes photos in the
+   browser to stay under 4 MB, so phone photos of any size work; a machine file over 4 MB is refused politely.
 5. **Razorpay**: start with **test keys** (`PAYMENTS_PROVIDER=razorpay`, test key id/secret). Add the webhook
    `https://api.<domain>/v1/webhooks/razorpay` with events `payment.authorized`, `payment.captured`,
    `payment.failed`, `order.paid`, `refund.processed`, `refund.failed`, and put its secret in
@@ -87,6 +97,31 @@ Photos are resized and converted to AVIF/WebP by the storefront on first view an
 (a photo replaced at the same address shows its old version for up to a week, so upload replacements as new files).
 Back up nightly with `scripts/backup-db.sh` from cron, and copy backups off the server (R2 or similar).
 
+## Errors and uptime
+
+- **Error reports**: create a project in **Sentry** (free tier) or **GlitchTip** (Sentry-compatible, free tier or
+  self-hosted) and put its DSN in the API's `SENTRY_DSN`. Errors from the API, its background jobs, the storefront
+  server and shoppers' browsers all arrive there (browser and storefront errors travel through the API's
+  `/v1/client-errors`). Reports carry the route pattern only (e.g. `/proof/[token]`), never request bodies,
+  cookies or secret links. Without a DSN everything still goes to the Railway/Vercel logs.
+- **Uptime**: one monitor on `https://<domain>/api/health` checks the whole chain (storefront → API → database).
+  UptimeRobot or Better Stack (free tiers), alerting by email and WhatsApp/SMS.
+
+## Analytics
+
+Both are optional and switched off until their IDs are set on the storefront (then redeploy, they're read at build
+time). The privacy policy page mentions whichever is on.
+
+- **Meta Pixel** (to measure Instagram and Facebook posts and ads): Meta Events Manager → Data sources → add a
+  Pixel → `NEXT_PUBLIC_META_PIXEL_ID`. Events sent: `PageView`, `ViewContent`, `AddToCart`, `InitiateCheckout`,
+  `Purchase` (with the order number as event id). Check them with Events Manager → Test events.
+- **Google Analytics 4**: create a property and a web data stream → `NEXT_PUBLIC_GA_ID` (`G-…`). Events: `page_view`,
+  `view_item`, `add_to_cart`, `begin_checkout`, `purchase`. In the data stream's **Enhanced measurement → Page views
+  → Advanced**, turn off "Page changes based on browser history events" (the shop sends its own page views;
+  leaving it on counts pages twice). Check with Admin → DebugView.
+- Account, order, proof, login and admin pages are never reported, and automatic Google events on them are
+  labelled `/private`.
+
 ## Before launch: checklist
 
 - [ ] Real brand name and logo (`packages/shared/src/brand.ts`, `apps/web/src/components/icons.tsx` `Logo`, favicon, OG image)
@@ -99,7 +134,9 @@ Back up nightly with `scripts/backup-db.sh` from cron, and copy backups off the 
 - [ ] Razorpay live keys and webhook secret; a ₹1 live order placed and refunded
 - [ ] SMS code arrives on Jio, Airtel and Vi numbers
 - [ ] WhatsApp templates approved; emails land in the inbox (not spam)
-- [ ] Uptime monitor on `https://<domain>` and `https://api.<domain>/health` (UptimeRobot or Better Stack, free tiers)
+- [ ] Uptime monitor on `https://<domain>/api/health` (UptimeRobot or Better Stack, free tiers)
+- [ ] `SENTRY_DSN` set, and a test error seen in Sentry/GlitchTip
+- [ ] Meta Pixel and GA4 IDs set (if wanted); a test order shows up as a Purchase in both
 - [ ] Database backups on (provider backups or `scripts/backup-db.sh`), and one restore tested
 - [ ] Two-factor login on every account above (hosting, email, Razorpay, domain, Meta)
 

@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 import { BRAND } from '@store/shared';
+import { ErrorReporter } from '@/components/ErrorReporter';
 import { Overlays } from '@/components/Overlays';
 import { getCategories } from '@/lib/catalog';
 import { fraunces, jakarta, mukta } from '@/lib/fonts';
@@ -25,6 +26,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       <body>
         {children}
         <Overlays categories={categories} />
+        <ErrorReporter />
       </body>
     </html>
   );

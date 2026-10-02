@@ -16,7 +16,7 @@ import {
 } from '@store/shared';
 import { api, ApiError } from '@/lib/api';
 import { media } from '@/lib/media';
-import { shrinkImage } from '@/lib/shrink';
+import { fitForUpload } from '@/lib/shrink';
 import { ui } from '@/lib/store';
 import { Camera, Check, Close, Info, Swap } from '../icons';
 
@@ -125,9 +125,9 @@ function ReturnForm({ order, opt, onCancel, onDone }: { order: OrderDto; opt: Re
     setErr('');
     try {
       for (const f of [...files].slice(0, MAX_PHOTOS - photos.length)) {
-        const blob = await shrinkImage(f);
-        const up = await api.upload('return', blob, f.name.replace(/\.[^.]+$/, '') + '.jpg');
-        setPhotos((p) => [...p, { id: up.id, url: URL.createObjectURL(blob) }]);
+        const fit = await fitForUpload(f, { maxPx: 2000, kind: 'photo' });
+        const up = await api.upload('return', fit.blob, fit.name);
+        setPhotos((p) => [...p, { id: up.id, url: URL.createObjectURL(fit.blob) }]);
       }
     } catch (e) {
       setErr(e instanceof ApiError ? e.message : 'A photo didn’t upload. Please try again.');

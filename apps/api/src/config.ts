@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { parseDsn } from './lib/monitor.ts';
 
 const bool = z.enum(['0', '1', 'true', 'false']).transform((v) => v === '1' || v === 'true');
 const optional = z
@@ -88,6 +89,16 @@ const schema = z.object({
   /** extra Python path where pyembroidery is installed (pip install --target .data/pylib -r tools/requirements.txt) */
   STITCH_PYTHONPATH: z.string().default('.data/pylib'),
 
+  /* ---- error reporting ---- */
+  /** Sentry or GlitchTip project DSN; errors go to the logs only when empty */
+  SENTRY_DSN: optional,
+  /** e.g. production or staging (defaults to NODE_ENV) */
+  SENTRY_ENVIRONMENT: optional,
+  /** the deployed version (defaults to the commit Railway or Render built) */
+  RELEASE: optional,
+  RAILWAY_GIT_COMMIT_SHA: optional,
+  RENDER_GIT_COMMIT: optional,
+
   /* ---- safety switches for staging/demo servers ---- */
   ALLOW_FAKE_PAYMENTS: bool.default(false),
   ALLOW_DEV_OTP: bool.default(false),
@@ -110,6 +121,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
   if (c.WHATSAPP_PROVIDER === 'meta' && !(c.META_WA_TOKEN && c.META_WA_PHONE_NUMBER_ID)) problems.push('META_WA_TOKEN and META_WA_PHONE_NUMBER_ID are needed for WhatsApp');
   if (c.STORAGE === 's3' && !(c.S3_ENDPOINT && c.S3_BUCKET && c.S3_ACCESS_KEY_ID && c.S3_SECRET_ACCESS_KEY)) problems.push('S3 storage needs S3_ENDPOINT, S3_BUCKET, S3_ACCESS_KEY_ID and S3_SECRET_ACCESS_KEY');
   if (c.S3_PUBLIC_URL && !c.S3_PUBLIC_BUCKET) problems.push('S3_PUBLIC_URL needs S3_PUBLIC_BUCKET (keep private files out of a public bucket)');
+  if (c.SENTRY_DSN && !parseDsn(c.SENTRY_DSN)) problems.push('SENTRY_DSN is not a valid DSN (https://<key>@<host>/<project>)');
   if (c.NODE_ENV === 'production') {
     // a real shop must never run on test switches by accident; staging servers opt in explicitly
     if (c.PAYMENTS_PROVIDER === 'fake' && !c.ALLOW_FAKE_PAYMENTS) problems.push('PAYMENTS_PROVIDER=fake is not allowed in production (set ALLOW_FAKE_PAYMENTS=1 for a demo server)');

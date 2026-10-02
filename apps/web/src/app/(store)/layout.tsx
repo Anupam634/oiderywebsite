@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { Analytics } from '@/components/Analytics';
 import { BottomNav } from '@/components/BottomNav';
 import { Footer } from '@/components/Footer';
 import { Header } from '@/components/Header';
@@ -12,6 +13,7 @@ export default async function StoreLayout({ children }: { children: ReactNode })
       {children}
       <Footer />
       <BottomNav />
+      <Analytics />
     </div>
   );
 }

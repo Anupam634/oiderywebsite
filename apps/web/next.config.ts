@@ -4,16 +4,25 @@ import type { NextConfig } from 'next';
 
 const dev = process.env.NODE_ENV !== 'production';
 const imageHosts = (process.env.NEXT_PUBLIC_IMAGE_HOSTS ?? '').split(',').map((h) => h.trim()).filter(Boolean);
+// analytics hosts, only when their IDs are set (see src/lib/track.ts)
+const pixel = !!process.env.NEXT_PUBLIC_META_PIXEL_ID;
+const ga = !!process.env.NEXT_PUBLIC_GA_ID;
+const trackScripts = [pixel && 'https://connect.facebook.net', ga && 'https://www.googletagmanager.com'].filter(Boolean).join(' ');
+const trackConnect = [
+  pixel && 'https://www.facebook.com https://connect.facebook.net',
+  ga && 'https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com',
+].filter(Boolean).join(' ');
 
-/* Content Security Policy: our own scripts plus Razorpay's checkout (script, iframe, API calls). Next.js
-   needs inline scripts for hydration; dev mode also needs eval and the HMR websocket. */
+/* Content Security Policy: our own scripts plus Razorpay's checkout (script, iframe, API calls) and, when
+   switched on, Meta Pixel and Google Analytics. Next.js needs inline scripts for hydration; dev mode also
+   needs eval and the HMR websocket. */
 const csp = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline' https://checkout.razorpay.com${dev ? " 'unsafe-eval'" : ''}`,
+  `script-src 'self' 'unsafe-inline' https://checkout.razorpay.com${trackScripts ? ` ${trackScripts}` : ''}${dev ? " 'unsafe-eval'" : ''}`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
-  `connect-src 'self' https://*.razorpay.com${dev ? ' ws: wss:' : ''}`,
+  `connect-src 'self' https://*.razorpay.com${trackConnect ? ` ${trackConnect}` : ''}${dev ? ' ws: wss:' : ''}`,
   'frame-src https://*.razorpay.com',
   "media-src 'self' blob:",
   "worker-src 'self' blob:",

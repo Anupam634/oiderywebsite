@@ -1,9 +1,18 @@
 'use client';
 import { useSyncExternalStore } from 'react';
 import type { StudioLineSpec } from '@store/shared';
+import { track, type TrackItem } from './track';
 
 /* Bag and wishlist, kept in localStorage and shared across tabs and pages.
    Prices here are for display; the API re-prices the bag before payment. */
+
+/** a bag line as analytics sees it (studio pieces are "studio-<garment>") */
+export const trackLine = (l: CartLine): TrackItem => ({
+  id: l.studio ? `studio-${l.studio.garment}` : l.slug,
+  name: l.name,
+  pricePaise: l.unitPricePaise,
+  qty: l.qty,
+});
 
 export interface CartLine {
   key: string;
@@ -86,6 +95,7 @@ export const cart = {
     const lines = cartStore.get();
     const same = !line.custom && lines.find((l) => l.key === line.key);
     cartStore.set(same ? lines.map((l) => (l === same ? { ...l, qty: l.qty + line.qty } : l)) : [...lines, line]);
+    track.addToCart(trackLine(line));
   },
   setQty(key: string, qty: number) {
     cartStore.set(qty < 1 ? cartStore.get().filter((l) => l.key !== key) : cartStore.get().map((l) => (l.key === key ? { ...l, qty } : l)));

@@ -17,6 +17,8 @@ import type {
   AddressDto,
   ProductionRow,
 } from '@store/shared';
+import { fitForUpload } from './shrink';
+import { TOO_BIG, UPLOAD_MAX_BYTES } from './upload-limit';
 import { ApiError } from './api';
 
 /* The studio admin API, called through this site's /api proxy (the staff cookie travels with it). */
@@ -37,6 +39,7 @@ async function call<T>(method: string, path: string, body?: unknown): Promise<T>
   if (res.status === 401 && typeof window !== 'undefined' && !location.pathname.startsWith('/admin/login')) {
     setAdmin(null);
   }
+  if (res.status === 413) throw new ApiError(413, TOO_BIG, 'too_large'); // the host's own limit answers without JSON
   if (!res.ok) {
     const b = (await res.json().catch(() => null)) as { error?: { message?: string; code?: string; details?: unknown } } | null;
     throw new ApiError(res.status, b?.error?.message ?? res.statusText, b?.error?.code, b?.error?.details);
@@ -73,13 +76,16 @@ export const adminApi = {
   invoice: (n: string) => call<{ order: AdminOrderDetail }>('POST', `/orders/${encodeURIComponent(n)}/invoice`).then((r) => r.order),
   production: (status?: string) => get<{ items: ProductionRow[] }>(`/production${status ? `?status=${status}` : ''}`).then((r) => r.items),
   itemStatus: (id: string, status: string) => call<{ order: AdminOrderDetail }>('POST', `/items/${id}/status`, { status }).then((r) => r.order),
-  sendProof: (id: string, file: File, note: string) => {
+  sendProof: async (id: string, file: File, note: string) => {
+    const fit = await fitForUpload(file, { maxPx: 2400, kind: 'photo' });
+    if (fit.blob.size > UPLOAD_MAX_BYTES) throw new ApiError(413, TOO_BIG, 'too_large');
     const fd = new FormData();
     fd.append('note', note);
-    fd.append('file', file, file.name);
+    fd.append('file', fit.blob, fit.name);
     return call<{ order: AdminOrderDetail }>('POST', `/items/${id}/proofs`, fd).then((r) => r.order);
   },
-  addStitchFile: (id: string, file: File, label: string) => {
+  addStitchFile: async (id: string, file: File, label: string) => {
+    if (file.size > UPLOAD_MAX_BYTES) throw new ApiError(413, TOO_BIG, 'too_large');
     const fd = new FormData();
     fd.append('label', label);
     fd.append('file', file, file.name);
@@ -91,11 +97,13 @@ export const adminApi = {
   createProduct: (b: { name: string; categoryId: string; type: string; pricePaise: number }) => call<{ product: AdminProduct }>('POST', '/products', b).then((r) => r.product),
   updateProduct: (id: string, b: Partial<AdminProduct>) => call<{ product: AdminProduct }>('PATCH', `/products/${id}`, b).then((r) => r.product),
   saveVariants: (id: string, variants: AdminVariant[]) => call<{ product: AdminProduct }>('PUT', `/products/${id}/variants`, { variants }).then((r) => r.product),
-  addImage: (id: string, file: File, role: string, alt: string) => {
+  addImage: async (id: string, file: File, role: string, alt: string) => {
+    const fit = await fitForUpload(file, { maxPx: 2400, kind: 'photo' }); // keeps see-through PNGs as PNG
+    if (fit.blob.size > UPLOAD_MAX_BYTES) throw new ApiError(413, TOO_BIG, 'too_large');
     const fd = new FormData();
     fd.append('role', role);
     fd.append('alt', alt);
-    fd.append('file', file, file.name);
+    fd.append('file', fit.blob, fit.name);
     return call<{ product: AdminProduct }>('POST', `/products/${id}/images`, fd).then((r) => r.product);
   },
   saveImages: (id: string, images: { id: string; role: string; alt: string; caption: string | null }[]) => call<{ product: AdminProduct }>('PATCH', `/products/${id}/images`, { images }).then((r) => r.product),

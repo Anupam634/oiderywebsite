@@ -11,6 +11,11 @@ import '@/styles/account.css';
 /* Shipping, returns, terms and privacy. Written for this studio's actual rules (prices, COD, proofs).
    They are a starting draft: the owner should have them reviewed before launch. */
 
+/** analytics switched on for this build (lib/track.ts); the privacy policy names them */
+const TRACKERS = [process.env.NEXT_PUBLIC_GA_ID && 'Google Analytics', process.env.NEXT_PUBLIC_META_PIXEL_ID && 'the Meta Pixel (Facebook and Instagram)'].filter(
+  (t): t is string => !!t,
+);
+
 const PAGES: Record<string, { title: string; summary: string; body: (s: StoreInfo) => ReactNode }> = {
   shipping: {
     title: 'Shipping policy',
@@ -125,7 +130,16 @@ const PAGES: Record<string, { title: string; summary: string; body: (s: StoreInf
         <h2>Your rights</h2>
         <p>You can ask to see, correct or delete your personal data, withdraw consent, or raise a grievance by writing to {s.email}{s.grievanceOfficer ? ` (grievance officer: ${s.grievanceOfficer})` : ''}. If you’re not satisfied, you can approach the Data Protection Board of India.</p>
         <h2>Cookies and storage</h2>
-        <p>We use one essential cookie to keep you logged in. Your bag and wishlist are saved in your own browser. We don’t use advertising trackers.</p>
+        <p>We use one essential cookie to keep you logged in. Your bag and wishlist are saved in your own browser.</p>
+        {TRACKERS.length ? (
+          <p>
+            We use {TRACKERS.join(' and ')} to count visits and to see which of our posts and ads bring shoppers, using cookies they set.
+            They see which pages and products you look at and what you buy (not your name, phone number, address or uploads), and they never
+            see your account, order or proof pages. You can block these cookies in your browser settings; the shop works the same without them.
+          </p>
+        ) : (
+          <p>We don’t use advertising or analytics trackers.</p>
+        )}
       </>
     ),
   },

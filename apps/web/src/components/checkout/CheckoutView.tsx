@@ -24,7 +24,8 @@ import { MAKE_DAYS, dateIn } from '@/lib/delivery';
 import { photo } from '@/lib/img';
 import { pincodeNote, usePincode } from '@/lib/pincode';
 import { logout, setMe, useMe } from '@/lib/session';
-import { cart, ui, useCart, type CartLine } from '@/lib/store';
+import { cart, trackLine, ui, useCart, type CartLine } from '@/lib/store';
+import { track } from '@/lib/track';
 import { OtpLogin } from '../auth/OtpLogin';
 import { Bag, Bank, Card, Cash, Check, Eye, Info, Lock, Plus, Shield, Spark, Swap, Upi, Wallet } from '../icons';
 import { usePayment } from './Payment';
@@ -191,6 +192,14 @@ export function CheckoutView({ offers }: { offers: Offer[] }) {
     if (pay === 'cod' && !T.codAllowed) setPay('upi');
   }, [pay, T.codAllowed]);
 
+  // analytics: checkout started, once per visit to this page (with the bag as it was on arrival)
+  const checkoutTracked = useRef(false);
+  useEffect(() => {
+    if (!hydrated || checkoutTracked.current || !lines.length) return;
+    checkoutTracked.current = true;
+    track.beginCheckout(lines.map(trackLine), estimate.totalPaise);
+  }, [hydrated, lines, estimate.totalPaise]);
+
   const set = <K extends keyof Form>(k: K, v: Form[K]) => {
     setForm((f) => ({ ...f, [k]: v }));
     if (k in errors) setErrors((e) => ({ ...e, [k]: undefined }));
@@ -240,6 +249,13 @@ export function CheckoutView({ offers }: { offers: Offer[] }) {
     });
 
   const done = (order: OrderDto) => {
+    track.purchase({
+      number: order.number,
+      totalPaise: order.totalPaise,
+      shippingPaise: order.shippingPaise,
+      couponCode: order.couponCode,
+      items: order.items.map((i) => ({ id: i.productSlug ?? `studio-${i.id}`, name: i.name, pricePaise: i.unitPricePaise, qty: i.qty })),
+    });
     cart.clear();
     write('store-coupon', null);
     write(DRAFT_KEY, null);

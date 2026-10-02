@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { BRAND } from '@store/shared';
+import { Analytics } from '@/components/Analytics';
 import { Lock, Logo } from '@/components/icons';
 import { CheckoutSteps } from '@/components/checkout/CheckoutSteps';
 import '@/styles/checkout.css';
@@ -27,6 +28,7 @@ export default function CheckoutLayout({ children }: { children: ReactNode }) {
           </nav>
         </div>
       </footer>
+      <Analytics />
     </div>
   );
 }

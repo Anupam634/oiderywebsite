@@ -1,5 +1,6 @@
 import type { FastifyError, FastifyInstance } from 'fastify';
 import { hasZodFastifySchemaValidationErrors } from 'fastify-type-provider-zod';
+import { capture, errorReport, redactPath } from './monitor.ts';
 
 export class AppError extends Error {
   constructor(
@@ -28,7 +29,11 @@ export function registerErrorHandler(app: FastifyInstance) {
     if (err instanceof AppError)
       return reply.code(err.statusCode).send({ error: { code: err.code, message: err.message, ...(err.details !== undefined ? { details: err.details } : {}) } });
     const status = (err as FastifyError).statusCode ?? 500;
-    if (status >= 500) req.log.error({ err }, 'request failed');
+    if (status >= 500) {
+      req.log.error({ err }, 'request failed');
+      // the route pattern (e.g. /v1/proofs/:token), never the real address
+      capture(errorReport(err, { request: { method: req.method, url: req.routeOptions.url ?? redactPath(req.url) }, tags: { source: 'api' } }));
+    }
     return reply.code(status).send({ error: { code: status === 429 ? 'rate_limited' : 'server_error', message: status >= 500 ? 'Something went wrong' : err.message } });
   });
 }

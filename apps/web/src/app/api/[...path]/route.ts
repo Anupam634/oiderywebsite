@@ -2,6 +2,10 @@
    no CORS is needed. The shopper's address is passed on in x-client-ip, vouched for by PROXY_KEY. */
 
 export const dynamic = 'force-dynamic';
+// uploads from a slow phone connection can take a while (the API call itself times out sooner)
+export const maxDuration = 200;
+/** hosts cap request bodies (Vercel: 4.5 MB); refuse bigger ones here too, so local runs behave like production */
+const MAX_BODY = 4_500_000;
 
 const API = (process.env.API_URL ?? 'http://localhost:4000').replace(/\/$/, '');
 const KEY = process.env.PROXY_KEY;
@@ -9,6 +13,9 @@ const DROP_IN = new Set(['host', 'connection', 'keep-alive', 'transfer-encoding'
 const DROP_OUT = ['content-encoding', 'content-length', 'transfer-encoding', 'connection', 'keep-alive'];
 
 async function proxy(req: Request, ctx: { params: Promise<{ path: string[] }> }) {
+  if (Number(req.headers.get('content-length') ?? 0) > MAX_BODY) {
+    return Response.json({ error: { code: 'too_large', message: 'That file is too big to upload (over 4 MB). Please choose a smaller one.' } }, { status: 413 });
+  }
   const { path } = await ctx.params;
   const url = new URL(req.url);
   const target = `${API}/${path.map(encodeURIComponent).join('/')}${url.search}`;

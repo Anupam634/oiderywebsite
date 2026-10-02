@@ -1,4 +1,5 @@
 import type { FastifyBaseLogger } from 'fastify';
+import { capture, errorReport } from '../lib/monitor.ts';
 import type { Db } from '../lib/prisma.ts';
 import type { Files } from '../modules/files/service.ts';
 import type { OrderService } from '../modules/orders/service.ts';
@@ -35,6 +36,7 @@ export function startJobs(deps: { db: Db; files: Files; orders: OrderService; lo
         await fn();
       } catch (err) {
         deps.log.error({ err }, `job failed: ${name}`);
+        capture(errorReport(err, { tags: { source: 'job', job: name } }));
       } finally {
         running = false;
       }

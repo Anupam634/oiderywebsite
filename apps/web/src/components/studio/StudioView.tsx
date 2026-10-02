@@ -45,6 +45,7 @@ import {
   type StudioLineSpec,
   type StudioSize,
 } from '@store/shared';
+import { fitForUpload } from '@/lib/shrink';
 import { api, ApiError } from '@/lib/api';
 import { photo } from '@/lib/img';
 import { cart, ui } from '@/lib/store';
@@ -358,7 +359,7 @@ export function StudioView({ start }: { start: StudioStart }) {
   /** the logo file the studio's digitizer works from: the shopper's own file, or the sample drawn as a PNG */
   const logoBlob = async (): Promise<{ blob: Blob; name: string } | null> => {
     if (how !== 'upload' || !src) return null;
-    if (src.blob) return { blob: src.blob, name: src.file };
+    if (src.blob) return fitForUpload(src.blob, { maxPx: 4000, kind: 'logo', name: src.file });
     const c = src.img as HTMLCanvasElement;
     const blob = await new Promise<Blob | null>((r) => c.toBlob(r, 'image/png'));
     return blob ? { blob, name: `${src.sample || 'logo'}.png` } : null;

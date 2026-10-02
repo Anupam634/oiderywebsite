@@ -1,6 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useEffect } from 'react';
+import { reportError } from '@/lib/report';
 import '@/styles/checkout.css';
 import '@/styles/account.css';
 
@@ -8,6 +9,8 @@ import '@/styles/account.css';
 export default function ErrorPage({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   useEffect(() => {
     console.error(error);
+    // errors from the server arrive here without details (the server reported those itself, under the same digest)
+    if (!error.digest) reportError(error);
   }, [error]);
   return (
     <main className="co-page" style={{ display: 'grid', placeItems: 'center', padding: 16 }}>

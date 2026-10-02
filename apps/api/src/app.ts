@@ -30,6 +30,7 @@ import { Notifications } from './modules/notify/messages.ts';
 import { Transport } from './modules/notify/transport.ts';
 import { Fulfilment } from './modules/orders/fulfil.ts';
 import { orderRoutes, webhookRoutes } from './modules/orders/routes.ts';
+import { monitorRoutes } from './modules/monitor/routes.ts';
 import { pincodeRoutes } from './modules/pincodes/routes.ts';
 import { OrderService } from './modules/orders/service.ts';
 import { createGateway, type PaymentGateway } from './modules/payments/gateway.ts';
@@ -92,6 +93,7 @@ export async function buildApp({ config, db, gateway }: { config: Config; db: Db
   await app.register(catalogRoutes(catalog), { prefix: '/v1' });
   await app.register(cartRoutes(db), { prefix: '/v1' });
   await app.register(pincodeRoutes, { prefix: '/v1' });
+  await app.register(monitorRoutes, { prefix: '/v1' });
   await app.register(authRoutes(db, otp), { prefix: '/v1' });
   await app.register(accountRoutes(db, orders, files, returns), { prefix: '/v1' });
   await app.register(returnRoutes(orders, returns), { prefix: '/v1' });

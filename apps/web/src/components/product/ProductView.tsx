@@ -15,11 +15,13 @@ import {
   type Variant,
 } from '@store/shared';
 import { relLum, lab, hexRgb, TH, TNAME, type ThreadKey } from '@store/stitch';
+import { fitForUpload } from '@/lib/shrink';
 import { api, ApiError } from '@/lib/api';
 import { photo } from '@/lib/img';
 import { media } from '@/lib/media';
 import { NAME_FONT_CSS } from '@/lib/stitch';
 import { cart, ui, useWishlist, wishlist } from '@/lib/store';
+import { track } from '@/lib/track';
 import { Bag, Check, Eye, Heart, Info, Spark } from '../icons';
 import { Gallery, type GalleryItem } from './Gallery';
 import { LiveCanvas, thumbOf, useLivePreview, useVariantRenders, type LiveInput } from './live';
@@ -69,6 +71,7 @@ export function ProductView({ p }: { p: ProductDetail }) {
   const maxQty = p.isUnique ? 1 : variant.trackStock ? Math.min(10, variant.stock) : 10;
 
   useEffect(() => setSi(Math.min(si, sizes.length - 1)), [ci]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => track.viewItem({ id: p.slug, name: p.name, pricePaise: p.pricePaise, qty: 1 }), [p.slug]); // eslint-disable-line react-hooks/exhaustive-deps
 
   /* gallery: live renders first for personalised pieces */
   const items: GalleryItem[] = live
@@ -120,12 +123,13 @@ export function ProductView({ p }: { p: ProductDetail }) {
   }
   async function add(goCheckout = false) {
     if (!validate() || adding) return;
-    // the pet photo goes to the studio at full size (the bag keeps a small thumbnail)
+    // the pet photo goes to the studio big enough to sketch from (the bag keeps a small thumbnail)
     let uploads: string[] | undefined;
     if (p.petPhoto && pet.blob && !pet.later) {
       setAdding(true);
       try {
-        uploads = [(await api.upload('pet', pet.blob, pet.file)).id];
+        const fit = await fitForUpload(pet.blob, { maxPx: 3000, kind: 'photo', name: pet.file });
+        uploads = [(await api.upload('pet', fit.blob, fit.name)).id];
       } catch (e) {
         setAdding(false);
         return ui.toast(e instanceof ApiError ? e.message : 'We couldn’t upload the photo. Please try again.');
@@ -167,7 +171,8 @@ export function ProductView({ p }: { p: ProductDetail }) {
   function loadPet(f: File | undefined) {
     if (!f) return;
     if (!/^image\/(png|jpe?g|webp)$/.test(f.type)) return ui.toast('Please upload a JPG, PNG or WEBP photo');
-    if (f.size > 15 * 1024 * 1024) return ui.toast('That photo is over 15 MB. Please pick a smaller one.');
+    // big phone photos are fine (they're resized before upload); beyond this a phone may run out of memory
+    if (f.size > 30 * 1024 * 1024) return ui.toast('That photo is over 30 MB. Please pick a smaller one.');
     const url = URL.createObjectURL(f);
     const im = new Image();
     im.onload = () => {
