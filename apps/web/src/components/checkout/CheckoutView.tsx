@@ -178,6 +178,9 @@ export function CheckoutView({ offers }: { offers: Offer[] }) {
   }, [me]);
 
   const server = useServerPrice(lines, coupon, ship, pay, `${me?.id ?? ''}:${repriceKey}`);
+  // the latest server price, for code that awaits (state captured in a closure would be stale)
+  const serverNow = useRef(server);
+  serverNow.current = server;
   // instant estimate while the server answers; the server's number is the one we charge
   const estimate = useMemo(() => {
     const offer = offers.find((o) => o.code === coupon);
@@ -306,6 +309,10 @@ export function CheckoutView({ offers }: { offers: Offer[] }) {
     setPlacing(true);
     try {
       await uploadPreviews(lines);
+      // a change of payment method, shipping or coupon may still be re-pricing: wait for it, so the total the
+      // server checks against is the one the button showed (else a quick tap is refused as "price changed")
+      for (let i = 0; i < 50 && serverNow.current.busy; i++) await new Promise((r) => setTimeout(r, 100));
+      const expected = serverNow.current.data?.totals.totalPaise;
       const req = toRequest(lines, coupon, ship, pay);
       const sig = JSON.stringify([req, d, usingSaved ? false : saveAddress]);
       // same bag and details as the last try = same checkout attempt (the server returns that order)
@@ -317,7 +324,7 @@ export function CheckoutView({ offers }: { offers: Offer[] }) {
         details: d,
         saveAddress: usingSaved ? false : saveAddress,
         clientKey: attempt.current.key,
-        ...(server.data ? { expectedTotalPaise: server.data.totals.totalPaise } : {}),
+        ...(expected !== undefined ? { expectedTotalPaise: expected } : {}),
       });
       if (!r.payment) return done(r.order);
       await runPayment(r.payment);

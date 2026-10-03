@@ -53,10 +53,18 @@ Keep everything in one part of the world: the storefront's server code runs in *
 region too. Every page asks the API for data; across oceans that adds up.
 
 1. **Database**: create PostgreSQL on Railway (or Neon, Singapore region). Copy its connection string.
-2. **API on Railway**: new service from this repository. In the service settings set the config file path to
-   `/apps/api/railway.json` (it builds `apps/api/Dockerfile` from the repository root, checks `/health` before
-   switching traffic, restarts on crashes and only redeploys when API code changes). Set the environment from
-   `apps/api/.env.example`, at least:
+2. **API on Railway** (with the Railway CLI, `npx @railway/cli`; this is how the staging server was made):
+   - `railway init -n <name>`, `railway add -d postgres`, `railway add -s api`
+   - Singapore only: `railway scale -s Postgres asia-southeast1-eqsg3a=1 us-west2=0`, and the same for `api`
+   - `railway volume -s <api service id> add -m /app/.data` (uploads and the outbox, until R2 is set up), with
+     `RAILWAY_RUN_UID=0` (the image runs as a normal user; Railway volumes belong to root)
+   - `railway domain -s api -p 4000`
+   - `RAILWAY_DOCKERFILE_PATH=apps/api/Dockerfile`: new Railway projects build with Railpack unless told to use
+     the Dockerfile. The root `railway.json` (Dockerfile, Singapore, `/health` check, restart on crash) is
+     "config as code", which Railway retires on **2026-12-01**: move it to `.railway/railway.ts` before then
+     (`railway config migrate`) and set the health check there.
+   - deploy from the repository root with `railway up -s api --ci`
+   Set the environment from `apps/api/.env.example`, at least:
    - `NODE_ENV=production`, `DATABASE_URL`, `APP_URL=https://<domain>`, `WEB_ORIGIN=https://<domain>`
    - `PROXY_KEY` and `FILE_SIGNING_SECRET`: two different long random strings (`openssl rand -hex 32`)
    - `TRUST_PROXY=1`, `WEB_REVALIDATE_URL=https://<domain>/api/revalidate`
@@ -65,9 +73,13 @@ region too. Every page asks the API for data; across oceans that adds up.
    - `SENTRY_DSN` for error reports (see "Errors and uptime" below)
    Migrations run automatically on start. Add the custom domain `api.<domain>` and check `https://api.<domain>/health`.
 3. **Catalogue**: either add products in the admin, or load the demo catalogue once for a preview server:
-   `node dist/seed.js` in the API service's shell (it refuses to run on a shop that already has orders).
+   `railway ssh -s api -- node dist/seed.js` (it refuses to run on a shop that already has orders). `railway ssh`
+   needs an SSH key registered once: `railway ssh keys add -k ~/.ssh/<key>.pub`.
 4. **Storefront on Vercel**: import the repository, root directory `apps/web` (its `vercel.json` sets the
-   framework, the install and build commands and the Singapore region).
+   framework, the install and build commands and the Singapore region). From the CLI: `vercel project add`,
+   `vercel link` at the repository root, set the project's root directory to `apps/web`, add the variables with
+   `vercel env add`, then `vercel deploy --prod` from the repository root (`.vercelignore` keeps secrets and local
+   data out of the upload; retry if an upload drops).
    Environment: `API_URL=https://api.<domain>`, `PROXY_KEY` (same as the API), `NEXT_PUBLIC_SITE_URL=https://<domain>`,
    `NEXT_PUBLIC_INDEXABLE=0` until launch. If product photos live on a public R2 bucket (`S3_PUBLIC_URL`), also set
    `NEXT_PUBLIC_IMAGE_HOSTS=media.<domain>` so the storefront can resize them. For analytics, set

@@ -1,0 +1,13 @@
+# what the Vercel CLI must never upload (secrets, local data, build output); mirrors .gitignore
+node_modules
+.next
+dist
+.turbo
+coverage
+*.log
+.env
+.env.*
+!.env.example
+.data
+apps/api/src/generated
+*.tsbuildinfo
