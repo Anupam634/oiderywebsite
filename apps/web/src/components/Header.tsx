@@ -31,9 +31,9 @@ export function Header({ categories, showMobileSearch }: { categories: CategoryN
       <header className={`hdr${showMobileSearch ? ' has-msrow' : ''}`} id="nav">
         <div className="wrap hdr-in">
           <MenuButton />
-          <Link className="logo" href="/" aria-label="taanka home">
+          <Link className="logo" href="/" aria-label="zulyf home">
             <Logo />
-            taanka
+            zulyf
           </Link>
           <nav className="mnav" aria-label="Main">
             {mega.map((c) => {

@@ -158,7 +158,7 @@ describe('proof → stitch → ship → deliver', () => {
     // ship: tracking link from the courier, invoice issued and emailed
     const shipped = await call('POST', `/v1/admin/orders/${number}/status`, { cookies: owner, body: { to: 'SHIPPED', courier: 'shiprocket', awb: 'SR778899' } });
     expect(shipped.body.order).toMatchObject({ status: 'SHIPPED', tracking: { courier: 'Shiprocket', awb: 'SR778899', url: 'https://shiprocket.co/tracking/SR778899' } });
-    expect(shipped.body.order.invoice.number).toMatch(/^TK\//);
+    expect(shipped.body.order.invoice.number).toMatch(/^ZF\//);
     await new Promise((r) => setTimeout(r, 300));
     expect(fs.readdirSync(path.join(tmp, 'outbox')).some((x) => x.includes('email-Invoice'))).toBe(true);
 

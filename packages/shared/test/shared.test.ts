@@ -108,7 +108,7 @@ describe('pricing', () => {
   });
   it('picks the better of coupon and buy-2, then shipping, UPI and COD rules', () => {
     const lines = [{ qty: 1, pricePaise: 119_900, mrpPaise: 149_900, custom: true }, { qty: 1, pricePaise: 249_900, mrpPaise: 319_900, custom: false }];
-    const coupon = { code: 'TAANKA10', percent: 10, maxDiscountPaise: 30_000, minSubtotalPaise: 0, label: '10% off' };
+    const coupon = { code: 'ZULYF10', percent: 10, maxDiscountPaise: 30_000, minSubtotalPaise: 0, label: '10% off' };
     const t = computeTotals(lines, { coupon, payment: 'upi' });
     expect(t.subtotalPaise).toBe(369_800);
     expect(t.discountPaise).toBe(36_980); // buy-2 10% beats the ₹300-capped coupon
@@ -202,7 +202,7 @@ describe('GST', () => {
     expect(financialYear(new Date('2027-04-01'))).toBe('2027-28');
     // 31 Mar 2027, 19:00 UTC is already 1 April in India
     expect(financialYear(new Date('2027-03-31T19:00:00Z'))).toBe('2027-28');
-    expect(invoiceNumber('TK', '2026-27', 7)).toBe('TK/2026-27/0007');
+    expect(invoiceNumber('ZF', '2026-27', 7)).toBe('ZF/2026-27/0007');
   });
   it('writes amounts in words with lakh and crore', () => {
     expect(amountInWords(327_800)).toBe('Rupees Three Thousand Two Hundred Seventy Eight Only');

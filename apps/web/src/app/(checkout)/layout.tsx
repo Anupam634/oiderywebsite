@@ -13,7 +13,7 @@ export default function CheckoutLayout({ children }: { children: ReactNode }) {
     <div className="co-page">
       <header className="co-head">
         <div className="wrap co-head-in">
-          <Link className="logo" href="/" aria-label={`${BRAND.name} home`}><Logo />taanka</Link>
+          <Link className="logo" href="/" aria-label={`${BRAND.name} home`}><Logo />zulyf</Link>
           <CheckoutSteps />
           <div className="co-secure"><Lock /><span>Secure checkout</span></div>
         </div>
@@ -21,7 +21,7 @@ export default function CheckoutLayout({ children }: { children: ReactNode }) {
       {children}
       <footer className="co-foot">
         <div className="wrap co-foot-in">
-          <span>© {new Date().getFullYear()} {BRAND.legalName} · placeholder name</span>
+          <span>© {new Date().getFullYear()} {BRAND.legalName}</span>
           <nav aria-label="Policies">
             <Link href="/policies/privacy">Privacy</Link><Link href="/policies/terms">Terms</Link><Link href="/policies/refunds">Refund policy</Link><Link href="/policies/shipping">Shipping policy</Link>
             <a href={`https://wa.me/${BRAND.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener">Help on WhatsApp</a>

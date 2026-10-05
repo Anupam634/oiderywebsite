@@ -56,7 +56,7 @@ function copy(code: string) {
 export function Offers() {
   const rows: [React.ReactNode, string, string, string][] = [
     [<Tag key="t" />, 'Buy 2, get 10% off', 'Applied automatically in your bag', ''],
-    [<Spark key="s" />, 'First order? Use TAANKA10', '10% off, up to ₹300', 'TAANKA10'],
+    [<Spark key="s" />, 'First order? Use ZULYF10', '10% off, up to ₹300', 'ZULYF10'],
     [<Upi key="u" />, 'Pay by UPI, save ₹50', 'On prepaid orders above ₹499', ''],
   ];
   return (

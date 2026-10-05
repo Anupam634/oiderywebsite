@@ -47,7 +47,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
   return (
     <div className={`adm${open ? ' menu-open' : ''}`}>
       <aside className="side" aria-label="Admin menu">
-        <Link className="brand" href="/admin"><Logo /><span>taanka<small>Studio admin</small></span></Link>
+        <Link className="brand" href="/admin"><Logo /><span>zulyf<small>Studio admin</small></span></Link>
         <nav className="nav">
           {NAV.map((n) => {
             const c = todo && n.count ? n.count(todo) : 0;
@@ -74,7 +74,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
       <div>
         <div className="topbar">
           <button type="button" aria-label={open ? 'Close menu' : 'Open menu'} onClick={() => setOpen(!open)}>{open ? <Close /> : <Menu />}</button>
-          taanka studio admin
+          zulyf studio admin
         </div>
         <main className="main">{children}</main>
       </div>

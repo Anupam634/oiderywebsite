@@ -26,7 +26,7 @@ export function LoginView() {
           <li><Truck />Track every order, from proof to doorstep</li>
           <li><Eye />Approve your stitch proofs in one tap</li>
           <li><Bag />Saved addresses for a faster checkout</li>
-          <li><Spark />First order? TAANKA10 takes 10% off</li>
+          <li><Spark />First order? ZULYF10 takes 10% off</li>
         </ul>
       </section>
       <section className="acc-card">

@@ -1,6 +1,6 @@
 # Embroidery store platform
 
-The production code for the store (placeholder brand **Taanka**): a colourful, shop-first storefront, a
+The production code for the store (placeholder brand **Zulyf**): a colourful, shop-first storefront, a
 studio admin, and an API that takes orders, payments, stitch proofs and machine files.
 
 | Part | Path | Stack |

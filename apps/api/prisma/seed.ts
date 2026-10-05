@@ -48,7 +48,7 @@ const TAX: Record<string, { hsnCode: string; gstRule: 'threshold' | 'flat'; gstR
 };
 
 const COUPONS = [
-  { code: 'TAANKA10', label: '10% off, first order', percent: 10, maxDiscountPaise: 30_000, minSubtotalPaise: 0, firstOrderOnly: true },
+  { code: 'ZULYF10', label: '10% off, first order', percent: 10, maxDiscountPaise: 30_000, minSubtotalPaise: 0, firstOrderOnly: true },
   { code: 'FESTIVE15', label: '15% off above ₹2,999', percent: 15, maxDiscountPaise: 60_000, minSubtotalPaise: 299_900, firstOrderOnly: false },
 ];
 

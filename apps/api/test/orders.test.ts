@@ -157,7 +157,7 @@ describe('cash on delivery', () => {
     expect(r.status).toBe(201);
     expect(r.body.payment).toBeNull();
     expect(r.body.order).toMatchObject({ status: 'PLACED', paymentState: 'COD_PENDING', paymentMethod: 'COD', totalPaise: 184_720, itemCount: 2, canCancel: true });
-    expect(r.body.order.number).toMatch(/^TK-[A-Z0-9]{6}$/);
+    expect(r.body.order.number).toMatch(/^ZF-[A-Z0-9]{6}$/);
     expect(await stock(v.id)).toBe(before - 2);
     const addr = await call(app, 'GET', '/v1/me/addresses', { sid });
     expect(addr.body.items).toHaveLength(1);
@@ -194,11 +194,11 @@ describe('cash on delivery', () => {
   it('keeps first-order coupons for first orders', async () => {
     const { sid, phone } = await login();
     const kit = await variant('poppy');
-    const first = await place(app, sid, phone, [{ variantId: kit.id, qty: 1 }], { coupon: 'TAANKA10' });
-    expect(first.body.order).toMatchObject({ couponCode: 'TAANKA10', discountPaise: 9_990 });
-    const priced = await call(app, 'POST', '/v1/cart/price', { sid, body: { items: [{ variantId: kit.id, qty: 1 }], coupon: 'TAANKA10' } });
-    expect(priced.body.coupon).toMatchObject({ valid: false, message: 'TAANKA10 is for your first order' });
-    const second = await place(app, sid, phone, [{ variantId: kit.id, qty: 1 }], { coupon: 'TAANKA10' });
+    const first = await place(app, sid, phone, [{ variantId: kit.id, qty: 1 }], { coupon: 'ZULYF10' });
+    expect(first.body.order).toMatchObject({ couponCode: 'ZULYF10', discountPaise: 9_990 });
+    const priced = await call(app, 'POST', '/v1/cart/price', { sid, body: { items: [{ variantId: kit.id, qty: 1 }], coupon: 'ZULYF10' } });
+    expect(priced.body.coupon).toMatchObject({ valid: false, message: 'ZULYF10 is for your first order' });
+    const second = await place(app, sid, phone, [{ variantId: kit.id, qty: 1 }], { coupon: 'ZULYF10' });
     expect(second.body.error.code).toBe('coupon_invalid');
   });
 });
@@ -409,7 +409,7 @@ describe('GST invoices', () => {
     const b = await db.order.findUniqueOrThrow({ where: { number: away.body.order.number } });
     const i1 = await app.invoices.issue(a.id);
     const i2 = await app.invoices.issue(b.id);
-    expect(i1.number).toMatch(/^TK\/\d{4}-\d{2}\/\d{4}$/);
+    expect(i1.number).toMatch(/^ZF\/\d{4}-\d{2}\/\d{4}$/);
     expect(i2.seq).toBe(i1.seq + 1);
     expect((await app.invoices.issue(a.id)).id).toBe(i1.id);
 

@@ -14,7 +14,7 @@ function copy(code: string) {
 export function Offers() {
   return (
     <section className="wrap offers" aria-label="Offers">
-      <div className="cp cp1"><b>10% OFF</b><span>on your first order</span><button type="button" className="cp-code" onClick={() => copy('TAANKA10')}>TAANKA10 <small>Copy</small></button></div>
+      <div className="cp cp1"><b>10% OFF</b><span>on your first order</span><button type="button" className="cp-code" onClick={() => copy('ZULYF10')}>ZULYF10 <small>Copy</small></button></div>
       <div className="cp cp2"><b>15% OFF</b><span>on orders above ₹2,999</span><button type="button" className="cp-code" onClick={() => copy('FESTIVE15')}>FESTIVE15 <small>Copy</small></button></div>
       <div className="cp cp3"><b>BUY 2</b><span>get 10% off, applied in your bag</span><em>No code needed</em></div>
       <div className="cp cp4"><b>₹50 OFF</b><span>when you pay by UPI</span><em>At checkout</em></div>

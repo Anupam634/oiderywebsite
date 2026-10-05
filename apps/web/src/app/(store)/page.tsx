@@ -133,7 +133,7 @@ export default async function HomePage() {
       </section>
 
       <section className="sx"><div className="wrap">
-        <div className="rh"><div><h2>#StitchedWithTaanka</h2><p>Tag us on Instagram to be featured here</p></div></div>
+        <div className="rh"><div><h2>#StitchedWithZulyf</h2><p>Tag us on Instagram to be featured here</p></div></div>
         <div className="ig">{IG.map(([img, cap]) => <span className="ig-t" key={img}><img {...photo(`photos/${img}.jpg`, cap, { sizes: '(max-width: 760px) 33vw, 210px', width: 700, height: 700 })} /><span>{cap}</span></span>)}</div>
       </div></section>
 

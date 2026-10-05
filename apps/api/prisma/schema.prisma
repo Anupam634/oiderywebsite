@@ -345,7 +345,7 @@ enum ProductionStatus {
 
 model Order {
   id               String          @id @default(cuid())
-  /// customer-facing number, e.g. TK-7Q4M2X
+  /// customer-facing number, e.g. ZF-7Q4M2X
   number           String          @unique
   customerId       String
   customer         Customer        @relation(fields: [customerId], references: [id], onDelete: Restrict)

@@ -58,7 +58,7 @@ const schema = z.object({
   /* ---- messages ---- */
   EMAIL_PROVIDER: z.enum(['outbox', 'resend']).default('outbox'),
   RESEND_API_KEY: optional,
-  EMAIL_FROM: z.string().default('Taanka <orders@example.com>'),
+  EMAIL_FROM: z.string().default('Zulyf <orders@zulyf.com>'),
   /** where new-order alerts go */
   OWNER_EMAIL: optional,
   WHATSAPP_PROVIDER: z.enum(['outbox', 'meta']).default('outbox'),

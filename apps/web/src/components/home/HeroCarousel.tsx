@@ -17,7 +17,7 @@ interface Slide {
 }
 
 const SLIDES: Slide[] = [
-  { cls: 'hs1', kicker: '✦ Diwali gifting store', title: ['Gifts they’ll ', 'keep forever'], text: 'Name totes, monogram caps and hoop art, personalised in 5–7 days. Free gift wrap with a handwritten note.', cta: ['btn-ink', 'Shop gifts', '/shop/gifts'], alt: ['Personalise a tote', '/p/phoolwari-name-tote'], code: <>Extra 10% off your first order with <b>TAANKA10</b></>, photos: [['r-tote', 'Natural tote with an embroidered bouquet and the name Priya'], ['cherry', 'Cherry blossom embroidery hoop'], ['r-cap', 'Black cap with gold initials']], sticker: ['From', '₹899'] },
+  { cls: 'hs1', kicker: '✦ Diwali gifting store', title: ['Gifts they’ll ', 'keep forever'], text: 'Name totes, monogram caps and hoop art, personalised in 5–7 days. Free gift wrap with a handwritten note.', cta: ['btn-ink', 'Shop gifts', '/shop/gifts'], alt: ['Personalise a tote', '/p/phoolwari-name-tote'], code: <>Extra 10% off your first order with <b>ZULYF10</b></>, photos: [['r-tote', 'Natural tote with an embroidered bouquet and the name Priya'], ['cherry', 'Cherry blossom embroidery hoop'], ['r-cap', 'Black cap with gold initials']], sticker: ['From', '₹899'] },
   { cls: 'hs2', kicker: '● Live preview', title: ['Your name, stitched. ', 'See it before you buy.'], text: 'Type a name, pick the thread and font, and watch it appear on a real tote, cap or T-shirt photo.', cta: ['btn-grad', 'Try it on a T-shirt', '/p/name-t-shirt'], alt: ['All name gifts', '/shop?type=personalise'], code: 'English or हिंदी · stitch proof on WhatsApp', photos: [['r-model', 'White T-shirt with the name Rohan stitched in pink'], ['r-tote-d', 'Close-up of an embroidered name and flowers'], ['r-hoodie', 'Maroon hoodie with a peacock feather']], sticker: ['From', '₹799'] },
   { cls: 'hs3', kicker: '✦ The festive edit', title: ['Lehengas, kurtas ', '& dupattas'], text: 'Zari, resham and mirror work in colours that glow. Ready-to-ship pieces, or made to your measurements.', cta: ['btn-gold', 'Shop clothing', '/shop/clothing'], alt: ['Lehengas', '/shop/clothing/lehengas'], code: 'Up to 25% off · COD on ready-to-ship', photos: [['lehenga', 'Woman in a bottle-green embroidered lehenga'], ['dupatta', 'Rani pink mirror-work dupatta'], ['kurta', 'Red kurta with an embroidered yoke']], sticker: ['Up to', '25% off'] },
 ];
@@ -52,7 +52,7 @@ export function HeroCarousel() {
     <section
       className="wrap hb"
       aria-roledescription="carousel"
-      aria-label="This week at Taanka"
+      aria-label="This week at Zulyf"
       onPointerEnter={(e) => e.pointerType === 'mouse' && (paused.current = true)}
       onPointerLeave={() => (paused.current = false)}
       onFocus={() => (paused.current = true)}

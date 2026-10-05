@@ -51,7 +51,7 @@ export function financialYear(d: Date): string {
   return `${y}-${String((y + 1) % 100).padStart(2, '0')}`;
 }
 
-/** "TK" + "2026-27" + 7 → "TK/2026-27/0007" (GST invoice numbers: up to 16 characters, consecutive in a year) */
+/** "ZF" + "2026-27" + 7 → "ZF/2026-27/0007" (GST invoice numbers: up to 16 characters, consecutive in a year) */
 export const invoiceNumber = (prefix: string, fy: string, seq: number) => `${prefix}/${fy}/${String(seq).padStart(4, '0')}`;
 
 /* ---------- invoice maths ---------- */

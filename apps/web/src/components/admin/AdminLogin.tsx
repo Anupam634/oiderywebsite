@@ -37,7 +37,7 @@ export function AdminLogin() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 18 }}>
           <span style={{ width: 40, height: 40, display: 'block' }}><Logo /></span>
           <div>
-            <b style={{ fontFamily: 'var(--serif)', fontStyle: 'italic', fontSize: 24 }}>taanka</b>
+            <b style={{ fontFamily: 'var(--serif)', fontStyle: 'italic', fontSize: 24 }}>zulyf</b>
             <div className="kicker" style={{ fontSize: 10.5 }}>Studio admin</div>
           </div>
         </div>
