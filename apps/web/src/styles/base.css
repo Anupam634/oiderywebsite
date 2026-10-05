@@ -369,7 +369,7 @@ footer{background:#140A24;color:#E9E1F5;padding:56px 0 24px;overflow:hidden;marg
 .soc a{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.08);transition:background var(--d2)}
 .soc a:hover{background:rgba(255,255,255,.18)}
 .soc svg{width:19px;height:19px}
-.bigword{font-family:var(--serif);font-style:italic;font-weight:700;font-size:clamp(64px,11vw,150px);line-height:.85;letter-spacing:-.045em;background:linear-gradient(90deg,#FFD23F,#FF8A00 25%,#FF2E93 55%,#C77DFF 80%,#00C9B7);-webkit-background-clip:text;background-clip:text;color:transparent;margin:64px 0 18px;white-space:nowrap;text-align:center;font-variation-settings:'SOFT' 100}
+.bigword{font-family:var(--serif);font-style:italic;font-weight:700;font-size:clamp(64px,11vw,150px);line-height:.85;letter-spacing:-.045em;background:linear-gradient(90deg,#FFD23F,#FF8A00 25%,#FF2E93 55%,#C77DFF 80%,#00C9B7);-webkit-background-clip:text;background-clip:text;color:transparent;margin:64px 0 4px;padding:0 .12em .18em;white-space:nowrap;text-align:center;font-variation-settings:'SOFT' 100}
 .fbot{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;font-size:13px;color:rgba(233,225,245,.62);border-top:1px dashed rgba(255,255,255,.18);padding-top:20px}
 .fbot .legal{display:flex;gap:16px;flex-wrap:wrap}
 .pay{display:flex;gap:6px;flex-wrap:wrap}
