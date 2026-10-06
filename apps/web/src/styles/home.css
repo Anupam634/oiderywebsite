@@ -189,7 +189,7 @@
 .zh-btn{height:54px;padding:0 36px;border-radius:999px;background:var(--crim);color:#fff;font-weight:700;font-size:16px;letter-spacing:.06em;text-transform:uppercase;box-shadow:0 14px 30px -14px rgba(200,23,76,.75)}
 .zh-btn:hover{background:var(--crim-d)}
 .zh-art{margin:0;position:relative;min-height:100%}
-.zh-art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 30%;-webkit-mask-image:linear-gradient(90deg,transparent,#000 12%);mask-image:linear-gradient(90deg,transparent,#000 12%)}
+.zh-art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:left center;-webkit-mask-image:linear-gradient(90deg,transparent,#000 12%);mask-image:linear-gradient(90deg,transparent,#000 12%)}
 .zh-flowers{position:absolute;left:0;bottom:0;width:clamp(96px,9.5vw,140px);height:auto;z-index:1;pointer-events:none}
 .zh-arrow{position:absolute;top:50%;transform:translateY(-50%);width:46px;height:46px;border-radius:50%;background:#fff;color:var(--navy);display:grid;place-items:center;box-shadow:0 8px 22px -10px rgba(20,26,59,.45);z-index:3}
 .zh-arrow svg{width:20px;height:20px}.zh-arrow.prev{left:18px}.zh-arrow.next{right:18px}
@@ -213,11 +213,7 @@
 .zc-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr)) minmax(0,.95fr);gap:16px}
 .zc-card{position:relative;display:flex;flex-direction:column;overflow:hidden;background:#16161F}
 .zc-card img{width:100%;aspect-ratio:268/164;height:auto;object-fit:cover;display:block;transition:transform .8s var(--ease)}
-.zc-promo img{position:absolute;inset:0;aspect-ratio:auto;height:100%;object-fit:cover}
-.zc-promo::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(14,14,20,.15),rgba(14,14,20,.82) 58%)}
-.zc-promo-t{position:relative;z-index:1;margin:auto 18px auto auto;padding:18px 0;text-align:center;color:#fff;display:flex;flex-direction:column;gap:10px;min-height:100%;justify-content:center}
-.zc-promo-t em{font-family:var(--serif);font-size:clamp(22px,2vw,28px);line-height:1.08;font-weight:500}
-.zc-promo-t small{font-size:11.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;max-width:130px;margin:0 auto}
+.zc-promo{background:#0E0E12}.zc-promo img{aspect-ratio:auto;height:100%;object-fit:contain}
 .zc-card:hover img{transform:scale(1.05)}
 .zc-card b{position:relative;display:flex;align-items:center;gap:8px;padding:11px 18px;background:#1C1C27;color:#fff;font-size:15px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
 .zc-card b svg{width:16px;height:16px;transition:transform var(--d2) var(--ease)}
