@@ -3,10 +3,9 @@ import { OCCASIONS, type ProductCard } from '@store/shared';
 import { HeroCarousel } from '@/components/home/HeroCarousel';
 import { Newsletter, Offers } from '@/components/home/Offers';
 import { Rail } from '@/components/home/Rail';
-import { Arrow, Cash, Chat, Eye, Swap, Truck } from '@/components/icons';
+import { Arrow, Cash, Chat, Eye, Heart, Leaf, Shield, Swap, Truck } from '@/components/icons';
 import { RecentlyViewed } from '@/components/RecentlyViewed';
 import { api } from '@/lib/api';
-import { getCategories } from '@/lib/catalog';
 import { categoryHref, productHref, SHOP_LINKS } from '@/lib/links';
 import { photo } from '@/lib/img';
 import '@/styles/home.css';
@@ -26,8 +25,16 @@ const DUO = '(max-width: 860px) 42vw, 270px';
 const THIRD = '(max-width: 860px) 31vw, 200px';
 const IG: [string, string][] = [['blossom', 'A gift for Amma'], ['punch', 'Studio wall, Mumbai'], ['pink', 'Festive season'], ['cardigan', 'Little flowers'], ['hands-black', 'Stitching night'], ['poppies', 'Poppies in progress']];
 
+/* the four Zulyf ranges, as in the homepage design: [image, label, link, alt] */
+const RANGE_CARDS: [string, string, string, string][] = [
+  ['cat-kurtis', 'Ladies Kurtis', '/shop/clothing/kurtas', 'Woman in a red embroidered kurti'],
+  ['cat-tees', 'Men’s T-Shirts', '/shop/clothing/tees', 'Man in a white T-shirt with a small crown'],
+  ['cat-hoodies', 'Hoodies', '/shop/clothing/tees', 'Man in a black hoodie with a mountain print'],
+  ['cat-embroidery', 'Embroidery Design', '/studio', 'Floral embroidery in a wooden hoop'],
+];
+
 export default async function HomePage() {
-  const [listing, categories] = await Promise.all([api.products('pageSize=60'), getCategories()]);
+  const listing = await api.products('pageSize=60');
   const all = listing.items;
   const byPop = all; // the API returns popularity order by default
   const best = byPop.filter((p) => !p.studio).slice(0, 10);
@@ -42,21 +49,35 @@ export default async function HomePage() {
     [SHOP_LINKS.under4999, 'Under', '₹4,999', (p) => p.pricePaise < 500_000],
     [SHOP_LINKS.luxe, 'Luxe', '₹5,000+', (p) => p.pricePaise >= 500_000],
   ];
-  const subs = categories.flatMap((c) => c.children.map((s) => ({ ...s, parent: c.slug })));
 
   return (
     <main id="top" className="hm">
       <HeroCarousel />
 
-      <section className="wrap cats" aria-label="Shop by category">
-        <div className="cats-row">
-          {subs.map((s) => (
-            <Link key={s.slug} className="cat" href={categoryHref(s.parent, s.slug)}>
-              <span className="cimg">{s.image && <img {...photo(s.image, '', { sizes: 84, width: 200, height: 250, eager: true })} />}</span>
-              <b>{s.name}</b>
+      <section className="wrap zc" aria-labelledby="zc-h">
+        <div className="zc-head">
+          <div className="zc-title"><i /><span aria-hidden="true">✤</span><h2 id="zc-h">Shop by Category</h2><span aria-hidden="true">✤</span><i /></div>
+          <p>Discover the latest collection</p>
+        </div>
+        <div className="zc-row">
+          {RANGE_CARDS.map(([img, label, href, alt]) => (
+            <Link key={label} className="zc-card" href={href}>
+              <img src={`/brand/home/${img}.jpg`} alt={alt} width={268} height={164} loading="lazy" />
+              <b>{label} <Arrow /></b>
             </Link>
           ))}
-          <Link className="cat all" href={SHOP_LINKS.all}><span className="cimg"><b>{listing.total}</b>pieces</span><b>Shop all</b></Link>
+          <Link className="zc-card zc-promo" href={SHOP_LINKS.all}>
+            <img src="/brand/home/cat-fabrics.jpg" alt="Premium quality fabrics for your everyday style" width={275} height={204} loading="lazy" />
+          </Link>
+        </div>
+      </section>
+
+      <section className="zt" aria-label="Why Zulyf">
+        <div className="wrap zt-in">
+          <div><Truck /><b>Fast &amp; secure<br />delivery</b></div>
+          <div><Shield /><b>Premium<br />quality</b></div>
+          <div><Heart /><b>Customer<br />support</b></div>
+          <div><Leaf /><b>Made with<br />love</b></div>
         </div>
       </section>
 
@@ -130,10 +151,6 @@ export default async function HomePage() {
           <div className="pr" style={{ ['--c' as string]: '#E4007C' }}><i><Eye /></i><div><b>Stitch proof first</b><span>Approve custom work on WhatsApp</span></div></div>
           <div className="pr" style={{ ['--c' as string]: '#3D2BD6' }}><i><Swap /></i><div><b>Easy exchange</b><span>7 days on ready-made pieces</span></div></div>
         </div>
-      </section>
-
-      <section className="wrap sx brandband" aria-label="Zulyf">
-        <img src="/brand/zulyf-logo.jpg" alt="Zulyf: Style, Craft, Comfort. Ladies kurtis, embroidery design, men's t-shirts and hoodies" width={1536} height={1024} loading="lazy" />
       </section>
 
       <section className="sx"><div className="wrap">

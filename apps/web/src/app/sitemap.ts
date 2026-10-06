@@ -8,7 +8,7 @@ export const revalidate = 3600;
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const site = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
   const url = (p: string) => `${site}${p}`;
-  const fixed = ['/', '/shop', '/studio', '/contact', '/policies/shipping', '/policies/refunds', '/policies/terms', '/policies/privacy'].map((p) => ({ url: url(p) }));
+  const fixed = ['/', '/shop', '/studio', '/about', '/contact', '/policies/shipping', '/policies/refunds', '/policies/terms', '/policies/privacy'].map((p) => ({ url: url(p) }));
   try {
     const [cats, list] = await Promise.all([getCategories(), api.products('pageSize=60')]);
     return [

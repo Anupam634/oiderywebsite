@@ -47,6 +47,7 @@ export const Users = make('<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c1-3.6
 export const Needle = make('<path d="M20 4L7 17"/><path d="M17.5 3.5a2 2 0 013 3"/><path d="M7 17l-3 3"/><path d="M4 9c2 0 3.5 1.2 3.5 3S6 15 4 15"/>');
 export const Report = make('<path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6M9 9h2"/>');
 export const Logout = make('<path d="M15 4h3a2 2 0 012 2v12a2 2 0 01-2 2h-3"/><path d="M10 16l4-4-4-4M14 12H4"/>');
+export const Leaf = make('<path d="M5 19c0-8 5-14 15-15 0 10-6 15-14 15"/><path d="M5 19c3-5 7-8 11-10"/>');
 export const SparkFill = make('<path d="M12 2l2.2 6.6L21 10l-6.8 1.6L12 18l-2.2-6.4L3 10l6.8-1.4z"/>', { fill: 'currentColor', stroke: 'none' });
 
 export function Logo() {

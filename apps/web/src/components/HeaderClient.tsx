@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { formatINR, type ProductCard } from '@store/shared';
 import { api } from '@/lib/api';
@@ -9,6 +9,13 @@ import { photo } from '@/lib/img';
 import { useMe } from '@/lib/session';
 import { ui, useCart, useWishlist } from '@/lib/store';
 import { Bag, Heart, Menu, Search, User } from './icons';
+
+/** main-menu link, underlined in crimson on the page it points to */
+export function NavLink({ href, match, children }: { href: string; match?: string; children: React.ReactNode }) {
+  const path = usePathname();
+  const on = href === '/' ? path === '/' : path.startsWith(match ?? href);
+  return <Link className={`ml${on ? ' on' : ''}`} href={href} aria-current={on ? 'page' : undefined}>{children}</Link>;
+}
 
 export function MenuButton() {
   return (
