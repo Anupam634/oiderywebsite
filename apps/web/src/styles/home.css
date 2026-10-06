@@ -236,6 +236,18 @@
 .zc-card b svg{width:16px;height:16px;transition:transform var(--d2) var(--ease)}
 .zc-card:hover b svg{transform:translateX(4px)}
 @media(max-width:1020px){.zc-row{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(220px,42vw);overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px}.zc-card{scroll-snap-align:start}}
+/* phones: the four ranges as one row of small tiles (photo, name below); the fabrics promo is left out */
+@media(max-width:760px){
+  .zc{padding:16px 0 14px}
+  .zc-head{margin-bottom:12px}
+  .zc-head p{display:none}
+  .zc-row{grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-flow:row;grid-auto-columns:auto;overflow:visible;scroll-snap-type:none;padding:0;gap:10px}
+  .zc-promo{display:none}
+  .zc-card{background:none;overflow:visible;align-items:center;gap:6px}
+  .zc-card img{aspect-ratio:1;border-radius:16px;object-position:center 22%;box-shadow:0 6px 14px -10px rgba(20,26,59,.5)}
+  .zc-card b{background:none;color:var(--navy);padding:0;font-size:10px;font-weight:700;letter-spacing:.02em;line-height:1.25;text-align:center;justify-content:center}
+  .zc-card b svg{display:none}
+}
 
 .zt{background:var(--blush);padding:24px 0}
 .zt-in{display:grid;grid-template-columns:repeat(4,1fr)}
@@ -243,4 +255,5 @@
 .zt-in>div+div{border-left:1px solid rgba(225,35,90,.22)}
 .zt-in svg{width:42px;height:42px;color:var(--crim);stroke-width:1.5;flex:none}
 .zt-in b{font-size:14.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--navy);line-height:1.4}
-@media(max-width:760px){.zt-in{grid-template-columns:1fr 1fr;row-gap:14px}.zt-in>div{justify-content:flex-start}.zt-in>div:nth-child(3){border-left:0}.zt-in svg{width:32px;height:32px}.zt-in b{font-size:12.5px}}
+/* phones: all four promises in one row, icon above the words */
+@media(max-width:760px){.zt{padding:12px 0}.zt-in{grid-template-columns:repeat(4,minmax(0,1fr))}.zt-in>div{flex-direction:column;justify-content:flex-start;gap:5px;padding:0 4px;text-align:center}.zt-in svg{width:22px;height:22px}.zt-in b{font-size:9px;letter-spacing:.03em;line-height:1.3}}
