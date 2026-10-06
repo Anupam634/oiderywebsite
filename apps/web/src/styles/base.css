@@ -24,11 +24,14 @@ h1,h2,h3,h4{margin:0;font-family:var(--serif);font-weight:600;letter-spacing:-.0
 @media(min-width:768px){.wrap{width:min(1240px,calc(100% - 64px))}}
 
 /* ---------- announcement + store header ---------- */
-.announce{background:var(--crim);color:#fff;font-size:13.5px;font-weight:600;position:relative;z-index:61}
+.announce{background:var(--crim);color:#fff;font-size:12.5px;font-weight:600;position:relative;z-index:61}
+.announce b{color:#FFE27A;font-weight:800}
+.ann-s{display:none}
+@media(max-width:520px){.ann-l{display:none}.ann-s{display:inline}}
 .announce i{font-style:normal;font-size:15px;margin:0 6px;opacity:.95}.announce em{font-style:normal;margin:0 8px;opacity:.85}
 .ann-in{display:flex;align-items:center;justify-content:center;gap:26px;height:36px;white-space:nowrap;overflow:hidden}
 
-.ann-x{position:relative;padding-left:26px;color:rgba(255,235,210,.78)}
+.ann-x{position:relative;padding-left:26px;color:rgba(255,255,255,.9)}
 .ann-x::before{content:'';position:absolute;left:0;top:50%;width:14px;height:2px;background:linear-gradient(90deg,currentColor 55%,transparent 0) 0 0/5px 2px repeat-x}
 a.ann-x:hover{color:#fff}
 @media(max-width:860px){.ann-x{display:none}.ann-in{font-size:12px}}
@@ -39,15 +42,16 @@ a.ann-x:hover{color:#fff}
 .logo{display:flex;align-items:center;gap:8px;font-family:var(--serif);font-style:italic;font-weight:650;font-size:26px;letter-spacing:-.03em;line-height:1;flex:none}
 .logo svg{width:32px;height:32px}
 .logo-mark{width:38px;height:38px;border-radius:50%;flex:none;display:block;box-shadow:0 0 0 1px rgba(27,16,48,.08)}
-.mnav{display:flex;align-items:stretch;align-self:stretch;margin:0 auto;gap:14px}
+.mnav{display:flex;align-items:stretch;align-self:stretch;margin-left:22px;gap:2px}
 .mi{position:relative;display:flex}
-.ml{display:flex;align-items:center;gap:5px;padding:0 11px;font-weight:550;font-size:16px;white-space:nowrap;position:relative;color:var(--navy);transition:color var(--d1)}
+.ml{display:flex;align-items:center;gap:5px;padding:0 11px;font-weight:600;font-size:15px;white-space:nowrap;position:relative;color:var(--navy);transition:color var(--d1)}
 .ml:hover,.ml.on{color:var(--crim)}
 .mchev{width:15px;height:15px;stroke-width:2.2}
 .ml::after{content:'';position:absolute;left:11px;right:11px;bottom:18px;height:2px;border-radius:2px;background:var(--crim);transform:scaleX(0);transition:transform var(--d2) var(--ease)}
 .mi:hover>.ml::after,.ml:hover::after,.mi:focus-within>.ml::after,.ml.on::after{transform:scaleX(1)}
 .ml.hot{align-self:center;height:38px;margin-left:6px;padding:0 15px;border-radius:999px;background:linear-gradient(135deg,#FF2E93,#E4007C 50%,#FF8A00);color:#fff;box-shadow:0 8px 20px -10px rgba(228,0,124,.8)}
 .ml.hot::after{display:none}
+.ml.hot:hover,.ml.hot.on{color:#fff;filter:brightness(1.06)}
 .mega{position:absolute;left:-14px;top:100%;opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity var(--d2),transform var(--d2) var(--ease),visibility 0s linear var(--d2);z-index:70}
 .mi:hover .mega,.mi:focus-within .mega{opacity:1;visibility:visible;transform:none;transition:opacity var(--d2),transform var(--d2) var(--ease)}
 .mega-in{display:grid;grid-template-columns:180px 180px 220px;gap:26px;padding:22px 24px 24px;background:#fff;border-radius:0 0 22px 22px;border:1px solid var(--line);border-top:0;box-shadow:0 34px 60px -28px rgba(27,16,48,.5)}
@@ -77,9 +81,8 @@ a.ann-x:hover{color:#fff}
 .ib.lab .count{right:8px}
 .count.bump{animation:bump .5s var(--ease)}
 @keyframes bump{40%{transform:scale(1.45)}}
-.burger,.msrow{display:none}
-.ib.lab span{display:none}.ib.lab{min-width:0;width:46px;height:46px;border-radius:50%;padding:0}.ib.lab .count{right:1px}
-.icons .ib svg{width:24px;height:24px;stroke-width:1.7;color:var(--navy)}
+.ib.sbtn,.burger,.msrow{display:none}
+.icons .ib{color:var(--navy)}
 @media(max-width:1279px){.ib.lab span{display:none}.ib.lab{min-width:0;width:44px;height:44px;border-radius:50%;padding:0}.ib.lab .count{right:1px}.ml{padding:0 9px;font-size:14px}.ml::after{left:9px;right:9px}}
 @media(max-width:1140px){.hsearch{display:none}.ib.sbtn{display:grid}.mnav{margin-right:auto}}
 @media(max-width:1020px){.mnav,.ib.acc{display:none}.burger{display:grid}.hdr-in{height:60px;gap:2px}.logo{margin-right:auto;font-size:24px}.logo-img{height:40px}

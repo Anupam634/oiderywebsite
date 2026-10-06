@@ -1,17 +1,21 @@
 import Link from 'next/link';
 import type { CategoryNode } from '@store/shared';
 import { categoryHref, SHOP_LINKS } from '@/lib/links';
-import { HeaderIcons, MenuButton, MobileSearchButton, NavLink } from './HeaderClient';
+import { HeaderIcons, HeaderSearch, MenuButton, MobileSearchButton, NavLink } from './HeaderClient';
 import { ChevronDown } from './icons';
 
-/* Store header, as in the Zulyf homepage design: crimson announcement bar, the Zulyf logo,
-   Home · Shop (every category in one dropdown) · About Us · Contact, and search / account / bag. */
+/* Store header: crimson announcement bar with the offers, the Zulyf logo, Home · Shop (every category in one
+   dropdown) · About Us · Contact · Design studio, the search box, and account / wishlist / bag with labels. */
 export function Header({ categories, showMobileSearch }: { categories: CategoryNode[]; showMobileSearch?: boolean }) {
   return (
     <>
       <div className="announce">
         <div className="wrap ann-in">
-          <span><i aria-hidden="true">✤</i> Stylish Collections <em>•</em> Handmade with Love <i aria-hidden="true">✤</i></span>
+          <span className="ann-l">✦ <b>Diwali gifting is live</b> · free gift wrap on personalised pieces</span>
+          <span className="ann-s">✦ <b>Diwali gifting is live</b> · free gift wrap</span>
+          <span className="ann-x">Free shipping over ₹999</span>
+          <span className="ann-x">COD on ready-to-ship</span>
+          <Link className="ann-x" href="/account">Track order</Link>
         </div>
       </div>
       <header className={`hdr${showMobileSearch ? ' has-msrow' : ''}`} id="nav">
@@ -45,7 +49,9 @@ export function Header({ categories, showMobileSearch }: { categories: CategoryN
             </div>
             <NavLink href="/about">About Us</NavLink>
             <NavLink href="/contact">Contact</NavLink>
+            <Link className="ml hot" href="/studio">Design studio</Link>
           </nav>
+          <HeaderSearch />
           <HeaderIcons />
         </div>
         {showMobileSearch && (
