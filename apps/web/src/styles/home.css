@@ -201,12 +201,21 @@
 .zh-dots{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);display:flex;gap:8px;z-index:3}
 .zh-dots button{width:9px;height:9px;border-radius:9px;background:rgba(20,26,59,.25);transition:width var(--d2) var(--ease),background var(--d2)}
 .zh-dots button[aria-current=true]{width:30px;background:var(--crim)}
+/* phones: the laptop layout in miniature, one compact banner per slide (copy left, picture right) */
 @media(max-width:760px){
-  .zh-slide{grid-template-columns:1fr;grid-template-rows:auto auto}
-  .zh-art{order:-1;height:260px}.zh-art img{-webkit-mask-image:none;mask-image:none;object-position:center 30%}
-  .zh-brand .zh-art{height:auto;aspect-ratio:1582/928;align-self:start}.zh-brand .zh-art img{-webkit-mask-image:none;mask-image:none;object-position:center}
-  .zh-copy{padding:22px 16px 54px}.zh-flowers{display:none}.zh-arrow{top:130px;width:38px;height:38px}
-  .zh-tag{letter-spacing:.2em;gap:10px}
+  .zh-slide{grid-template-columns:44% 56%;min-height:0;height:clamp(236px,66vw,300px)}
+  .zh-copy{padding:10px 2px 28px 12px}
+  .zh-logo img{width:100%;max-width:168px}
+  .zh-tag{font-size:8.5px;letter-spacing:.13em;gap:5px;margin-top:8px;white-space:nowrap}
+  .zh-tag i{width:3.5px;height:3.5px}
+  .zh-tag::before,.zh-tag::after,.zh-knot,.zh-ranges,.zh-p,.zh-arrow,.zh-flowers{display:none}
+  .zh-k{font-size:9px;letter-spacing:.12em}
+  .zh-h{font-size:clamp(20px,6vw,25px);margin:6px 0 0}
+  .zh-btn{height:36px;padding:0 15px;margin-top:14px;font-size:11px;letter-spacing:.05em;box-shadow:0 10px 20px -12px rgba(200,23,76,.75)}
+  .zh-btn .arr{width:14px;height:14px}
+  .zh-art,.zh-brand .zh-art{height:100%;aspect-ratio:auto;align-self:stretch;min-height:0}
+  .zh-art img,.zh-brand .zh-art img{object-position:var(--mpos,center);-webkit-mask-image:linear-gradient(90deg,transparent,#000 20%);mask-image:linear-gradient(90deg,transparent,#000 20%)}
+  .zh-dots{left:22%;bottom:9px}
 }
 
 .zc{padding:40px 0 30px}

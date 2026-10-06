@@ -6,7 +6,8 @@ import { Arrow, ChevronLeft, ChevronRight } from '../icons';
 
 /* Homepage hero, as in the Zulyf homepage design: a full-width cream banner with the logo, the
    "Style • Craft • Comfort" line and the four ranges, and the collection photo on the right.
-   The next slides follow the same layout. */
+   The next slides follow the same layout. On phones each slide is the same layout in miniature (copy left,
+   picture right), with the picture framed for the narrow space by `mpos`. */
 interface Slide {
   id: string;
   kicker?: string;
@@ -15,11 +16,13 @@ interface Slide {
   cta: [string, string];
   img: string;
   alt: string;
+  /** how the picture is framed on phones (CSS object-position) */
+  mpos?: string;
 }
 
 const SLIDES: Slide[] = [
-  { id: 'brand', cta: ['Shop now', '/shop'], img: '/brand/home/hero.jpg', alt: 'A smiling woman in a red kurta beside a rail with an embroidered kurti, a white T-shirt and a black hoodie' },
-  { id: 'kurtis', kicker: 'Ladies kurtis', title: ['Kurtis for ', 'every day'], text: 'Soft, breathable fabrics in easy colours you’ll wear again and again. Comfortable fits for work, college and home.', cta: ['Shop kurtis', '/shop/clothing/kurtas'], img: '/brand/home/slide-kurtis.jpg', alt: 'Smiling woman in a plain red kurti' },
+  { id: 'brand', cta: ['Shop now', '/shop'], img: '/brand/home/hero.jpg', alt: 'A smiling woman in a red kurta beside a rail with an embroidered kurti, a white T-shirt and a black hoodie', mpos: '80% 100%' },
+  { id: 'kurtis', kicker: 'Ladies kurtis', title: ['Kurtis for ', 'every day'], text: 'Soft, breathable fabrics in easy colours you’ll wear again and again. Comfortable fits for work, college and home.', cta: ['Shop kurtis', '/shop/clothing/kurtas'], img: '/brand/home/slide-kurtis.jpg', alt: 'Smiling woman in a plain red kurti', mpos: '56% 20%' },
   { id: 'design', kicker: 'Embroidery design', title: ['Your design, ', 'stitched by hand'], text: 'Send a logo, a name or a sketch. We digitize it, send a stitch proof on WhatsApp, then embroider it on your piece.', cta: ['Start a design', '/studio'], img: 'photos/blossom.jpg', alt: 'Hand embroidery of pink blossoms in a hoop' },
 ];
 
@@ -78,10 +81,10 @@ export function HeroCarousel() {
               )}
               <Link className="btn zh-btn" href={s.cta[1]}>{s.cta[0]} <Arrow className="arr" /></Link>
             </div>
-            <figure className="zh-art">
+            <figure className="zh-art" style={s.mpos ? ({ '--mpos': s.mpos } as React.CSSProperties) : undefined}>
               {s.img.startsWith('/')
                 ? <img src={s.img} alt={s.alt} width={1582} height={928} fetchPriority={n === 0 ? 'high' : undefined} loading={n === 0 ? 'eager' : 'lazy'} />
-                : <img {...photo(s.img, s.alt, { sizes: '(max-width: 760px) 100vw, 50vw' })} />}
+                : <img {...photo(s.img, s.alt, { sizes: '(max-width: 760px) 56vw, 50vw' })} />}
             </figure>
             {s.id === 'brand' && <img className="zh-flowers" src="/brand/home/hero-flowers.png" alt="" width={140} height={205} aria-hidden="true" />}
           </article>
