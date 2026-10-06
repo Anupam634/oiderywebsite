@@ -28,10 +28,14 @@ import { cart, trackLine, ui, useCart, type CartLine } from '@/lib/store';
 import { track } from '@/lib/track';
 import { OtpLogin } from '../auth/OtpLogin';
 import { Bag, Bank, Card, Cash, Check, Eye, Info, Lock, Plus, Shield, Spark, Swap, Upi, Wallet } from '../icons';
+import { setCheckoutStage } from './CheckoutSteps';
 import { usePayment } from './Payment';
 
 type Ship = NonNullable<CartPriceRequest['shipping']>;
 type Pay = NonNullable<CartPriceRequest['payment']>;
+/** checkout is three steps, one open at a time: verify the mobile number, confirm the address, pay */
+type Step = 'contact' | 'address' | 'payment';
+const ADDRESS_FIELDS: CheckoutField[] = ['pincode', 'name', 'line1', 'line2', 'city', 'state', 'phone'];
 
 const PAYS: { id: Pay; name: string; sub: string; icon: ReactNode; colour: string }[] = [
   { id: 'upi', name: 'UPI', sub: 'Google Pay, PhonePe, Paytm or any UPI app', icon: <Upi />, colour: '#2C8538' },
@@ -137,6 +141,8 @@ export function CheckoutView({ offers }: { offers: Offer[] }) {
   const [repriceKey, setRepriceKey] = useState(0);
   const attempt = useRef<{ key: string; sig: string } | null>(null);
   const payment = usePayment();
+  const [step, setStep] = useState<Step>('contact');
+  const stepFor = useRef<string | null>(null);
 
   // restore the saved pincode, coupon and address draft once in the browser
   useEffect(() => {
@@ -176,6 +182,22 @@ export function CheckoutView({ offers }: { offers: Offer[] }) {
       () => setSaved([]),
     );
   }, [me]);
+
+  // open the right step: verify first; a logged-in shopper with a complete address goes straight to payment
+  useEffect(() => {
+    if (me === undefined) return;
+    if (me === null) {
+      stepFor.current = null;
+      setStep('contact');
+      return;
+    }
+    if (saved === null || stepFor.current === me.id) return;
+    stepFor.current = me.id;
+    setStep(Object.keys(checkoutErrors(details())).length ? 'address' : 'payment');
+    // details() reads the form that was filled in the same update as `saved`
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [me, saved]);
+  useEffect(() => setCheckoutStage(step === 'payment' ? 'payment' : 'details'), [step]);
 
   const server = useServerPrice(lines, coupon, ship, pay, `${me?.id ?? ''}:${repriceKey}`);
   // the latest server price, for code that awaits (state captured in a closure would be stale)
@@ -251,6 +273,36 @@ export function CheckoutView({ offers }: { offers: Offer[] }) {
       gst: form.gstOn ? { gstin: form.gstin, business: form.business } : null, giftNote: form.giftOn ? form.giftNote : null,
     });
 
+  const goStep = (next: Step) => {
+    setStep(next);
+    setTimeout(() => document.getElementById(next)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60);
+  };
+  /** open the address step on the first problem and point at it */
+  const showProblem = (errs: Partial<Record<CheckoutField, string>>) => {
+    const first = Object.keys(errs)[0] as CheckoutField | undefined;
+    if (!first) return false;
+    if (usingSaved && ADDRESS_FIELDS.includes(first)) setPicked('new');
+    setStep('address');
+    setTimeout(() => {
+      const el = document.getElementById(`f-${first}`);
+      el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(() => el?.focus({ preventScroll: true }), 380);
+    }, 60);
+    ui.toast('Please check the highlighted details');
+    return true;
+  };
+  const confirmAddress = () => {
+    const errs = checkoutErrors(details());
+    setErrors(errs);
+    if (!showProblem(errs)) goStep('payment');
+  };
+  // Enter in a field: the address step continues, only the payment step places the order
+  const onFormSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    if (step === 'address') return confirmAddress();
+    if (step === 'payment') void submit();
+  };
+
   const done = (order: OrderDto) => {
     track.purchase({
       number: order.number,
@@ -291,21 +343,14 @@ export function CheckoutView({ offers }: { offers: Offer[] }) {
     e?.preventDefault();
     if (!lines.length) return ui.toast('Your bag is empty');
     if (!me) {
-      document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      goStep('contact');
       setTimeout(() => document.getElementById('otp-phone')?.focus({ preventScroll: true }), 380);
       return ui.toast('Please verify your mobile number first');
     }
     const d = details();
     const errs = checkoutErrors(d);
     setErrors(errs);
-    const first = Object.keys(errs)[0];
-    if (first) {
-      if (usingSaved) setPicked('new');
-      const el = document.getElementById(`f-${first}`);
-      el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      setTimeout(() => el?.focus({ preventScroll: true }), 380);
-      return ui.toast('Please check the highlighted details');
-    }
+    if (showProblem(errs)) return;
     setPlacing(true);
     try {
       await uploadPreviews(lines);
@@ -368,165 +413,176 @@ export function CheckoutView({ offers }: { offers: Offer[] }) {
         <div className="co-left">
           <MobileSummary total={T.totalPaise}>{summary}</MobileSummary>
 
-          <form id="coForm" noValidate onSubmit={submit}>
-            <section className="co-card" id="contact">
+          <form id="coForm" noValidate onSubmit={onFormSubmit}>
+            <section className={`co-card co-step${step === 'contact' ? ' open' : ' shut'}`} id="contact">
               <div className="co-h">
                 <span className="n">{me ? <Check strokeWidth={3} /> : '1'}</span>
-                <h2>Contact</h2>
+                <h2>Mobile number</h2>
                 {me && <button type="button" className="link" onClick={() => void logout()}>Not you? Log out</button>}
               </div>
               {me === undefined ? (
-                <div style={{ height: 90 }} aria-busy="true" />
+                <div style={{ height: 56 }} aria-busy="true" />
               ) : me === null ? (
                 <>
-                  <p style={{ margin: '0 0 14px', color: 'var(--ink-2)', fontSize: 14.5 }}>Verify your mobile number to place the order. We send your order updates and stitch proof here.</p>
+                  <p className="co-lead">Verify your mobile number to place the order. We send your order updates and stitch proof here.</p>
                   <OtpLogin compact defaultPhone={form.phone} />
                 </>
               ) : (
-                <div className="fgrid2">
-                  <div className="fld full">
-                    <span>Mobile number</span>
-                    <div className="verified"><Check strokeWidth={3} /><b>{formatPhone(me.phone)}</b><small>Verified</small></div>
-                  </div>
-                  <label className={`${fld('email')} full`}><span>Email <i>(optional, for your GST invoice)</i></span>
-                    <div className="inp"><input id="f-email" type="email" autoComplete="email" placeholder="you@example.com" value={form.email} onChange={(e) => set('email', e.target.value)} /></div>
-                    <small className="err">{err('email')}</small></label>
-                  <label className="chk full"><input type="checkbox" checked={form.whatsappUpdates} onChange={(e) => set('whatsappUpdates', e.target.checked)} /><span>Send order updates and my stitch proof on WhatsApp</span></label>
-                </div>
+                <p className="co-done"><Check strokeWidth={3} /><b>{formatPhone(me.phone)}</b><small>Verified</small></p>
               )}
             </section>
 
-            <section className="co-card">
-              <div className="co-h"><span className="n">2</span><h2>Delivery address</h2></div>
-              {!!saved?.length && (
-                <div className="addrs" style={{ marginBottom: picked === 'new' ? 16 : 0 }}>
-                  {saved.map((a) => (
-                    <div key={a.id} role="radio" aria-checked={picked === a.id} tabIndex={0} className={`addr pick${picked === a.id ? ' on' : ''}`} onClick={() => pickAddress(a)} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && pickAddress(a)}>
-                      <b>{a.name}</b><span className="tag">{a.type[0] + a.type.slice(1).toLowerCase()}</span>
-                      <div>{a.line1}, {a.line2}{a.landmark ? `, ${a.landmark}` : ''}</div>
-                      <div>{a.city}, {a.state} {a.pincode} · {formatPhone(a.phone)}</div>
-                    </div>
-                  ))}
-                  {picked !== 'new' && <button className="addr-new" type="button" onClick={() => pickAddress('new')}><Plus />Deliver to a new address</button>}
-                </div>
+            <section className={`co-card co-step${step === 'address' ? ' open' : ' shut'}${me ? '' : ' wait'}`} id="address">
+              <div className="co-h">
+                <span className="n">{step === 'payment' ? <Check strokeWidth={3} /> : '2'}</span>
+                <h2>Delivery address</h2>
+                {step === 'payment' && <button type="button" className="link" onClick={() => goStep('address')}>Change</button>}
+              </div>
+              {step === 'payment' && (
+                <p className="co-done addr">
+                  <b>{form.name}</b>, {form.line1}, {form.line2}{form.landmark ? `, ${form.landmark}` : ''}, {form.city}, {form.state} {form.pincode} · {formatPhone(form.phone)}
+                </p>
               )}
-              {!usingSaved && (
-                <div className="fgrid2">
-                  <label className={fld('pincode')}><span>Pincode</span>
-                    <div className="inp"><input id="f-pincode" inputMode="numeric" maxLength={6} autoComplete="postal-code" placeholder="400001" value={form.pincode} onChange={(e) => onPin(e.target.value)} /></div>
-                    <small className="err">{err('pincode')}</small>
-                    <small className={`pinm ${pinNote.tone}`} aria-live="polite">{pinNote.text}</small></label>
-                  <label className={fld('name')}><span>Full name</span>
-                    <div className="inp"><input id="f-name" autoComplete="name" placeholder="Priya Sharma" value={form.name} onChange={(e) => set('name', e.target.value)} /></div>
-                    <small className="err">{err('name')}</small></label>
-                  <label className={`${fld('line1')} full`}><span>Flat, house number, building</span>
-                    <div className="inp"><input id="f-line1" autoComplete="address-line1" placeholder="Flat 402, Gulmohar Apartments" value={form.line1} onChange={(e) => set('line1', e.target.value)} /></div>
-                    <small className="err">{err('line1')}</small></label>
-                  <label className={`${fld('line2')} full`}><span>Area, street, sector</span>
-                    <div className="inp"><input id="f-line2" autoComplete="address-line2" placeholder="Linking Road, Bandra West" value={form.line2} onChange={(e) => set('line2', e.target.value)} /></div>
-                    <small className="err">{err('line2')}</small></label>
-                  <label className="fld"><span>Landmark <i>(optional)</i></span>
-                    <div className="inp"><input placeholder="Near the post office" value={form.landmark} onChange={(e) => set('landmark', e.target.value)} /></div></label>
-                  <label className={fld('city')}><span>City</span>
-                    <div className="inp"><input id="f-city" autoComplete="address-level2" placeholder="City" value={form.city} onChange={(e) => set('city', e.target.value)} /></div>
-                    <small className="err">{err('city')}</small></label>
-                  <label className={fld('state')}><span>State</span>
-                    <div className="inp sel"><select id="f-state" autoComplete="address-level1" value={form.state} onChange={(e) => set('state', e.target.value)}>
-                      <option value="">Select state</option>
-                      {INDIAN_STATES.map((s) => <option key={s}>{s}</option>)}
-                    </select></div>
-                    <small className="err">{err('state')}</small></label>
-                  <label className={fld('phone')}><span>Mobile for delivery</span>
-                    <div className="inp pre"><em>+91</em><input id="f-phone" inputMode="numeric" maxLength={10} autoComplete="tel-national" placeholder="98765 43210" value={form.phone} onChange={(e) => set('phone', e.target.value.replace(/\D/g, '').slice(0, 10))} /></div>
-                    <small className="err">{err('phone')}</small></label>
-                  <div className="fld"><span>Save this address as</span>
-                    <div className="seg2">
-                      {(['home', 'work', 'other'] as const).map((t) => (
-                        <button key={t} type="button" aria-pressed={form.addressType === t} onClick={() => set('addressType', t)}>{t[0]!.toUpperCase() + t.slice(1)}</button>
+              {step === 'address' && (
+                <>
+                  {!!saved?.length && (
+                    <div className="addrs" style={{ marginBottom: picked === 'new' ? 16 : 0 }}>
+                      {saved.map((a) => (
+                        <div key={a.id} role="radio" aria-checked={picked === a.id} tabIndex={0} className={`addr pick${picked === a.id ? ' on' : ''}`} onClick={() => pickAddress(a)} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && pickAddress(a)}>
+                          <b>{a.name}</b><span className="tag">{a.type[0] + a.type.slice(1).toLowerCase()}</span>
+                          <div>{a.line1}, {a.line2}{a.landmark ? `, ${a.landmark}` : ''}</div>
+                          <div>{a.city}, {a.state} {a.pincode} · {formatPhone(a.phone)}</div>
+                        </div>
                       ))}
-                    </div></div>
-                  {me && <label className="chk full"><input type="checkbox" checked={saveAddress} onChange={(e) => setSaveAddress(e.target.checked)} /><span>Save this address for next time</span></label>}
-                </div>
-              )}
-              <div className="fgrid2" style={{ marginTop: 14 }}>
-                <label className="chk full"><input type="checkbox" checked={form.gstOn} onChange={(e) => set('gstOn', e.target.checked)} /><span>I need a GST invoice for my business</span></label>
-                {form.gstOn && (
-                  <div className="full fgrid2">
-                    <label className={fld('gstin')}><span>GSTIN</span>
-                      <div className="inp"><input id="f-gstin" maxLength={15} placeholder="27ABCDE1234F1Z5" autoComplete="off" style={{ textTransform: 'uppercase' }} value={form.gstin} onChange={(e) => set('gstin', e.target.value.toUpperCase())} /></div>
-                      <small className="err">{err('gstin')}</small></label>
-                    <label className={fld('business')}><span>Business name</span>
-                      <div className="inp"><input id="f-business" placeholder="Chai Co. Pvt Ltd" value={form.business} onChange={(e) => set('business', e.target.value)} /></div>
-                      <small className="err">{err('business')}</small></label>
-                  </div>
-                )}
-              </div>
-            </section>
-
-            <section className="co-card">
-              <div className="co-h"><span className="n">3</span><h2>Delivery speed</h2></div>
-              <div className="ropts" role="radiogroup" aria-label="Delivery speed">
-                {([
-                  ['standard', 'Standard delivery', T.afterDiscountPaise >= FREE_SHIPPING_MIN_PAISE ? 'Free' : formatINR(RULES.standardShippingPaise)],
-                  ['express', 'Express delivery', formatINR(RULES.expressShippingPaise)],
-                ] as const).map(([id, label, price]) => (
-                  <label key={id} className={`ropt${ship === id ? ' on' : ''}`}>
-                    <input type="radio" name="ship" value={id} checked={ship === id} onChange={() => setShip(id)} />
-                    <div><b>{label}</b><small>Arrives by {eta[id]}{okPin ? '' : ' · add your pincode for an exact date'}</small></div>
-                    <span className={`rp${price === 'Free' ? ' free' : ''}`}>{price}</span>
-                  </label>
-                ))}
-              </div>
-              <div className="mnote">{T.hasCustom && <><Info /><span>Your bag has a made-for-you piece. We WhatsApp you a stitch proof within 24 hours and ship once it&apos;s stitched, in 5–7 days.</span></>}</div>
-              <label className="chk" style={{ marginTop: 14 }}><input type="checkbox" checked={form.giftOn} onChange={(e) => set('giftOn', e.target.checked)} /><span><b>Sending it as a gift?</b> We&apos;ll hide the prices on the invoice and add your note, free.</span></label>
-              {form.giftOn && <div id="giftBox"><textarea maxLength={150} placeholder="Your message for the card" aria-label="Gift note" value={form.giftNote} onChange={(e) => set('giftNote', e.target.value)} /></div>}
-            </section>
-
-            <section className="co-card">
-              <div className="co-h"><span className="n">4</span><h2>Payment</h2><span className="lockchip"><Lock />Encrypted &amp; secure</span></div>
-              <div className="pays" role="radiogroup" aria-label="Payment method">
-                {PAYS.map((p) => {
-                  const dis = p.id === 'cod' && !T.codAllowed;
-                  const sub = p.id === 'cod' && dis ? 'Not available: made-for-you pieces are prepaid' : p.sub;
-                  const tag = p.id === 'upi' ? (T.afterDiscountPaise >= RULES.upiDiscountMinPaise ? `Save ${formatINR(RULES.upiDiscountPaise)}` : 'Fast & secure') : p.id === 'cod' ? null : 'Secure';
-                  return (
-                    <div key={p.id} className={`pm${pay === p.id ? ' on' : ''}${dis ? ' dis' : ''}`}>
-                      <label>
-                        <input type="radio" name="pay" value={p.id} checked={pay === p.id} disabled={dis} onChange={() => setPay(p.id)} />
-                        <span className="pic" style={{ ['--c' as string]: p.colour }}>{p.icon}</span>
-                        <div><b>{p.name}</b><small>{sub}</small></div>
-                        {tag && <span className={`tagp${p.id === 'upi' ? '' : ' grey'}`}>{tag}</span>}
-                      </label>
-                      <div className="pbody2">
-                        {p.id === 'cod' ? (
-                          <div className="codnote"><Info /><span>A ₹49 cash-handling fee applies. Keep exact change ready, or pay the delivery partner by UPI.</span></div>
-                        ) : (
-                          <div className="paynote"><Shield /><span>You&apos;ll finish paying in the secure Razorpay window{p.id === 'upi' ? ': scan the QR or approve in your UPI app' : p.id === 'card' ? '. We never see or store your card number' : ''}.</span></div>
-                        )}
-                      </div>
+                      {picked !== 'new' && <button className="addr-new" type="button" onClick={() => pickAddress('new')}><Plus />Deliver to a new address</button>}
                     </div>
-                  );
-                })}
-              </div>
+                  )}
+                  {!usingSaved && (
+                    <div className="fgrid2">
+                      <label className={fld('pincode')}><span>Pincode</span>
+                        <div className="inp"><input id="f-pincode" inputMode="numeric" maxLength={6} autoComplete="postal-code" placeholder="400001" value={form.pincode} onChange={(e) => onPin(e.target.value)} /></div>
+                        <small className="err">{err('pincode')}</small>
+                        <small className={`pinm ${pinNote.tone}`} aria-live="polite">{pinNote.text}</small></label>
+                      <label className={fld('name')}><span>Full name</span>
+                        <div className="inp"><input id="f-name" autoComplete="name" placeholder="Priya Sharma" value={form.name} onChange={(e) => set('name', e.target.value)} /></div>
+                        <small className="err">{err('name')}</small></label>
+                      <label className={`${fld('line1')} full`}><span>Flat, house number, building</span>
+                        <div className="inp"><input id="f-line1" autoComplete="address-line1" placeholder="Flat 402, Gulmohar Apartments" value={form.line1} onChange={(e) => set('line1', e.target.value)} /></div>
+                        <small className="err">{err('line1')}</small></label>
+                      <label className={`${fld('line2')} full`}><span>Area, street, sector</span>
+                        <div className="inp"><input id="f-line2" autoComplete="address-line2" placeholder="Linking Road, Bandra West" value={form.line2} onChange={(e) => set('line2', e.target.value)} /></div>
+                        <small className="err">{err('line2')}</small></label>
+                      <label className="fld"><span>Landmark <i>(optional)</i></span>
+                        <div className="inp"><input placeholder="Near the post office" value={form.landmark} onChange={(e) => set('landmark', e.target.value)} /></div></label>
+                      <label className={fld('city')}><span>City</span>
+                        <div className="inp"><input id="f-city" autoComplete="address-level2" placeholder="City" value={form.city} onChange={(e) => set('city', e.target.value)} /></div>
+                        <small className="err">{err('city')}</small></label>
+                      <label className={fld('state')}><span>State</span>
+                        <div className="inp sel"><select id="f-state" autoComplete="address-level1" value={form.state} onChange={(e) => set('state', e.target.value)}>
+                          <option value="">Select state</option>
+                          {INDIAN_STATES.map((s) => <option key={s}>{s}</option>)}
+                        </select></div>
+                        <small className="err">{err('state')}</small></label>
+                      <label className={fld('phone')}><span>Mobile for delivery</span>
+                        <div className="inp pre"><em>+91</em><input id="f-phone" inputMode="numeric" maxLength={10} autoComplete="tel-national" placeholder="98765 43210" value={form.phone} onChange={(e) => set('phone', e.target.value.replace(/\D/g, '').slice(0, 10))} /></div>
+                        <small className="err">{err('phone')}</small></label>
+                      <div className="fld"><span>Save this address as</span>
+                        <div className="seg2">
+                          {(['home', 'work', 'other'] as const).map((t) => (
+                            <button key={t} type="button" aria-pressed={form.addressType === t} onClick={() => set('addressType', t)}>{t[0]!.toUpperCase() + t.slice(1)}</button>
+                          ))}
+                        </div></div>
+                      {me && <label className="chk full"><input type="checkbox" checked={saveAddress} onChange={(e) => setSaveAddress(e.target.checked)} /><span>Save this address for next time</span></label>}
+                    </div>
+                  )}
+                  <div className="fgrid2 co-more">
+                    <label className={`${fld('email')} full`}><span>Email <i>(optional, for your GST invoice)</i></span>
+                      <div className="inp"><input id="f-email" type="email" autoComplete="email" placeholder="you@example.com" value={form.email} onChange={(e) => set('email', e.target.value)} /></div>
+                      <small className="err">{err('email')}</small></label>
+                    <label className="chk full"><input type="checkbox" checked={form.whatsappUpdates} onChange={(e) => set('whatsappUpdates', e.target.checked)} /><span>Send order updates and my stitch proof on WhatsApp</span></label>
+                    <label className="chk full"><input type="checkbox" checked={form.gstOn} onChange={(e) => set('gstOn', e.target.checked)} /><span>I need a GST invoice for my business</span></label>
+                    {form.gstOn && (
+                      <div className="full fgrid2">
+                        <label className={fld('gstin')}><span>GSTIN</span>
+                          <div className="inp"><input id="f-gstin" maxLength={15} placeholder="27ABCDE1234F1Z5" autoComplete="off" style={{ textTransform: 'uppercase' }} value={form.gstin} onChange={(e) => set('gstin', e.target.value.toUpperCase())} /></div>
+                          <small className="err">{err('gstin')}</small></label>
+                        <label className={fld('business')}><span>Business name</span>
+                          <div className="inp"><input id="f-business" placeholder="Chai Co. Pvt Ltd" value={form.business} onChange={(e) => set('business', e.target.value)} /></div>
+                          <small className="err">{err('business')}</small></label>
+                      </div>
+                    )}
+                  </div>
+                  <button className="btn btn-grad big co-next" type="button" onClick={confirmAddress}>Continue to payment</button>
+                </>
+              )}
             </section>
 
-            {pending && (
-              <section className="co-card" id="pending" aria-live="polite">
-                <div className="opay">
-                  <Info />
-                  <span>Order <b>{pending.number}</b> is waiting for payment. {pending.reason} We’ll hold your pieces for 30 minutes.</span>
-                  <button className="btn btn-grad" type="button" disabled={placing} onClick={() => void retryPayment()}>Try again</button>
-                </div>
-                <p className="fine" style={{ margin: 0 }}>Want to pay another way? Pick a different payment method above and press pay.</p>
-              </section>
-            )}
+            <section className={`co-card co-step${step === 'payment' ? ' open' : ' shut wait'}`} id="payment">
+              <div className="co-h"><span className="n">3</span><h2>Payment</h2>{step === 'payment' && <span className="lockchip"><Lock />Encrypted &amp; secure</span>}</div>
+              {step === 'payment' && (
+                <>
+                  <h3 className="co-sub">Delivery</h3>
+                  <div className="ropts" role="radiogroup" aria-label="Delivery speed">
+                    {([
+                      ['standard', 'Standard delivery', T.afterDiscountPaise >= FREE_SHIPPING_MIN_PAISE ? 'Free' : formatINR(RULES.standardShippingPaise)],
+                      ['express', 'Express delivery', formatINR(RULES.expressShippingPaise)],
+                    ] as const).map(([id, label, price]) => (
+                      <label key={id} className={`ropt${ship === id ? ' on' : ''}`}>
+                        <input type="radio" name="ship" value={id} checked={ship === id} onChange={() => setShip(id)} />
+                        <div><b>{label}</b><small>Arrives by {eta[id]}{okPin ? '' : ' · add your pincode for an exact date'}</small></div>
+                        <span className={`rp${price === 'Free' ? ' free' : ''}`}>{price}</span>
+                      </label>
+                    ))}
+                  </div>
+                  <div className="mnote">{T.hasCustom && <><Info /><span>Your bag has a made-for-you piece. We WhatsApp you a stitch proof within 24 hours and ship once it&apos;s stitched, in 5–7 days.</span></>}</div>
+                  <h3 className="co-sub">Pay with</h3>
+                  <div className="pays" role="radiogroup" aria-label="Payment method">
+                    {PAYS.map((p) => {
+                      const dis = p.id === 'cod' && !T.codAllowed;
+                      const sub = p.id === 'cod' && dis ? 'Not available: made-for-you pieces are prepaid' : p.sub;
+                      const tag = p.id === 'upi' ? (T.afterDiscountPaise >= RULES.upiDiscountMinPaise ? `Save ${formatINR(RULES.upiDiscountPaise)}` : 'Fast & secure') : p.id === 'cod' ? null : 'Secure';
+                      return (
+                        <div key={p.id} className={`pm${pay === p.id ? ' on' : ''}${dis ? ' dis' : ''}`}>
+                          <label>
+                            <input type="radio" name="pay" value={p.id} checked={pay === p.id} disabled={dis} onChange={() => setPay(p.id)} />
+                            <span className="pic" style={{ ['--c' as string]: p.colour }}>{p.icon}</span>
+                            <div><b>{p.name}</b><small>{sub}</small></div>
+                            {tag && <span className={`tagp${p.id === 'upi' ? '' : ' grey'}`}>{tag}</span>}
+                          </label>
+                          <div className="pbody2">
+                            {p.id === 'cod' ? (
+                              <div className="codnote"><Info /><span>A ₹49 cash-handling fee applies. Keep exact change ready, or pay the delivery partner by UPI.</span></div>
+                            ) : (
+                              <div className="paynote"><Shield /><span>You&apos;ll finish paying in the secure Razorpay window{p.id === 'upi' ? ': scan the QR or approve in your UPI app' : p.id === 'card' ? '. We never see or store your card number' : ''}.</span></div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <label className="chk" style={{ marginTop: 16 }}><input type="checkbox" checked={form.giftOn} onChange={(e) => set('giftOn', e.target.checked)} /><span><b>Sending it as a gift?</b> We&apos;ll hide the prices on the invoice and add your note, free.</span></label>
+                  {form.giftOn && <div id="giftBox"><textarea maxLength={150} placeholder="Your message for the card" aria-label="Gift note" value={form.giftNote} onChange={(e) => set('giftNote', e.target.value)} /></div>}
 
-            <div className="co-place">
-              <button className="btn btn-grad big" type="submit" disabled={placing || problems}>
-                {placing ? <><span className="spin" /><span>{pay === 'cod' ? 'Placing your order…' : 'Opening payment…'}</span></> : <><Lock /><span>{payLabel}</span></>}
-              </button>
-              <p className="fine">By placing this order you agree to our <Link href="/policies/terms">Terms</Link> and <Link href="/policies/refunds">Refund policy</Link>. Personalised pieces can&apos;t be returned.</p>
-            </div>
+                  {pending && (
+                    <div className="co-pending" id="pending" aria-live="polite">
+                      <div className="opay">
+                        <Info />
+                        <span>Order <b>{pending.number}</b> is waiting for payment. {pending.reason} We’ll hold your pieces for 30 minutes.</span>
+                        <button className="btn btn-grad" type="button" disabled={placing} onClick={() => void retryPayment()}>Try again</button>
+                      </div>
+                      <p className="fine" style={{ margin: 0 }}>Want to pay another way? Pick a different payment method above and press pay.</p>
+                    </div>
+                  )}
+
+                  <div className="co-place">
+                    <button className="btn btn-grad big" type="submit" disabled={placing || problems}>
+                      {placing ? <><span className="spin" /><span>{pay === 'cod' ? 'Placing your order…' : 'Opening payment…'}</span></> : <><Lock /><span>{payLabel}</span></>}
+                    </button>
+                    <p className="fine">By placing this order you agree to our <Link href="/policies/terms">Terms</Link> and <Link href="/policies/refunds">Refund policy</Link>. Personalised pieces can&apos;t be returned.</p>
+                  </div>
+                </>
+              )}
+            </section>
           </form>
         </div>
         <aside className="co-right" aria-label="Order summary"><div className="co-sum">{summary}</div></aside>
@@ -534,7 +590,8 @@ export function CheckoutView({ offers }: { offers: Offer[] }) {
 
       <div className="co-paybar">
         <div><small>Total</small><b>{formatINR(T.totalPaise)}</b></div>
-        <button className="btn btn-grad" type="submit" form="coForm" disabled={placing || problems}>{pay === 'cod' ? 'Place order' : 'Pay now'}</button>
+        {step === 'address' && <button className="btn btn-grad" type="button" onClick={confirmAddress}>Continue</button>}
+        {step === 'payment' && <button className="btn btn-grad" type="submit" form="coForm" disabled={placing || problems}>{pay === 'cod' ? 'Place order' : 'Pay now'}</button>}
       </div>
       {payment.sheet}
     </main>
