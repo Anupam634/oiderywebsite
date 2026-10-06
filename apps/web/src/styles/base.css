@@ -35,7 +35,7 @@ a.ann-x:hover{color:#fff}
 .hdr{position:sticky;top:0;z-index:60;background:rgba(255,252,246,.97);-webkit-backdrop-filter:saturate(1.4) blur(14px);backdrop-filter:saturate(1.4) blur(14px);border-bottom:1px solid var(--line);transition:box-shadow var(--d3)}
 .hdr.scrolled{box-shadow:0 12px 30px -20px rgba(27,16,48,.5)}
 .hdr-in{display:flex;align-items:center;gap:10px;height:72px}
-.logo-img{height:50px;width:auto;display:block}
+.logo-img{height:56px;width:auto;display:block}
 .logo{display:flex;align-items:center;gap:8px;font-family:var(--serif);font-style:italic;font-weight:650;font-size:26px;letter-spacing:-.03em;line-height:1;flex:none}
 .logo svg{width:32px;height:32px}
 .logo-mark{width:38px;height:38px;border-radius:50%;flex:none;display:block;box-shadow:0 0 0 1px rgba(27,16,48,.08)}

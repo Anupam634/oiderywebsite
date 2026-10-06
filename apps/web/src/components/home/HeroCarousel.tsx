@@ -18,7 +18,7 @@ interface Slide {
 }
 
 const SLIDES: Slide[] = [
-  { id: 'brand', cta: ['Shop now', '/shop'], img: '/brand/home/hero.jpg', alt: 'A woman in a red embroidered kurti beside a rail with a kurti, a white T-shirt and a black hoodie' },
+  { id: 'brand', cta: ['Shop now', '/shop'], img: '/brand/home/hero.jpg', alt: 'A smiling woman in a red embroidered kurta with a printed dupatta' },
   { id: 'kurtis', kicker: 'The festive edit', title: ['Kurtis with ', 'hand embroidery'], text: 'Resham and zari work on soft cotton and silk. Ready to ship, or made to your measurements.', cta: ['Shop kurtis', '/shop/clothing/kurtas'], img: 'photos/kurta.jpg', alt: 'Red kurta with an embroidered yoke' },
   { id: 'design', kicker: 'Embroidery design', title: ['Your design, ', 'stitched by hand'], text: 'Send a logo, a name or a sketch. We digitize it, send a stitch proof on WhatsApp, then embroider it on your piece.', cta: ['Start a design', '/studio'], img: 'photos/blossom.jpg', alt: 'Hand embroidery of pink blossoms in a hoop' },
 ];
@@ -64,7 +64,7 @@ export function HeroCarousel() {
             <div className="zh-copy">
               {s.id === 'brand' ? (
                 <>
-                  <h1 className="zh-logo"><img src="/brand/home/logo.png" alt="Zulyf" width={425} height={203} /></h1>
+                  <h1 className="zh-logo"><img src="/brand/logo-hero.webp" alt="Zulyf" width={900} height={497} /></h1>
                   <p className="zh-tag"><span>Style</span><i /><span>Craft</span><i /><span>Comfort</span></p>
                   <span className="zh-knot" aria-hidden="true">✤</span>
                   <p className="zh-ranges">{RANGES.map((r, k) => <span key={r}>{k > 0 && <i />}{r}</span>)}</p>
@@ -80,7 +80,7 @@ export function HeroCarousel() {
             </div>
             <figure className="zh-art">
               {s.img.startsWith('/')
-                ? <img src={s.img} alt={s.alt} width={728} height={434} fetchPriority={n === 0 ? 'high' : undefined} loading={n === 0 ? 'eager' : 'lazy'} />
+                ? <img src={s.img} alt={s.alt} width={1500} height={1000} fetchPriority={n === 0 ? 'high' : undefined} loading={n === 0 ? 'eager' : 'lazy'} />
                 : <img {...photo(s.img, s.alt, { sizes: '(max-width: 760px) 100vw, 50vw' })} />}
             </figure>
             {s.id === 'brand' && <img className="zh-flowers" src="/brand/home/hero-flowers.png" alt="" width={140} height={205} aria-hidden="true" />}

@@ -27,9 +27,9 @@ const IG: [string, string][] = [['blossom', 'A gift for Amma'], ['punch', 'Studi
 
 /* the four Zulyf ranges, as in the homepage design: [image, label, link, alt] */
 const RANGE_CARDS: [string, string, string, string][] = [
-  ['cat-kurtis', 'Ladies Kurtis', '/shop/clothing/kurtas', 'Woman in a red embroidered kurti'],
-  ['cat-tees', 'Men’s T-Shirts', '/shop/clothing/tees', 'Man in a white T-shirt with a small crown'],
-  ['cat-hoodies', 'Hoodies', '/shop/clothing/tees', 'Man in a black hoodie with a mountain print'],
+  ['cat-kurtis', 'Ladies Kurtis', '/shop/clothing/kurtas', 'Woman in a red embroidered kurta'],
+  ['cat-tees', 'Men’s T-Shirts', '/shop/clothing/tees', 'Man in a plain white T-shirt'],
+  ['cat-hoodies', 'Hoodies', '/shop/clothing/tees', 'Man in a black hoodie'],
   ['cat-embroidery', 'Embroidery Design', '/studio', 'Floral embroidery in a wooden hoop'],
 ];
 
@@ -67,7 +67,8 @@ export default async function HomePage() {
             </Link>
           ))}
           <Link className="zc-card zc-promo" href={SHOP_LINKS.all}>
-            <img src="/brand/home/cat-fabrics.jpg" alt="Premium quality fabrics for your everyday style" width={275} height={204} loading="lazy" />
+            <img src="/brand/home/cat-fabrics.jpg" alt="" width={620} height={477} loading="lazy" />
+            <span className="zc-promo-t"><em>Premium<br />Quality<br />Fabrics</em><small>For your everyday style</small></span>
           </Link>
         </div>
       </section>

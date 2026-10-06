@@ -18,7 +18,7 @@ export function Header({ categories, showMobileSearch }: { categories: CategoryN
         <div className="wrap hdr-in">
           <MenuButton />
           <Link className="logo" href="/" aria-label="Zulyf home">
-            <img className="logo-img" src="/brand/home/logo.png" alt="Zulyf" width={425} height={203} />
+            <img className="logo-img" src="/brand/logo-header.webp" alt="Zulyf" width={280} height={155} />
           </Link>
           <nav className="mnav" aria-label="Main">
             <NavLink href="/">Home</NavLink>
