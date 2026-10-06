@@ -13,7 +13,7 @@ export default function CheckoutLayout({ children }: { children: ReactNode }) {
     <div className="co-page">
       <header className="co-head">
         <div className="wrap co-head-in">
-          <Link className="logo" href="/" aria-label={`${BRAND.name} home`}><Logo />zulyf</Link>
+          <Link className="logo" href="/" aria-label={`${BRAND.name} home`}><Logo />Zulyf</Link>
           <CheckoutSteps />
           <div className="co-secure"><Lock /><span>Secure checkout</span></div>
         </div>

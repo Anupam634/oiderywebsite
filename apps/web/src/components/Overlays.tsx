@@ -10,7 +10,7 @@ import { useMe } from '@/lib/session';
 import { cart, lineTotal, ui, useCart, useWishlist, wishlist } from '@/lib/store';
 import { addCardToBag } from './ProductCard';
 import { SearchRow, useSuggestions } from './HeaderClient';
-import { Bag, Chat, Check, Close, Plus, Search } from './icons';
+import { Bag, Chat, Check, Close, Logo, Plus, Search } from './icons';
 
 type Panel = 'cart' | 'wish' | 'search' | 'menu' | null;
 
@@ -235,7 +235,7 @@ function MobileMenu({ categories, onClose }: { categories: CategoryNode[]; onClo
     <div className="overlay on" role="dialog" aria-label="Menu">
       <div className="scrim on" onClick={onClose} />
       <div className="mpanel">
-        <div className="mp-top"><Link className="logo" href="/">zulyf</Link><button className="ib" type="button" aria-label="Close menu" onClick={onClose}><Close /></button></div>
+        <div className="mp-top"><Link className="logo" href="/"><Logo />Zulyf</Link><button className="ib" type="button" aria-label="Close menu" onClick={onClose}><Close /></button></div>
         <Link className="mp-studio" href="/studio"><b>Design studio</b><span>Your logo, a motif or a name, on real fabric</span></Link>
         <h6>Shop by category</h6>
         <div className="mp-cats">

@@ -164,3 +164,7 @@
 .c2-art img:nth-child(2){transform:translateY(16px)}
 @media(max-width:860px){.corp2{grid-template-columns:minmax(0,1fr);padding:24px 18px;margin-block:20px}.c2-art{gap:8px}}
 .news{margin-top:0}
+
+/* the full Zulyf logo, exactly as designed, on its own cream */
+.brandband{display:grid;place-items:center;background:#FDFBEC;border-radius:28px;padding:clamp(8px,2vw,20px)}
+.brandband img{width:100%;max-width:900px;height:auto;display:block}

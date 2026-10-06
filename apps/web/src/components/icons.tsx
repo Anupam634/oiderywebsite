@@ -50,18 +50,6 @@ export const Logout = make('<path d="M15 4h3a2 2 0 012 2v12a2 2 0 01-2 2h-3"/><p
 export const SparkFill = make('<path d="M12 2l2.2 6.6L21 10l-6.8 1.6L12 18l-2.2-6.4L3 10l6.8-1.4z"/>', { fill: 'currentColor', stroke: 'none' });
 
 export function Logo() {
-  return (
-    <svg viewBox="0 0 40 40" aria-hidden="true">
-      <defs>
-        <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#FF2E93" />
-          <stop offset=".55" stopColor="#FF8A00" />
-          <stop offset="1" stopColor="#FFB300" />
-        </linearGradient>
-      </defs>
-      <circle cx="20" cy="21.5" r="15.5" fill="none" stroke="url(#lg)" strokeWidth="5" />
-      <path d="M10.5 24q4.75-9 9.5 0t9.5 0" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeDasharray="3.4 2.6" />
-      <rect x="16.5" y="1.5" width="7" height="6.5" rx="2" fill="currentColor" />
-    </svg>
-  );
+  // the Z, needle and flower from the Zulyf logo (public/brand/zulyf-logo.jpg), cut out as a round mark
+  return <img className="logo-mark" src="/brand/zulyf-mark.png" alt="" width={192} height={192} />;
 }

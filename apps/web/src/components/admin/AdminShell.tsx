@@ -47,7 +47,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
   return (
     <div className={`adm${open ? ' menu-open' : ''}`}>
       <aside className="side" aria-label="Admin menu">
-        <Link className="brand" href="/admin"><Logo /><span>zulyf<small>Studio admin</small></span></Link>
+        <Link className="brand" href="/admin"><Logo /><span>Zulyf<small>Studio admin</small></span></Link>
         <nav className="nav">
           {NAV.map((n) => {
             const c = todo && n.count ? n.count(todo) : 0;

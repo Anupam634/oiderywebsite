@@ -132,6 +132,10 @@ export default async function HomePage() {
         </div>
       </section>
 
+      <section className="wrap sx brandband" aria-label="Zulyf">
+        <img src="/brand/zulyf-logo.jpg" alt="Zulyf: Style, Craft, Comfort. Ladies kurtis, embroidery design, men's t-shirts and hoodies" width={1536} height={1024} loading="lazy" />
+      </section>
+
       <section className="sx"><div className="wrap">
         <div className="rh"><div><h2>#StitchedWithZulyf</h2><p>Tag us on Instagram to be featured here</p></div></div>
         <div className="ig">{IG.map(([img, cap]) => <span className="ig-t" key={img}><img {...photo(`photos/${img}.jpg`, cap, { sizes: '(max-width: 760px) 33vw, 210px', width: 700, height: 700 })} /><span>{cap}</span></span>)}</div>

@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   title: { default: `${BRAND.name} · Embroidery Studio`, template: `%s · ${BRAND.name}` },
   description: `${BRAND.tagline}. Personalise with a name, upload your logo, see it stitched before you buy.`,
   robots: indexable ? undefined : { index: false, follow: false },
-  icons: { icon: '/favicon.svg' },
+  icons: { icon: [{ url: '/favicon-48.png', sizes: '48x48', type: 'image/png' }, { url: '/favicon-32.png', sizes: '32x32', type: 'image/png' }], apple: '/apple-touch-icon.png' },
   openGraph: { type: 'website', siteName: BRAND.name, images: ['/photos/og-share.jpg'] },
 };
 export const viewport: Viewport = { themeColor: '#1B1030' };

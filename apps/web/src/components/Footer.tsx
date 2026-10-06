@@ -9,7 +9,7 @@ export function Footer() {
       <div className="wrap">
         <div className="fgrid">
           <div className="fbrand">
-            <Link className="logo" href="/"><Logo />zulyf</Link>
+            <Link className="logo" href="/"><Logo />Zulyf</Link>
             <p>An embroidery studio making colourful clothing, décor and personalised gifts. Stitched in India with a lot of love and even more thread.</p>
           </div>
           <div><h2>Shop</h2><Link href={categoryHref('clothing')}>Clothing</Link><Link href={categoryHref('home')}>Home décor</Link><Link href={categoryHref('gifts')}>Gifts</Link><Link href={SHOP_LINKS.personalised}>Personalised</Link><Link href={SHOP_LINKS.new}>New arrivals</Link></div>
