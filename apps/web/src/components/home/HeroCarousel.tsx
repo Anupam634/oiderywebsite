@@ -80,7 +80,7 @@ export function HeroCarousel() {
             </div>
             <figure className="zh-art">
               {s.img.startsWith('/')
-                ? <img src={s.img} alt={s.alt} width={1456} height={868} fetchPriority={n === 0 ? 'high' : undefined} loading={n === 0 ? 'eager' : 'lazy'} />
+                ? <img src={s.img} alt={s.alt} width={1582} height={928} fetchPriority={n === 0 ? 'high' : undefined} loading={n === 0 ? 'eager' : 'lazy'} />
                 : <img {...photo(s.img, s.alt, { sizes: '(max-width: 760px) 100vw, 50vw' })} />}
             </figure>
             {s.id === 'brand' && <img className="zh-flowers" src="/brand/home/hero-flowers.png" alt="" width={140} height={205} aria-hidden="true" />}

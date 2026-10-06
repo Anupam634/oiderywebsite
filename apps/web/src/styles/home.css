@@ -173,9 +173,9 @@
 .zh{position:relative;background:#FAF0E7;overflow:hidden}
 .zh-track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain}
 .zh-track::-webkit-scrollbar{display:none}
-.zh-slide{flex:0 0 100%;scroll-snap-align:start;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);min-height:clamp(430px,34vw,520px);position:relative}
-.zh-copy{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:36px 24px 60px;color:var(--navy)}
-.zh-logo{margin:0;line-height:0}.zh-logo img{width:min(430px,82%);height:auto;margin:0 auto}
+.zh-slide{flex:0 0 100%;scroll-snap-align:start;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);min-height:clamp(400px,31vw,560px);position:relative}
+.zh-copy{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:26px 24px 44px;color:var(--navy)}
+.zh-logo{margin:0;line-height:0}.zh-logo img{width:clamp(260px,27vw,430px);max-width:86%;height:auto;margin:0 auto}
 .zh-tag{display:flex;align-items:center;gap:16px;margin:14px 0 0;font-size:clamp(15px,1.4vw,19px);font-weight:500;letter-spacing:.3em;text-transform:uppercase}
 .zh-tag::before,.zh-tag::after{content:'';width:clamp(40px,6vw,90px);height:1.5px;background:var(--crim)}
 .zh-tag i,.zh-ranges i{width:6px;height:6px;border-radius:50%;background:var(--crim);display:inline-block}
@@ -190,7 +190,12 @@
 .zh-btn:hover{background:var(--crim-d)}
 .zh-art{margin:0;position:relative;min-height:100%}
 .zh-art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:left center;-webkit-mask-image:linear-gradient(90deg,transparent,#000 12%);mask-image:linear-gradient(90deg,transparent,#000 12%)}
+/* the brand slide shows the whole picture (rail, kurti, T-shirt, hoodie, plant): the frame takes the picture's
+   own shape, sits on the bottom edge, and its top and left edges fade into the cream */
+.zh-brand .zh-art{min-height:0;align-self:end;aspect-ratio:1582/928}
+.zh-brand .zh-art img{object-position:center bottom;-webkit-mask-image:linear-gradient(90deg,transparent,#000 10%),linear-gradient(180deg,transparent,#000 7%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent,#000 10%),linear-gradient(180deg,transparent,#000 7%);mask-composite:intersect}
 .zh-flowers{position:absolute;left:0;bottom:0;width:clamp(96px,9.5vw,140px);height:auto;z-index:1;pointer-events:none}
+@media(max-width:1400px){.zh-flowers{width:80px}}
 .zh-arrow{position:absolute;top:50%;transform:translateY(-50%);width:46px;height:46px;border-radius:50%;background:#fff;color:var(--navy);display:grid;place-items:center;box-shadow:0 8px 22px -10px rgba(20,26,59,.45);z-index:3}
 .zh-arrow svg{width:20px;height:20px}.zh-arrow.prev{left:18px}.zh-arrow.next{right:18px}
 .zh-dots{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);display:flex;gap:8px;z-index:3}
@@ -199,6 +204,7 @@
 @media(max-width:760px){
   .zh-slide{grid-template-columns:1fr;grid-template-rows:auto auto}
   .zh-art{order:-1;height:260px}.zh-art img{-webkit-mask-image:none;mask-image:none;object-position:center 30%}
+  .zh-brand .zh-art{height:auto;aspect-ratio:1582/928;align-self:start}.zh-brand .zh-art img{-webkit-mask-image:none;mask-image:none;object-position:center}
   .zh-copy{padding:22px 16px 54px}.zh-flowers{display:none}.zh-arrow{top:130px;width:38px;height:38px}
   .zh-tag{letter-spacing:.2em;gap:10px}
 }
