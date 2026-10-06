@@ -19,7 +19,7 @@ interface Slide {
 
 const SLIDES: Slide[] = [
   { id: 'brand', cta: ['Shop now', '/shop'], img: '/brand/home/hero.jpg', alt: 'A smiling woman in a red kurta beside a rail with an embroidered kurti, a white T-shirt and a black hoodie' },
-  { id: 'kurtis', kicker: 'The festive edit', title: ['Kurtis with ', 'hand embroidery'], text: 'Resham and zari work on soft cotton and silk. Ready to ship, or made to your measurements.', cta: ['Shop kurtis', '/shop/clothing/kurtas'], img: 'photos/kurta.jpg', alt: 'Red kurta with an embroidered yoke' },
+  { id: 'kurtis', kicker: 'Ladies kurtis', title: ['Kurtis for ', 'every day'], text: 'Soft, breathable fabrics in easy colours you’ll wear again and again. Comfortable fits for work, college and home.', cta: ['Shop kurtis', '/shop/clothing/kurtas'], img: '/brand/home/slide-kurtis.jpg', alt: 'Smiling woman in a plain red kurti' },
   { id: 'design', kicker: 'Embroidery design', title: ['Your design, ', 'stitched by hand'], text: 'Send a logo, a name or a sketch. We digitize it, send a stitch proof on WhatsApp, then embroider it on your piece.', cta: ['Start a design', '/studio'], img: 'photos/blossom.jpg', alt: 'Hand embroidery of pink blossoms in a hoop' },
 ];
 
