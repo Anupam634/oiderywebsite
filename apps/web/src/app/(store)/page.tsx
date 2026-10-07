@@ -30,7 +30,7 @@ const RANGE_CARDS: [string, string, string, string][] = [
   ['cat-kurtis', 'Ladies Kurtis', '/shop/clothing/kurtas', 'Smiling woman in a red kurta'],
   ['cat-tees', 'Men’s T‑Shirts', '/shop/clothing/tees', 'Smiling man in a plain white T-shirt'],
   ['cat-hoodies', 'Hoodies', '/shop/clothing/tees', 'Man in a white hoodie and sunglasses'],
-  ['cat-embroidery', 'Embroidery Design', '/studio', 'Floral embroidery in a wooden hoop'],
+  ['cat-embroidery', 'Embroidery Design', '/studio', 'A puppy design being embroidered by machine'],
 ];
 
 export default async function HomePage() {
