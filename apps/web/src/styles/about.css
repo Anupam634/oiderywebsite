@@ -1,0 +1,58 @@
+/* About page: intro with the Zulyf logo, the three ranges, the custom embroidery steps, contact. */
+.ab{background:#FDF8F1;padding-bottom:56px}
+.ab-hero{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);gap:clamp(28px,4vw,56px);align-items:center;padding-block:clamp(28px,5vw,64px) clamp(24px,4vw,44px)}
+.ab-k{display:flex;align-items:center;gap:12px;margin:0;color:var(--crim);font-size:13px;font-weight:800;letter-spacing:.24em;text-transform:uppercase}
+.ab-k i{width:5px;height:5px;border-radius:50%;background:var(--crim)}
+.ab-copy h1{margin:14px 0 16px;font-size:clamp(40px,5vw,64px);line-height:1.02;color:var(--navy);font-variation-settings:'SOFT' 100}
+.ab-lead{margin:0;max-width:520px;font-size:clamp(16px,1.4vw,19px);line-height:1.6;color:#4A4560}
+.ab-ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+.ab-btn{background:var(--crim);color:#fff;box-shadow:0 14px 30px -14px rgba(200,23,76,.75)}
+.ab-btn:hover{background:var(--crim-d);transform:translateY(-2px)}
+.ab-btn2{border:1.5px solid var(--navy);color:var(--navy);background:transparent}
+.ab-btn2:hover{background:var(--navy);color:#fff}
+.ab-logo{margin:0;border-radius:26px;overflow:hidden;background:#FDFBEC;box-shadow:0 30px 60px -38px rgba(20,26,59,.55);border:1px solid rgba(20,26,59,.06)}
+.ab-logo img{display:block;width:100%;height:auto}
+
+.ab-sec{padding-block:clamp(22px,3.5vw,40px)}
+.ab-h{display:flex;align-items:center;justify-content:center;gap:14px;margin:0 0 22px;font-size:clamp(24px,2.6vw,34px);color:var(--navy);text-align:center}
+.ab-h span{color:var(--crim);font-size:.55em}
+.ab-h i{width:clamp(22px,5vw,70px);height:1.5px;background:var(--crim)}
+
+.ab-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.ab-card{display:flex;flex-direction:column;background:#fff;border-radius:22px;overflow:hidden;border:1px solid var(--line);box-shadow:0 22px 44px -36px rgba(20,26,59,.6);transition:transform var(--d2) var(--ease),box-shadow var(--d2)}
+.ab-card:hover{transform:translateY(-3px);box-shadow:0 28px 50px -34px rgba(20,26,59,.65)}
+.ab-card img{display:block;width:100%;aspect-ratio:720/442;height:auto;object-fit:cover}
+.ab-card-b{display:flex;flex-direction:column;gap:6px;padding:16px 18px 20px}
+.ab-card-b b{display:flex;align-items:center;gap:8px;font-size:17px;color:var(--navy)}
+.ab-card-b b svg{width:16px;height:16px;color:var(--crim);transition:transform var(--d2) var(--ease)}
+.ab-card:hover .ab-card-b b svg{transform:translateX(4px)}
+.ab-card-b>span{font-size:15px;line-height:1.5;color:#4A4560}
+
+.ab-steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;counter-reset:none}
+.ab-steps li{display:flex;flex-direction:column;gap:8px;background:#fff;border-radius:22px;padding:22px;border:1px solid var(--line)}
+.ab-n{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:var(--crim);color:#fff;font-weight:800;font-size:16px;box-shadow:0 8px 18px -10px rgba(200,23,76,.8)}
+.ab-steps b{font-size:17px;color:var(--navy);margin-top:4px}
+.ab-steps li>span:last-child{font-size:15px;line-height:1.55;color:#4A4560}
+
+.ab-talk{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;padding:clamp(22px,3vw,34px) clamp(22px,3.5vw,40px);border-radius:26px;background:var(--blush);border:1px solid rgba(225,35,90,.15)}
+.ab-talk h2{margin:0 0 6px;font-size:clamp(24px,2.4vw,30px);color:var(--navy)}
+.ab-talk p{margin:0;font-size:16px;color:#4A4560}
+
+@media(max-width:900px){
+  .ab-hero{grid-template-columns:minmax(0,1fr)}
+  .ab-logo{order:-1}
+  .ab-cards,.ab-steps{grid-template-columns:minmax(0,1fr)}
+  .ab-card{flex-direction:row;align-items:center}
+  .ab-card img{width:42%;aspect-ratio:1;flex:none}
+  .ab-card-b{padding:12px 14px}
+  .ab-card-b b{font-size:15.5px}
+  .ab-card-b>span{font-size:14px}
+  .ab-steps li{flex-direction:row;flex-wrap:wrap;align-items:center;column-gap:12px;padding:16px}
+  .ab-steps li>span:last-child{flex-basis:100%}
+  .ab-steps b{margin-top:0}
+}
+@media(max-width:520px){
+  .ab-k{font-size:11px;letter-spacing:.18em}
+  .ab-ctas .btn{height:48px;padding:0 20px;font-size:15px}
+  .ab-talk .btn{width:100%}
+}
