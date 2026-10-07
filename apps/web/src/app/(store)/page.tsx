@@ -29,7 +29,7 @@ const IG: [string, string][] = [['blossom', 'A gift for Amma'], ['punch', 'Studi
 const RANGE_CARDS: [string, string, string, string][] = [
   ['cat-kurtis', 'Ladies Kurtis', '/shop/clothing/kurtas', 'Smiling woman in a red kurta'],
   ['cat-tees', 'Men’s T‑Shirts', '/shop/clothing/tees', 'Smiling man in a plain white T-shirt'],
-  ['cat-hoodies', 'Hoodies', '/shop/clothing/tees', 'Man in a charcoal hoodie leaning on a car'],
+  ['cat-hoodies', 'Hoodies', '/shop/clothing/tees', 'Man in a white hoodie and sunglasses'],
   ['cat-embroidery', 'Embroidery Design', '/studio', 'Floral embroidery in a wooden hoop'],
 ];
 
