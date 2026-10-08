@@ -553,7 +553,7 @@ export function CheckoutView({ offers }: { offers: Offer[] }) {
                             {p.id === 'cod' ? (
                               <div className="codnote"><Info /><span>A ₹49 cash-handling fee applies. Keep exact change ready, or pay the delivery partner by UPI.</span></div>
                             ) : (
-                              <div className="paynote"><Shield /><span>You&apos;ll finish paying in the secure Razorpay window{p.id === 'upi' ? ': scan the QR or approve in your UPI app' : p.id === 'card' ? '. We never see or store your card number' : ''}.</span></div>
+                              <div className="paynote"><Shield /><span>You&apos;ll finish paying in the secure payment window{p.id === 'upi' ? ': scan the QR or approve in your UPI app' : p.id === 'card' ? '. We never see or store your card number' : ''}.</span></div>
                             )}
                           </div>
                         </div>

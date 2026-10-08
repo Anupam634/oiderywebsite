@@ -23,14 +23,25 @@ export default async function ContactPage() {
             <a href={`mailto:${s.email}`}><span>Email</span><b>{s.email}</b></a>
             <div><span>Order help</span><b>Your order page</b><small>Track, cancel or pay from <a className="link" href="/account">My account</a></small></div>
           </div>
-          <h2>Studio address</h2>
+          <h2>Business details</h2>
           <p>
-            {s.legalName}
-            {s.address.map((line) => (
-              <span key={line}><br />{line}</span>
-            ))}
-            {s.gstin && <><br />GSTIN {s.gstin}</>}
+            {BRAND.name} is a brand of <b>{s.legalName}</b>.
+            <br />Owner: {BRAND.owner}
+            <br />Email: <a className="link" href={`mailto:${s.email}`}>{s.email}</a>
+            <br />Phone / WhatsApp: <a className="link" href={`tel:${s.phone.replace(/[^\d+]/g, '')}`}>{s.phone}</a>
           </p>
+          {s.address.length > 0 && (
+            <>
+              <h2>Studio address</h2>
+              <p>
+                {s.legalName}
+                {s.address.map((line) => (
+                  <span key={line}><br />{line}</span>
+                ))}
+                {s.gstin && <><br />GSTIN {s.gstin}</>}
+              </p>
+            </>
+          )}
           <h2>Grievance officer</h2>
           <p>
             {s.grievanceOfficer ?? 'To be appointed'}, {s.legalName}. Email {s.email}. We acknowledge every complaint within 48 hours and resolve it within one month.

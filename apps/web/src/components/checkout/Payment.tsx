@@ -117,7 +117,7 @@ export function usePayment(): { open: (p: PaymentStart) => Promise<PayOutcome>; 
         <h3>Pay for order {fake.orderNumber}</h3>
         <div className="amt">{formatINR(fake.amountPaise)}</div>
         <p>
-          by {METHOD_LABEL[fake.method] ?? fake.method}. Real payments open the secure Razorpay window here once the studio adds its Razorpay keys.
+          by {METHOD_LABEL[fake.method] ?? fake.method}. Real payments open the secure payment window here once the payment gateway is connected.
         </p>
         <div className="row">
           <button className="btn bad" type="button" disabled={!!busy} onClick={() => void fakePay(false)}>{busy === 'fail' ? 'Failing…' : 'Make it fail'}</button>

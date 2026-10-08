@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { BRAND } from '@store/shared';
 import { Arrow } from '@/components/icons';
+import { getStoreInfo } from '@/lib/store-info';
 import '@/styles/about.css';
 
 export const metadata: Metadata = { title: 'About us', description: `${BRAND.name}: ladies kurtis, men’s T-shirts, hoodies and custom embroidery design. Style, craft, comfort.` };
@@ -13,7 +14,8 @@ const RANGES: [string, string, string, string][] = [
   ['cat-embroidery', 'Embroidery design', 'Send us a name, a logo or a sketch and we stitch it on your piece.', '/studio'],
 ];
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const s = await getStoreInfo();
   return (
     <main className="ab">
       <section className="wrap ab-hero">
@@ -57,6 +59,7 @@ export default function AboutPage() {
           <div>
             <h2>Talk to us</h2>
             <p>Questions about sizes, fabrics or a custom order? We reply within a few hours.</p>
+            <p className="ab-co">{BRAND.name} is a brand of <b>{s.legalName}</b> · {s.email} · {s.phone}</p>
           </div>
           <Link className="btn ab-btn" href="/contact">Contact the studio <Arrow className="arr" /></Link>
         </div>

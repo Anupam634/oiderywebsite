@@ -62,7 +62,8 @@ export const publicStore = (s: StoreSettings) => ({
   legalName: s.legalName,
   tradeName: s.tradeName,
   gstin: s.gstin || null,
-  address: [s.addressLine1, s.addressLine2, [s.city, s.state, s.pincode].filter(Boolean).join(', ')].filter(Boolean),
+  // no street address yet: show nothing rather than the default state on its own
+  address: s.addressLine1.trim() || s.city.trim() ? [s.addressLine1, s.addressLine2, [s.city, s.state, s.pincode].filter(Boolean).join(', ')].filter(Boolean) : [],
   state: s.state,
   phone: s.phone,
   email: s.email,

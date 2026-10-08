@@ -96,7 +96,7 @@ const PAGES: Record<string, { title: string; summary: string; body: (s: StoreInf
           <li>We may decline designs that are offensive, unlawful or that infringe someone else’s rights.</li>
         </ul>
         <h2>Payments</h2>
-        <p>Online payments are processed securely by Razorpay. We never see or store your card details.</p>
+        <p>Online payments are processed securely by our RBI-authorised payment gateway partner. We never see or store your card details.</p>
         <h2>Our responsibility</h2>
         <p>We make every piece with care. If something goes wrong, our responsibility is limited to repairing, replacing or refunding the piece concerned, as described in our returns policy. Nothing here limits your rights under the Consumer Protection Act, 2019.</p>
         <h2>Disputes</h2>
@@ -113,7 +113,7 @@ const PAGES: Record<string, { title: string; summary: string; body: (s: StoreInf
         <ul>
           <li>Your mobile number (to log in and send order updates), name, email and delivery address.</li>
           <li>Your orders, and files you upload for them: logos, artwork and pet photos.</li>
-          <li>Payment status from Razorpay (not your card or bank details).</li>
+          <li>Payment status from our payment gateway (not your card or bank details).</li>
           <li>Basic technical data such as your IP address, used to keep the shop secure and prevent abuse.</li>
         </ul>
         <h2>Why we use it</h2>
@@ -124,7 +124,7 @@ const PAGES: Record<string, { title: string; summary: string; body: (s: StoreInf
         </ul>
         <p>We don’t sell your data and we don’t send marketing messages without your consent.</p>
         <h2>Who we share it with</h2>
-        <p>Only what each partner needs to do their job: courier partners (delivery details), Razorpay (payments), our SMS, WhatsApp and email providers (messages) and our hosting providers.</p>
+        <p>Only what each partner needs to do their job: courier partners (delivery details), our payment gateway (payments), our SMS, WhatsApp and email providers (messages) and our hosting providers.</p>
         <h2>How long we keep it</h2>
         <p>Order and invoice records are kept for as long as tax law requires (currently up to 8 years). Files you upload for a bag you never order are deleted after 30 days. Ask us anytime to delete your account and data we don’t need to keep by law.</p>
         <h2>Your rights</h2>

@@ -1,9 +1,11 @@
 import Link from 'next/link';
 import { BRAND } from '@store/shared';
 import { categoryHref, SHOP_LINKS } from '@/lib/links';
+import { getStoreInfo } from '@/lib/store-info';
 import { Logo } from './icons';
 
-export function Footer() {
+export async function Footer() {
+  const s = await getStoreInfo();
   return (
     <footer>
       <div className="wrap">
@@ -19,7 +21,8 @@ export function Footer() {
         </div>
         <div className="bigword" aria-hidden="true">zulyf</div>
         <div className="fbot">
-          <span>© {new Date().getFullYear()} {BRAND.legalName} · GSTIN: {BRAND.gstin ?? 'to be added'}</span>
+          <span className="fco">© {new Date().getFullYear()} {BRAND.name} · a brand of <b>{s.legalName}</b>{s.gstin ? ` · GSTIN ${s.gstin}` : ''}<br />
+            <a href={`mailto:${s.email}`}>{s.email}</a> · <a href={`tel:${s.phone.replace(/[^\d+]/g, '')}`}>{s.phone}</a></span>
           <div className="pay"><span>UPI</span><span>Cards</span><span>Net banking</span><span>Wallets</span><span>COD</span></div>
         </div>
       </div>
