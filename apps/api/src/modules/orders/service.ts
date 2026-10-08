@@ -327,7 +327,9 @@ export class OrderService {
       throw new AppError(402, 'payment_pending', 'Your bank is still confirming this payment. Your order will update as soon as it does, so please don’t pay again.');
     if (last?.status === 'failed') {
       await this.event(this.db, o.id, 'payment_failed', `Payment attempt failed${last.errorReason ? `: ${last.errorReason}` : ''}`, { visible: false });
-      throw new AppError(402, 'payment_failed', `The payment didn’t go through${last.errorReason ? ` (${last.errorReason})` : ''}. You can try again.`);
+      // Cashfree writes its reasons for the shop ("User entered wrong PIN. Request user to try again…"): the shopper gets the first part
+      const why = last.errorReason?.split(/(?<=\.)\s/)[0]?.replace(/\.$/, '');
+      throw new AppError(402, 'payment_failed', `The payment didn’t go through${why ? ` (${why})` : ''}. You can try again.`);
     }
     throw new AppError(402, 'payment_incomplete', 'The payment hasn’t completed yet');
   }

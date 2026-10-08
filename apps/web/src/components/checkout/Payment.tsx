@@ -93,17 +93,56 @@ function openRazorpay(p: PaymentStart): Promise<PayOutcome> {
   );
 }
 
-/** Cashfree's window opens over our page. However it closes, our server then asks Cashfree how the payment went. */
+/** take Cashfree's window off the page (it doesn't close itself for the back button) */
+function closeCashfreeWindow() {
+  document.getElementById('cashfree-modal-container')?.remove();
+  document.body.style.removeProperty('overflow');
+  document.documentElement.style.removeProperty('overflow');
+}
+
+/**
+ * Cashfree's window opens over our page and fills a phone's screen, so the back button should close it rather than
+ * leave the checkout: an extra history entry catches that press. However the window closes, our server then asks
+ * Cashfree how the payment went.
+ */
 async function openCashfree(p: PaymentStart): Promise<PayOutcome> {
-  let result: CashfreeResult;
   try {
     await loadScript('https://sdk.cashfree.com/js/v3/cashfree.js', () => !!window.Cashfree);
-    result = await window.Cashfree!({ mode: p.mode ?? 'production' }).checkout({ paymentSessionId: p.sessionId!, redirectTarget: '_modal' });
   } catch (e) {
-    return { kind: 'failed', reason: e instanceof Error ? e.message : 'Could not open the payment window. Please try again.' };
+    return { kind: 'failed', reason: (e as Error).message };
   }
+  let back = false;
+  let onBack = () => {};
+  const backPressed = new Promise<CashfreeResult>((resolve) => {
+    onBack = () => {
+      back = true;
+      closeCashfreeWindow();
+      resolve({ error: { message: 'closed with the back button' } });
+    };
+  });
+  window.addEventListener('popstate', onBack);
+  history.pushState(history.state, '', location.href);
+  const checkout = Promise.resolve()
+    .then(() => window.Cashfree!({ mode: p.mode ?? 'production' }).checkout({ paymentSessionId: p.sessionId!, redirectTarget: '_modal' }))
+    .catch((e: unknown): CashfreeResult => ({ error: { message: e instanceof Error ? e.message : String(e) } }));
+  const result = await Promise.race([checkout, backPressed]);
+  window.removeEventListener('popstate', onBack);
   // in-app browsers can't show it over our page: Cashfree takes over the page and brings the shopper back to the order
   if (result.redirect) return new Promise((resolve) => setTimeout(() => resolve({ kind: 'dismissed' }), 20_000));
+  // closed without the back button: take the extra entry off again before anything navigates
+  if (!back)
+    await new Promise<void>((resolve) => {
+      const t = setTimeout(resolve, 800);
+      window.addEventListener(
+        'popstate',
+        () => {
+          clearTimeout(t);
+          resolve();
+        },
+        { once: true },
+      );
+      history.back();
+    });
   try {
     return { kind: 'paid', order: await api.confirmCashfree(p.orderNumber) };
   } catch (e) {

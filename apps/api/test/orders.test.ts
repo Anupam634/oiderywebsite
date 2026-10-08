@@ -87,7 +87,7 @@ class TestCashfree extends CashfreeGateway {
   /** what Cashfree would record when the shopper tries to pay */
   pay(orderId: string, amountPaise: number, status = 'SUCCESS', group = 'upi') {
     const p = CashfreeGateway.toPayment(
-      { cf_payment_id: `14539950847057${String(++this.n).padStart(5, '0')}`, payment_status: status, payment_amount: amountPaise / 100, payment_group: group, error_details: status === 'FAILED' ? { error_description: 'Card declined by the bank' } : null },
+      { cf_payment_id: `14539950847057${String(++this.n).padStart(5, '0')}`, payment_status: status, payment_amount: amountPaise / 100, payment_group: group, error_details: status === 'FAILED' ? { error_description: 'Card declined by the bank. Request user to try another card' } : null },
       orderId,
     );
     this.tries.set(orderId, [p, ...(this.tries.get(orderId) ?? [])]);
@@ -377,7 +377,7 @@ describe('Cashfree', () => {
     cf.pay(orderId, r.body.payment.amountPaise, 'FAILED', 'credit_card');
     const failed = await call(cfApp, 'POST', url, { sid });
     expect(failed.status).toBe(402);
-    expect(failed.body.error).toMatchObject({ code: 'payment_failed', message: expect.stringContaining('Card declined by the bank') });
+    expect(failed.body.error).toMatchObject({ code: 'payment_failed', message: 'The payment didn’t go through (Card declined by the bank). You can try again.' });
 
     // opening the window again reuses the same Cashfree order and session
     const again = await call(cfApp, 'POST', `/v1/orders/${number}/pay`, { sid });
