@@ -19,7 +19,7 @@ import type { Actor, Prisma } from '../../generated/prisma/client.ts';
 import { lineSchema, priceCart, type PricedLine } from '../cart/service.ts';
 import type { Files } from '../files/service.ts';
 import type { Notifications } from '../notify/messages.ts';
-import type { GatewayPayment, PaymentGateway } from '../payments/gateway.ts';
+import { CashfreeGateway, type GatewayPayment, type PaymentGateway } from '../payments/gateway.ts';
 import { orderInclude, toOrderDto, type FullOrder } from './dto.ts';
 
 type Tx = Prisma.TransactionClient;
@@ -249,10 +249,33 @@ export class OrderService {
     if (o.status !== 'PENDING_PAYMENT') throw new AppError(409, 'not_payable', 'This order doesn’t need a payment');
     if (Date.now() - o.createdAt.getTime() > this.config.PENDING_ORDER_MINUTES * 60_000)
       throw new AppError(409, 'payment_window_closed', 'The payment window for this order has closed. Please check out again.');
+    const cashfree = this.gateway instanceof CashfreeGateway ? this.gateway : null;
     let p = await this.db.payment.findFirst({ where: { orderId: o.id, provider: this.gateway.name, status: 'CREATED', amountPaise: o.totalPaise }, orderBy: { createdAt: 'desc' } });
+    let sessionId: string | null = null;
+    // a Cashfree payment session lasts as long as its order: open it again, or start a new order once it has expired
+    if (p?.providerOrderId && cashfree) {
+      const s = await cashfree.session(p.providerOrderId);
+      if (s.status === 'PAID') {
+        await this.confirmCashfree(o);
+        throw new AppError(409, 'not_payable', 'This order is already paid');
+      }
+      sessionId = s.sessionId;
+      if (!sessionId) p = null;
+    }
     if (!p) {
-      const g = await this.gateway.createOrder({ amountPaise: o.totalPaise, receipt: o.number, notes: { order: o.number } });
+      const windowEnds = o.createdAt.getTime() + this.config.PENDING_ORDER_MINUTES * 60_000;
+      const g = await this.gateway.createOrder({
+        amountPaise: o.totalPaise,
+        receipt: o.number,
+        notes: { order: o.number },
+        customer: { id: o.customerId, phone: o.phone, name: o.shipName, email: o.email },
+        method: CHECKOUT_PAYMENT[o.paymentMethod],
+        returnUrl: `${this.config.APP_URL}/account/orders/${encodeURIComponent(o.number)}?placed=1&pay=check`,
+        // a little after our own payment window, and never sooner than the gateway allows
+        expiresAt: new Date(Math.max(windowEnds, Date.now() + 15 * 60_000) + 5 * 60_000),
+      });
       p = await this.db.payment.create({ data: { orderId: o.id, provider: this.gateway.name, providerOrderId: g.providerOrderId, amountPaise: o.totalPaise } });
+      sessionId = g.sessionId ?? null;
     }
     return {
       provider: this.gateway.name,
@@ -262,6 +285,7 @@ export class OrderService {
       method: CHECKOUT_PAYMENT[o.paymentMethod],
       ...(this.gateway.keyId ? { keyId: this.gateway.keyId } : {}),
       ...(p.providerOrderId ? { providerOrderId: p.providerOrderId } : {}),
+      ...(cashfree && sessionId ? { sessionId, mode: cashfree.mode } : {}),
       description: `Order ${o.number}`,
       prefill: { name: o.shipName, email: o.email ?? '', contact: `+91${o.phone}` },
     };
@@ -278,6 +302,34 @@ export class OrderService {
     if (gp.status !== 'captured') throw new AppError(402, 'payment_incomplete', 'The payment hasn’t completed yet');
     await this.recordPaid(p.id, gp);
     return this.load(o.id);
+  }
+
+  /**
+   * Cashfree's window has closed, or Cashfree has sent the shopper back to us: ask Cashfree how the payment went
+   * (there is no browser-side signature to check). Paid: the order is placed. Otherwise say why not.
+   */
+  async confirmCashfree(o: FullOrder) {
+    if (!(this.gateway instanceof CashfreeGateway)) throw new AppError(404, 'not_found', 'Not available');
+    if (o.paymentState !== 'PENDING') return o;
+    /** the newest Cashfree order's latest attempt (payments come newest first) */
+    let last: GatewayPayment | null | undefined;
+    for (const p of o.payments) {
+      if (p.provider !== 'cashfree' || p.status !== 'CREATED' || !p.providerOrderId) continue;
+      const tries = await this.gateway.attempts(p.providerOrderId);
+      const paid = tries.find((t) => t.status === 'captured');
+      if (paid) {
+        await this.recordPaid(p.id, paid);
+        return this.load(o.id);
+      }
+      if (last === undefined) last = tries[0] ?? null;
+    }
+    if (last?.status === 'pending')
+      throw new AppError(402, 'payment_pending', 'Your bank is still confirming this payment. Your order will update as soon as it does, so please don’t pay again.');
+    if (last?.status === 'failed') {
+      await this.event(this.db, o.id, 'payment_failed', `Payment attempt failed${last.errorReason ? `: ${last.errorReason}` : ''}`, { visible: false });
+      throw new AppError(402, 'payment_failed', `The payment didn’t go through${last.errorReason ? ` (${last.errorReason})` : ''}. You can try again.`);
+    }
+    throw new AppError(402, 'payment_incomplete', 'The payment hasn’t completed yet');
   }
 
   /** the dev/demo payment sheet */
@@ -395,7 +447,7 @@ export class OrderService {
     if (amountPaise > o.totalPaise - o.refundedPaise) throw new AppError(400, 'bad_amount', `You can refund up to ${formatINR(o.totalPaise - o.refundedPaise)}`);
     const pay = o.payments.find((p) => p.status === 'CAPTURED' && p.providerPaymentId);
     if (!pay) throw new AppError(409, 'not_paid_online', 'This order wasn’t paid online, so there is nothing to refund through the gateway');
-    const r = await this.gateway.refund(pay.providerPaymentId!, amountPaise, { order: o.number, reason: reason.slice(0, 200) });
+    const r = await this.gateway.refund(pay.providerPaymentId!, amountPaise, { order: o.number, reason: reason.slice(0, 200) }, pay.providerOrderId);
     const total = o.refundedPaise + amountPaise;
     await this.db.$transaction([
       this.db.refund.create({ data: { orderId: o.id, paymentId: pay.id, amountPaise, reason, providerRefundId: r.providerRefundId, status: r.status, returnId: opts.returnId ?? null, createdById: opts.adminId ?? null } }),

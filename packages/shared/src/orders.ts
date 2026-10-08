@@ -142,7 +142,7 @@ export interface OrderDto extends OrderSummaryDto {
 
 /** what the browser needs to open the payment window */
 export interface PaymentStart {
-  provider: 'razorpay' | 'fake';
+  provider: 'razorpay' | 'cashfree' | 'fake';
   orderNumber: string;
   amountPaise: number;
   currency: 'INR';
@@ -150,6 +150,9 @@ export interface PaymentStart {
   /** Razorpay key id and order id (provider = razorpay) */
   keyId?: string;
   providerOrderId?: string;
+  /** Cashfree payment session and mode (provider = cashfree) */
+  sessionId?: string;
+  mode?: 'sandbox' | 'production';
   description: string;
   prefill: { name: string; email: string; contact: string };
 }

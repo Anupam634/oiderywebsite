@@ -13,22 +13,22 @@ const trackConnect = [
   ga && 'https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com',
 ].filter(Boolean).join(' ');
 
-/* Content Security Policy: our own scripts plus Razorpay's checkout (script, iframe, API calls) and, when
-   switched on, Meta Pixel and Google Analytics. Next.js needs inline scripts for hydration; dev mode also
-   needs eval and the HMR websocket. */
+/* Content Security Policy: our own scripts plus Razorpay's and Cashfree's checkouts (script, iframe, API calls)
+   and, when switched on, Meta Pixel and Google Analytics. Next.js needs inline scripts for hydration; dev mode
+   also needs eval and the HMR websocket. */
 const csp = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline' https://checkout.razorpay.com${trackScripts ? ` ${trackScripts}` : ''}${dev ? " 'unsafe-eval'" : ''}`,
+  `script-src 'self' 'unsafe-inline' https://checkout.razorpay.com https://sdk.cashfree.com${trackScripts ? ` ${trackScripts}` : ''}${dev ? " 'unsafe-eval'" : ''}`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
-  `connect-src 'self' https://*.razorpay.com${trackConnect ? ` ${trackConnect}` : ''}${dev ? ' ws: wss:' : ''}`,
-  'frame-src https://*.razorpay.com',
+  `connect-src 'self' https://*.razorpay.com https://*.cashfree.com${trackConnect ? ` ${trackConnect}` : ''}${dev ? ' ws: wss:' : ''}`,
+  'frame-src https://*.razorpay.com https://*.cashfree.com',
   "media-src 'self' blob:",
   "worker-src 'self' blob:",
   "object-src 'none'",
   "base-uri 'self'",
-  "form-action 'self'",
+  "form-action 'self' https://*.cashfree.com",
   "frame-ancestors 'none'",
 ].join('; ');
 

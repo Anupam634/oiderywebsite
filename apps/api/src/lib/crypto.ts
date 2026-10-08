@@ -4,6 +4,7 @@ import { createHash, createHmac, randomBytes, randomInt, scrypt, timingSafeEqual
 
 export const sha256 = (data: string | Buffer) => createHash('sha256').update(data).digest('hex');
 export const hmacHex = (secret: string, data: string | Buffer) => createHmac('sha256', secret).update(data).digest('hex');
+export const hmacBase64 = (secret: string, data: string | Buffer) => createHmac('sha256', secret).update(data).digest('base64');
 
 /** constant-time comparison of two strings */
 export function safeEqual(a: string, b: string): boolean {

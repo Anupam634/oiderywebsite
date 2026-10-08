@@ -360,7 +360,7 @@ function RefundModal({ o, onClose, act }: { o: AdminOrderDetail; onClose: () => 
         <label className="f"><span>Amount in ₹ <i>(up to {rupees(left)})</i></span><input inputMode="numeric" value={amount} onChange={(e) => setAmount(e.target.value.replace(/[^\d.]/g, ''))} /></label>
         <label className="f"><span>Reason</span><input value={reason} onChange={(e) => setReason(e.target.value)} placeholder="e.g. Thread colour differed" /></label>
       </div>
-      <p className="muted">The money goes back to the customer’s original payment method through Razorpay (5–7 working days).</p>
+      <p className="muted">The money goes back to the customer’s original payment method through the payment gateway (5–7 working days).</p>
       <div className="row">
         <button className="btn btn-grad" type="button" disabled={!paise || paise > left || reason.trim().length < 3} onClick={async () => { if (await act(() => adminApi.refund(o.number, paise, reason.trim()), 'Refund started')) onClose(); }}>Refund {paise ? rupees(paise) : ''}</button>
         <button className="btn line" type="button" onClick={onClose}>Close</button>

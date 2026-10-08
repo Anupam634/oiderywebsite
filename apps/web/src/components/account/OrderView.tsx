@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   BRAND,
   ORDER_STATUS_LABEL,
@@ -15,7 +15,7 @@ import {
 import { api, ApiError } from '@/lib/api';
 import { media } from '@/lib/media';
 import { useMe } from '@/lib/session';
-import { ui } from '@/lib/store';
+import { cart, ui } from '@/lib/store';
 import { usePayment } from '../checkout/Payment';
 import { Arrow, Chat, Check, Info, Truck } from '../icons';
 import { ReturnsSection } from './Returns';
@@ -26,7 +26,10 @@ const COLOURS = ['#E4007C', '#FFB300', '#00A39A', '#3D2BD6', '#FF4B2B', '#5DAA3A
 
 export function OrderView({ number }: { number: string }) {
   const router = useRouter();
-  const placed = useSearchParams().get('placed') === '1';
+  const search = useSearchParams();
+  const placed = search.get('placed') === '1';
+  /** back from Cashfree's own payment page (it takes over the whole page in in-app browsers) */
+  const backFromGateway = search.get('pay') === 'check';
   const me = useMe();
   const [o, setO] = useState<OrderDto | null>(null);
   const [missing, setMissing] = useState(false);
@@ -45,6 +48,27 @@ export function OrderView({ number }: { number: string }) {
     if (me === null) router.replace(`/login?next=/account/orders/${number}`);
     else if (me) void load();
   }, [me, load, number, router]);
+
+  // ask once how that payment went (Cashfree's webhook may not have arrived yet)
+  const checked = useRef(false);
+  useEffect(() => {
+    if (!backFromGateway || !o || checked.current) return;
+    checked.current = true;
+    if (o.paymentState === 'PAID') {
+      cart.clear();
+      return;
+    }
+    if (o.status !== 'PENDING_PAYMENT') return;
+    api.confirmCashfree(o.number).then(
+      (order) => {
+        setO(order);
+        cart.clear();
+      },
+      (e) => {
+        if (e instanceof ApiError && e.code !== 'payment_incomplete') ui.toast(e.message);
+      },
+    );
+  }, [backFromGateway, o]);
 
   const confetti = useMemo(
     () =>

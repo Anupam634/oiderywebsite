@@ -4,7 +4,7 @@ import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import { requireCustomer } from '../../lib/auth.ts';
 import { notFound } from '../../lib/errors.ts';
 import type { Db } from '../../lib/prisma.ts';
-import type { GatewayPayment } from '../payments/gateway.ts';
+import { CashfreeGateway, type CfPayment, type GatewayPayment } from '../payments/gateway.ts';
 import { placeOrderSchema, type OrderService } from './service.ts';
 
 const numberParam = z.object({ number: z.string().regex(/^[A-Z]{2,4}-[A-Z0-9]{4,10}$/) });
@@ -57,6 +57,19 @@ export const orderRoutes =
     );
 
     app.post(
+      '/orders/:number/cashfree',
+      {
+        preValidation: requireCustomer,
+        schema: { tags: ['orders'], summary: 'Check a Cashfree payment with Cashfree (after its window closes, or on the way back from Cashfree)', params: numberParam },
+        config: { rateLimit: { max: 30, timeWindow: '10 minutes' } },
+      },
+      async (req) => {
+        const o = await mine(req.params.number, req.customer!.customerId);
+        return { order: orders.dto(await orders.confirmCashfree(o)) };
+      },
+    );
+
+    app.post(
       '/orders/:number/fake-payment',
       {
         preValidation: requireCustomer,
@@ -91,7 +104,18 @@ interface RzpEvent {
   };
 }
 
-/** Razorpay webhooks (the raw body is needed to check the signature). */
+/** a Cashfree webhook (payment and refund events) */
+interface CfEvent {
+  type: string;
+  data: {
+    order?: { order_id: string };
+    payment?: CfPayment;
+    error_details?: { error_description?: string | null } | null;
+    refund?: { refund_id: string; refund_status: string };
+  };
+}
+
+/** Razorpay and Cashfree webhooks (the raw body is needed to check the signature). */
 export const webhookRoutes =
   (db: Db, orders: OrderService): FastifyPluginAsync =>
   async (app) => {
@@ -127,13 +151,7 @@ export const webhookRoutes =
         case 'refund.processed':
         case 'refund.failed': {
           const r = evt.payload.refund?.entity;
-          if (!r) break;
-          const status = evt.event === 'refund.processed' ? 'PROCESSED' : 'FAILED';
-          const row = await db.refund.findUnique({ where: { providerRefundId: r.id } });
-          if (row && row.status !== status) {
-            await db.refund.update({ where: { id: row.id }, data: { status } });
-            await db.orderEvent.create({ data: { orderId: row.orderId, type: `refund_${status.toLowerCase()}`, message: status === 'PROCESSED' ? 'Refund processed by the bank' : 'Refund failed: please check in the Razorpay dashboard', visible: status === 'PROCESSED' } });
-          }
+          if (r) await refundSettled(r.id, evt.event === 'refund.processed' ? 'PROCESSED' : 'FAILED', 'Razorpay');
           break;
         }
         default:
@@ -141,4 +159,50 @@ export const webhookRoutes =
       }
       return { ok: true };
     });
+
+    app.post('/webhooks/cashfree', { schema: { hide: true }, config: { rateLimit: false } }, async (req, reply) => {
+      const raw = req.body as Buffer;
+      const sig = req.headers['x-webhook-signature'];
+      const ts = req.headers['x-webhook-timestamp'];
+      const cf = orders.gateway instanceof CashfreeGateway ? orders.gateway : null;
+      if (!cf || typeof sig !== 'string' || typeof ts !== 'string' || !Buffer.isBuffer(raw) || !cf.verifyWebhook(raw, sig, ts)) {
+        reply.code(400);
+        return { ok: false };
+      }
+      const evt = JSON.parse(raw.toString('utf8')) as CfEvent;
+      const orderId = evt.data?.order?.order_id;
+      switch (evt.type) {
+        case 'PAYMENT_SUCCESS_WEBHOOK': {
+          if (!orderId || !evt.data.payment) break;
+          const row = await db.payment.findUnique({ where: { providerOrderId: orderId } });
+          const gp = CashfreeGateway.toPayment(evt.data.payment, orderId);
+          if (row && gp.status === 'captured') await orders.recordPaid(row.id, gp);
+          break;
+        }
+        case 'PAYMENT_FAILED_WEBHOOK':
+        case 'PAYMENT_USER_DROPPED_WEBHOOK': {
+          if (!orderId) break;
+          const reason = evt.data.error_details?.error_description ?? (evt.type === 'PAYMENT_USER_DROPPED_WEBHOOK' ? 'The shopper closed the payment window' : 'failed');
+          await db.payment.updateMany({ where: { providerOrderId: orderId, status: 'CREATED' }, data: { errorReason: reason } });
+          break;
+        }
+        case 'REFUND_STATUS_WEBHOOK': {
+          const r = evt.data?.refund;
+          const status = r && { SUCCESS: 'PROCESSED' as const, CANCELLED: 'FAILED' as const, REJECTED: 'FAILED' as const }[r.refund_status];
+          if (r && status) await refundSettled(r.refund_id, status, 'Cashfree');
+          break;
+        }
+        default:
+          break;
+      }
+      return { ok: true };
+    });
+
+    /** the bank has finished a refund (or it failed): note it once */
+    async function refundSettled(providerRefundId: string, status: 'PROCESSED' | 'FAILED', gateway: string) {
+      const row = await db.refund.findUnique({ where: { providerRefundId } });
+      if (!row || row.status === status) return;
+      await db.refund.update({ where: { id: row.id }, data: { status } });
+      await db.orderEvent.create({ data: { orderId: row.orderId, type: `refund_${status.toLowerCase()}`, message: status === 'PROCESSED' ? 'Refund processed by the bank' : `Refund failed: please check in the ${gateway} dashboard`, visible: status === 'PROCESSED' } });
+    }
   };

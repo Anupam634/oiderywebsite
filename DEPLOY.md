@@ -12,12 +12,13 @@ outside service needs an account in the studio's own name.
 | Database | PostgreSQL 15+ | Railway Postgres / Neon / Render Postgres (with daily backups) |
 | Files | logos, pet photos, proofs, invoices, product photos | **Cloudflare R2** (S3-compatible) |
 | Login codes | SMS one-time passwords | **Twilio Verify** (fastest to start) or **MSG91** (cheaper, needs DLT) |
-| Payments | UPI, cards, net banking, wallets | **Razorpay** |
+| Payments | UPI, cards, net banking, wallets | **Razorpay** or **Cashfree** |
 | Email | order confirmations, invoices | **Resend** |
 | WhatsApp | proofs, shipping updates | **Meta WhatsApp Cloud API** |
 
 The browser only ever talks to the storefront domain; the storefront forwards `/api/*` to the API. The API
-needs its own public address only for Razorpay webhooks (`https://api.<domain>/v1/webhooks/razorpay`).
+needs its own public address only for payment webhooks (`https://api.<domain>/v1/webhooks/razorpay` or
+`/v1/webhooks/cashfree`).
 
 Two ways to host:
 
@@ -91,6 +92,11 @@ region too. Every page asks the API for data; across oceans that adds up.
    `payment.failed`, `order.paid`, `refund.processed`, `refund.failed`, and put its secret in
    `RAZORPAY_WEBHOOK_SECRET`. Place a few test orders (UPI, card, a failure, a refund). Switch to live keys
    after activation.
+   **Cashfree instead**: `PAYMENTS_PROVIDER=cashfree`, `CASHFREE_APP_ID`, `CASHFREE_SECRET_KEY` from Developers →
+   API Keys, `CASHFREE_ENV=sandbox` for the test keys (a production server also needs `ALLOW_FAKE_PAYMENTS=1`
+   while on test keys). Add the webhook `https://api.<domain>/v1/webhooks/cashfree` (payment success, failed,
+   user dropped and refund status events) and whitelist the shop's domain under Developers. Test UPI ID
+   `testsuccess@gocash` pays, `testfailure@gocash` fails. After activation: live keys and `CASHFREE_ENV=production`.
 6. **Store settings**: log in at `https://<domain>/admin` → Settings: legal name, address, GSTIN, state,
    grievance officer, invoice prefix. Change the bootstrap password (Settings → My password) and add staff.
 7. **Before launch** (see the checklist below), then set `NEXT_PUBLIC_INDEXABLE=1`, redeploy the storefront and

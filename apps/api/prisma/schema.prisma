@@ -463,7 +463,7 @@ model Payment {
   id                String        @id @default(cuid())
   orderId           String
   order             Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  /// razorpay | fake
+  /// razorpay | cashfree | fake
   provider          String
   providerOrderId   String?       @unique
   providerPaymentId String?       @unique

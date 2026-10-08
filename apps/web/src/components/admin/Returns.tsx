@@ -276,7 +276,7 @@ function RefundModal({ r, act, onClose }: { r: AdminReturnDetail; act: Act; onCl
         <label className="f"><span>Amount (₹) <i>suggested {rupees(r.suggestedRefundPaise)}, up to {rupees(left)}</i></span><input inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value.replace(/[^\d.]/g, ''))} /></label>
         <div className="f">
           <span>How</span>
-          {r.paidOnline && <label className="chk"><input type="radio" name="rtx-m" checked={method === 'GATEWAY'} onChange={() => setMethod('GATEWAY')} />Back to the customer’s online payment (Razorpay)</label>}
+          {r.paidOnline && <label className="chk"><input type="radio" name="rtx-m" checked={method === 'GATEWAY'} onChange={() => setMethod('GATEWAY')} />Back to the customer’s online payment</label>}
           <label className="chk"><input type="radio" name="rtx-m" checked={method === 'MANUAL'} onChange={() => setMethod('MANUAL')} />I paid it myself by UPI or bank transfer</label>
         </div>
         {method === 'MANUAL' && (

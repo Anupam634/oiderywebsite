@@ -47,10 +47,15 @@ const schema = z.object({
   MSG91_OTP_TEMPLATE_ID: optional,
 
   /* ---- payments ---- */
-  PAYMENTS_PROVIDER: z.enum(['fake', 'razorpay']).default('fake'),
+  PAYMENTS_PROVIDER: z.enum(['fake', 'razorpay', 'cashfree']).default('fake'),
   RAZORPAY_KEY_ID: optional,
   RAZORPAY_KEY_SECRET: optional,
   RAZORPAY_WEBHOOK_SECRET: optional,
+  /** Cashfree dashboard → Developers → API Keys (the secret key also signs Cashfree's webhooks) */
+  CASHFREE_APP_ID: optional,
+  CASHFREE_SECRET_KEY: optional,
+  /** sandbox (test keys, no real money) or production */
+  CASHFREE_ENV: z.enum(['sandbox', 'production']).default('sandbox'),
   PENDING_ORDER_MINUTES: z.coerce.number().int().min(5).default(30),
   /** minutes after checkout to remind a shopper who hasn't paid yet (once; 0 = never) */
   PAYMENT_REMINDER_MINUTES: z.coerce.number().int().min(0).default(10),
@@ -119,6 +124,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
   const c = parsed.data;
   const problems: string[] = [];
   if (c.PAYMENTS_PROVIDER === 'razorpay' && !(c.RAZORPAY_KEY_ID && c.RAZORPAY_KEY_SECRET)) problems.push('RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET are needed for Razorpay');
+  if (c.PAYMENTS_PROVIDER === 'cashfree' && !(c.CASHFREE_APP_ID && c.CASHFREE_SECRET_KEY)) problems.push('CASHFREE_APP_ID and CASHFREE_SECRET_KEY are needed for Cashfree');
   if (c.OTP_PROVIDER === 'twilio' && !(c.TWILIO_ACCOUNT_SID && c.TWILIO_AUTH_TOKEN && c.TWILIO_VERIFY_SERVICE_SID)) problems.push('Twilio Verify needs TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN and TWILIO_VERIFY_SERVICE_SID');
   if (c.OTP_PROVIDER === 'msg91' && !(c.MSG91_AUTH_KEY && c.MSG91_OTP_TEMPLATE_ID)) problems.push('MSG91 needs MSG91_AUTH_KEY and MSG91_OTP_TEMPLATE_ID');
   if (c.EMAIL_PROVIDER === 'resend' && !c.RESEND_API_KEY) problems.push('RESEND_API_KEY is needed for Resend');
@@ -132,6 +138,8 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     if (c.OTP_PROVIDER === 'dev' && !c.ALLOW_DEV_OTP) problems.push('OTP_PROVIDER=dev is not allowed in production (set ALLOW_DEV_OTP=1 for a demo server)');
     if (c.FILE_SIGNING_SECRET.startsWith('dev-only')) problems.push('set FILE_SIGNING_SECRET to a long random string');
     if (c.PAYMENTS_PROVIDER === 'razorpay' && !c.RAZORPAY_WEBHOOK_SECRET) problems.push('RAZORPAY_WEBHOOK_SECRET is needed in production');
+    // Cashfree's published test UPI IDs and cards "pay" in sandbox mode: never on a real shop
+    if (c.PAYMENTS_PROVIDER === 'cashfree' && c.CASHFREE_ENV === 'sandbox' && !c.ALLOW_FAKE_PAYMENTS) problems.push('CASHFREE_ENV=sandbox is not allowed in production (set ALLOW_FAKE_PAYMENTS=1 for a demo server)');
   }
   if (problems.length) throw new Error(`Invalid environment: ${problems.join('; ')}`);
   return { ...c, cookieSecure: c.COOKIE_SECURE ?? c.NODE_ENV === 'production' };

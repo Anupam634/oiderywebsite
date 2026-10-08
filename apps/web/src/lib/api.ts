@@ -168,6 +168,8 @@ export const api = {
   payAgain: (number: string) => post<{ payment: PaymentStart }>(`/v1/orders/${encodeURIComponent(number)}/pay`).then((r) => r.payment),
   confirmRazorpay: (number: string, body: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }) =>
     post<{ order: OrderDto }>(`/v1/orders/${encodeURIComponent(number)}/razorpay`, body).then((r) => r.order),
+  /** after Cashfree's window closes: the server asks Cashfree whether the order was paid */
+  confirmCashfree: (number: string) => post<{ order: OrderDto }>(`/v1/orders/${encodeURIComponent(number)}/cashfree`).then((r) => r.order),
   fakePayment: (number: string, ok: boolean) => post<{ order: OrderDto }>(`/v1/orders/${encodeURIComponent(number)}/fake-payment`, { ok }).then((r) => r.order),
   paymentFailed: (number: string, reason?: string) => post<{ ok: true }>(`/v1/orders/${encodeURIComponent(number)}/payment-failed`, reason ? { reason } : {}),
 

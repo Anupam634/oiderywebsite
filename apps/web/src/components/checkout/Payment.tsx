@@ -4,7 +4,7 @@ import { BRAND, formatINR, type OrderDto, type PaymentStart } from '@store/share
 import { api, ApiError } from '@/lib/api';
 import { Lock } from '../icons';
 
-/* Opens the payment window for an order: Razorpay Checkout when the store has Razorpay keys, otherwise a
+/* Opens the payment window for an order: Razorpay or Cashfree Checkout when the store has keys, otherwise a
    clearly-labelled test sheet (local development and demos), so the whole flow can be tried end to end. */
 
 export type PayOutcome = { kind: 'paid'; order: OrderDto } | { kind: 'dismissed' } | { kind: 'failed'; reason: string };
@@ -13,28 +13,40 @@ interface RazorpayInstance {
   open(): void;
   on(event: 'payment.failed', cb: (r: { error?: { description?: string } }) => void): void;
 }
+/** what Cashfree's checkout promise resolves with (any of the three) */
+interface CashfreeResult {
+  error?: { message?: string };
+  redirect?: boolean;
+  paymentDetails?: { paymentMessage?: string };
+}
 declare global {
   interface Window {
     Razorpay?: new (options: object) => RazorpayInstance;
+    Cashfree?: (options: { mode: 'sandbox' | 'production' }) => { checkout(options: { paymentSessionId: string; redirectTarget: '_modal' }): Promise<CashfreeResult> };
   }
 }
 
-let loader: Promise<void> | null = null;
-function loadRazorpay() {
-  loader ??= new Promise<void>((resolve, reject) => {
-    if (window.Razorpay) return resolve();
-    const s = document.createElement('script');
-    s.src = 'https://checkout.razorpay.com/v1/checkout.js';
-    s.async = true;
-    s.onload = () => resolve();
-    s.onerror = () => {
-      loader = null;
-      reject(new Error('Could not load the payment window. Please check your connection.'));
-    };
-    document.head.appendChild(s);
-  });
+const loaders = new Map<string, Promise<void>>();
+function loadScript(src: string, ready: () => boolean) {
+  let loader = loaders.get(src);
+  if (!loader) {
+    loader = new Promise<void>((resolve, reject) => {
+      if (ready()) return resolve();
+      const s = document.createElement('script');
+      s.src = src;
+      s.async = true;
+      s.onload = () => resolve();
+      s.onerror = () => {
+        loaders.delete(src);
+        reject(new Error('Could not load the payment window. Please check your connection.'));
+      };
+      document.head.appendChild(s);
+    });
+    loaders.set(src, loader);
+  }
   return loader;
 }
+const loadRazorpay = () => loadScript('https://checkout.razorpay.com/v1/checkout.js', () => !!window.Razorpay);
 
 const METHOD_LABEL: Record<string, string> = { upi: 'UPI', card: 'Card', netbanking: 'Net banking', wallet: 'Wallet', cod: 'Cash on delivery' };
 
@@ -81,6 +93,25 @@ function openRazorpay(p: PaymentStart): Promise<PayOutcome> {
   );
 }
 
+/** Cashfree's window opens over our page. However it closes, our server then asks Cashfree how the payment went. */
+async function openCashfree(p: PaymentStart): Promise<PayOutcome> {
+  let result: CashfreeResult;
+  try {
+    await loadScript('https://sdk.cashfree.com/js/v3/cashfree.js', () => !!window.Cashfree);
+    result = await window.Cashfree!({ mode: p.mode ?? 'production' }).checkout({ paymentSessionId: p.sessionId!, redirectTarget: '_modal' });
+  } catch (e) {
+    return { kind: 'failed', reason: e instanceof Error ? e.message : 'Could not open the payment window. Please try again.' };
+  }
+  // in-app browsers can't show it over our page: Cashfree takes over the page and brings the shopper back to the order
+  if (result.redirect) return new Promise((resolve) => setTimeout(() => resolve({ kind: 'dismissed' }), 20_000));
+  try {
+    return { kind: 'paid', order: await api.confirmCashfree(p.orderNumber) };
+  } catch (e) {
+    if (e instanceof ApiError && e.code === 'payment_incomplete') return { kind: 'dismissed' };
+    return { kind: 'failed', reason: e instanceof ApiError ? e.message : 'We couldn’t check the payment. If money was taken, your order will update in a few minutes.' };
+  }
+}
+
 /** usePayment().open(start) resolves when the shopper has paid, closed the window, or the payment failed */
 export function usePayment(): { open: (p: PaymentStart) => Promise<PayOutcome>; sheet: ReactNode } {
   const [fake, setFake] = useState<PaymentStart | null>(null);
@@ -89,6 +120,7 @@ export function usePayment(): { open: (p: PaymentStart) => Promise<PayOutcome>; 
 
   const open = (p: PaymentStart) => {
     if (p.provider === 'razorpay') return openRazorpay(p);
+    if (p.provider === 'cashfree') return openCashfree(p);
     setFake(p);
     return new Promise<PayOutcome>((resolve) => {
       resolver.current = resolve;

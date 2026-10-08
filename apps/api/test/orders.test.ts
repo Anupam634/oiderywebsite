@@ -5,9 +5,9 @@ import sharp from 'sharp';
 import { afterAll, beforeAll, describe, expect, inject, it } from 'vitest';
 import { buildApp } from '../src/app.ts';
 import { loadConfig } from '../src/config.ts';
-import { hmacHex } from '../src/lib/crypto.ts';
+import { hmacBase64, hmacHex } from '../src/lib/crypto.ts';
 import { createPrisma, type Db } from '../src/lib/prisma.ts';
-import { RazorpayGateway, type GatewayPayment } from '../src/modules/payments/gateway.ts';
+import { CashfreeGateway, RazorpayGateway, type GatewayOrderInput, type GatewayPayment } from '../src/modules/payments/gateway.ts';
 
 /* Accounts, checkout and payments, end to end through the HTTP API. Uses products the catalogue tests
    don't count stock on (poppy kit, cherry hoop, tulip cushion, meadow hoop, name T-shirt). */
@@ -59,9 +59,48 @@ class TestRazorpay extends RazorpayGateway {
   }
 }
 
+/** Cashfree with the network calls replaced: real webhook signatures, pretend API */
+class TestCashfree extends CashfreeGateway {
+  orders = new Map<string, { status: string; session: string; input: GatewayOrderInput }>();
+  tries = new Map<string, GatewayPayment[]>();
+  refunds: { orderId: string; amount: number }[] = [];
+  n = 0;
+  constructor() {
+    super('cf_test_app', 'cf_test_secret', 'sandbox');
+  }
+  override async createOrder(input: GatewayOrderInput) {
+    const id = `${input.receipt}_T${++this.n}`;
+    this.orders.set(id, { status: 'ACTIVE', session: `session_T${this.n}`, input });
+    return { providerOrderId: id, sessionId: `session_T${this.n}` };
+  }
+  override async session(id: string) {
+    const o = this.orders.get(id)!;
+    return { status: o.status, sessionId: o.status === 'ACTIVE' ? o.session : null };
+  }
+  override async attempts(id: string) {
+    return this.tries.get(id) ?? [];
+  }
+  override async refund(_paymentId: string, amount: number, _notes: Record<string, string>, orderId?: string | null) {
+    this.refunds.push({ orderId: orderId!, amount });
+    return { providerRefundId: `ZFR${this.refunds.length}`, status: 'PENDING' as const };
+  }
+  /** what Cashfree would record when the shopper tries to pay */
+  pay(orderId: string, amountPaise: number, status = 'SUCCESS', group = 'upi') {
+    const p = CashfreeGateway.toPayment(
+      { cf_payment_id: `14539950847057${String(++this.n).padStart(5, '0')}`, payment_status: status, payment_amount: amountPaise / 100, payment_group: group, error_details: status === 'FAILED' ? { error_description: 'Card declined by the bank' } : null },
+      orderId,
+    );
+    this.tries.set(orderId, [p, ...(this.tries.get(orderId) ?? [])]);
+    if (status === 'SUCCESS') this.orders.get(orderId)!.status = 'PAID';
+    return p;
+  }
+}
+
 let app: Awaited<ReturnType<typeof buildApp>>;
 let rzpApp: Awaited<ReturnType<typeof buildApp>>;
+let cfApp: Awaited<ReturnType<typeof buildApp>>;
 let rzp: TestRazorpay;
+let cf: TestCashfree;
 let db: Db;
 
 beforeAll(async () => {
@@ -70,10 +109,13 @@ beforeAll(async () => {
   app = await buildApp({ config, db });
   rzp = new TestRazorpay();
   rzpApp = await buildApp({ config: env({ PAYMENTS_PROVIDER: 'razorpay', RAZORPAY_KEY_ID: 'rzp_test_key', RAZORPAY_KEY_SECRET: 'test_secret', RAZORPAY_WEBHOOK_SECRET: 'webhook_secret' }), db, gateway: rzp });
+  cf = new TestCashfree();
+  cfApp = await buildApp({ config: env({ PAYMENTS_PROVIDER: 'cashfree', CASHFREE_APP_ID: 'cf_test_app', CASHFREE_SECRET_KEY: 'cf_test_secret', APP_URL: 'https://shop.example' }), db, gateway: cf });
 });
 afterAll(async () => {
   await app.close();
   await rzpApp.close();
+  await cfApp.close();
   await db.$disconnect();
   fs.rmSync(tmp, { recursive: true, force: true });
 });
@@ -315,6 +357,94 @@ describe('Razorpay', () => {
     const o = await db.order.findUnique({ where: { number: r.body.order.number }, include: { events: true } });
     expect(o).toMatchObject({ status: 'PLACED', paymentState: 'PAID' });
     expect(o!.events.filter((e) => e.type === 'paid')).toHaveLength(1);
+  });
+});
+
+describe('Cashfree', () => {
+  it('opens a payment session and asks Cashfree before marking an order paid', async () => {
+    const { sid, phone } = await login(cfApp);
+    // poppy kits: plenty in stock for the other test files running alongside
+    const v = await variant('poppy');
+    const r = await place(cfApp, sid, phone, [{ variantId: v.id, qty: 1 }], { payment: 'upi' });
+    const number = r.body.order.number as string;
+    expect(r.body.payment).toMatchObject({ provider: 'cashfree', sessionId: expect.stringMatching(/^session_T/), mode: 'sandbox', amountPaise: r.body.order.totalPaise });
+    expect(r.body.order.upiDiscountPaise).toBe(5_000);
+    const orderId = r.body.payment.providerOrderId as string;
+    expect(cf.orders.get(orderId)!.input).toMatchObject({ method: 'upi', customer: { phone, name: 'Priya Sharma' }, returnUrl: `https://shop.example/account/orders/${number}?placed=1&pay=check` });
+
+    const url = `/v1/orders/${number}/cashfree`;
+    expect((await call(cfApp, 'POST', url, { sid })).body.error.code).toBe('payment_incomplete');
+    cf.pay(orderId, r.body.payment.amountPaise, 'FAILED', 'credit_card');
+    const failed = await call(cfApp, 'POST', url, { sid });
+    expect(failed.status).toBe(402);
+    expect(failed.body.error).toMatchObject({ code: 'payment_failed', message: expect.stringContaining('Card declined by the bank') });
+
+    // opening the window again reuses the same Cashfree order and session
+    const again = await call(cfApp, 'POST', `/v1/orders/${number}/pay`, { sid });
+    expect(again.body.payment).toMatchObject({ providerOrderId: orderId, sessionId: r.body.payment.sessionId });
+
+    const p = cf.pay(orderId, r.body.payment.amountPaise);
+    const ok = await call(cfApp, 'POST', url, { sid });
+    expect(ok.body.order).toMatchObject({ status: 'PLACED', paymentState: 'PAID' });
+    expect(await db.payment.findUnique({ where: { providerOrderId: orderId } })).toMatchObject({ status: 'CAPTURED', method: 'upi', providerPaymentId: p.paymentId });
+    expect((await call(cfApp, 'POST', url, { sid })).body.order).toMatchObject({ paymentState: 'PAID' });
+    const o = await db.order.findUnique({ where: { number }, include: { events: true } });
+    expect(o!.events.filter((e) => e.type === 'paid')).toHaveLength(1);
+    expect(o!.events.filter((e) => e.type === 'payment_failed')).toHaveLength(1);
+  });
+
+  it('starts a new Cashfree order once the old one has expired', async () => {
+    const { sid, phone } = await login(cfApp);
+    const v = await variant('cherry');
+    const r = await place(cfApp, sid, phone, [{ variantId: v.id, qty: 1 }], { payment: 'card' });
+    const first = r.body.payment.providerOrderId as string;
+    expect(cf.orders.get(first)!.input.method).toBe('card');
+    cf.orders.get(first)!.status = 'EXPIRED';
+    const again = await call(cfApp, 'POST', `/v1/orders/${r.body.order.number}/pay`, { sid });
+    expect(again.body.payment.providerOrderId).not.toBe(first);
+    expect(again.body.payment.sessionId).not.toBe(r.body.payment.sessionId);
+  });
+
+  it('accepts signed webhooks only, handles repeats and settles refunds', async () => {
+    const { sid, phone } = await login(cfApp);
+    const v = await variant('poppy');
+    const r = await place(cfApp, sid, phone, [{ variantId: v.id, qty: 1 }], { payment: 'netbanking' });
+    const orderId = r.body.payment.providerOrderId as string;
+    const send = (body: string, sig: string, ts?: string) =>
+      cfApp.inject({ method: 'POST', url: '/v1/webhooks/cashfree', payload: body, headers: { 'content-type': 'application/json', 'x-webhook-signature': sig, ...(ts ? { 'x-webhook-timestamp': ts } : {}) } });
+    const sign = (body: string, ts: string) => hmacBase64('cf_test_secret', ts + body);
+    // decimals exactly as Cashfree sends them: the signature covers the raw body
+    const paid = `{"data":{"order":{"order_id":"${orderId}","order_amount":${(r.body.payment.amountPaise / 100).toFixed(2)}},"payment":{"cf_payment_id":"1453995084705707520","payment_status":"SUCCESS","payment_amount":${(r.body.payment.amountPaise / 100).toFixed(2)},"payment_group":"net_banking"}},"type":"PAYMENT_SUCCESS_WEBHOOK"}`;
+    const ts = String(Date.now());
+    expect((await send(paid, 'bad', ts)).statusCode).toBe(400);
+    expect((await send(paid, sign(paid, ts))).statusCode).toBe(400);
+    expect((await send(paid, sign(paid, ts), String(Date.now() + 1))).statusCode).toBe(400);
+    expect((await send(paid, sign(paid, ts), ts)).statusCode).toBe(200);
+    expect((await send(paid, sign(paid, ts), ts)).statusCode).toBe(200);
+    const o = await db.order.findUnique({ where: { number: r.body.order.number }, include: { events: true } });
+    expect(o).toMatchObject({ status: 'PLACED', paymentState: 'PAID' });
+    expect(o!.events.filter((e) => e.type === 'paid')).toHaveLength(1);
+    expect(await db.payment.findUnique({ where: { providerOrderId: orderId } })).toMatchObject({ status: 'CAPTURED', method: 'netbanking', providerPaymentId: '1453995084705707520' });
+
+    // refunds go by Cashfree order; the bank's answer arrives as a webhook
+    await cfApp.orders.refund(await cfApp.orders.load(o!.id), 20_000, 'Part refund', { actor: 'SYSTEM', notify: false });
+    expect(cf.refunds.at(-1)).toEqual({ orderId, amount: 20_000 });
+    const refundId = `ZFR${cf.refunds.length}`;
+    const settled = `{"data":{"refund":{"cf_refund_id":11325632,"refund_id":"${refundId}","order_id":"${orderId}","refund_amount":200.00,"refund_status":"SUCCESS"}},"type":"REFUND_STATUS_WEBHOOK"}`;
+    expect((await send(settled, sign(settled, ts), ts)).statusCode).toBe(200);
+    expect(await db.refund.findUnique({ where: { providerRefundId: refundId } })).toMatchObject({ status: 'PROCESSED', amountPaise: 20_000 });
+  });
+
+  it('maps Cashfree payments and signs like Cashfree does', () => {
+    expect(CashfreeGateway.toPayment({ cf_payment_id: 12376123, payment_status: 'SUCCESS', payment_amount: 1349.5, payment_group: 'debit_card' }, 'ZF-AAAA_X')).toMatchObject({ paymentId: '12376123', status: 'captured', method: 'card', amountPaise: 134_950, errorReason: null });
+    expect(CashfreeGateway.toPayment({ cf_payment_id: '9', payment_status: 'USER_DROPPED', payment_amount: 10, payment_group: 'upi' }, 'x').status).toBe('dropped');
+    expect(CashfreeGateway.toPayment({ cf_payment_id: '9', payment_status: 'VOID', payment_amount: 10 }, 'x')).toMatchObject({ status: 'failed', method: null });
+    const g = new CashfreeGateway('app', 'secret', 'production');
+    const body = Buffer.from('{"type":"PAYMENT_SUCCESS_WEBHOOK","data":{}}');
+    const sig = hmacBase64('secret', Buffer.concat([Buffer.from('1785401067911'), body]));
+    expect(g.verifyWebhook(body, sig, '1785401067911')).toBe(true);
+    expect(g.verifyWebhook(body, sig)).toBe(false);
+    expect(g.verifyWebhook(Buffer.from(body.toString().replace('{}', '{ }')), sig, '1785401067911')).toBe(false);
   });
 });
 
